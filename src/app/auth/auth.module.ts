@@ -7,7 +7,7 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { MainComponent } from './pages/main/main.component';
-import { NbAlertModule, NbButtonModule, NbCardModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule } from '@nebular/theme';
+import { NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule } from '@nebular/theme';
 
 
 @NgModule({
@@ -27,7 +27,8 @@ import { NbAlertModule, NbButtonModule, NbCardModule, NbFormFieldModule, NbIconM
     NbAuthModule,
     NbAlertModule,
     NbButtonModule, 
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NbCheckboxModule
   ]
 })
 export class AuthModule { }
