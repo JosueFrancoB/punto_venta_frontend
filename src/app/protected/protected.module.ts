@@ -3,14 +3,16 @@ import { CommonModule } from '@angular/common';
 
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule } from '@nebular/theme';
+import { NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSidebarModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UsersComponent } from './users/users.component';
 
 
 @NgModule({
   declarations: [
-    DashboardComponent
+    DashboardComponent,
+    UsersComponent
   ],
   imports: [
     CommonModule,
@@ -24,7 +26,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     NbAlertModule,
     NbButtonModule, 
     ReactiveFormsModule,
-    NbCheckboxModule
+    NbCheckboxModule,
+    NbIconModule,
+    NbSidebarModule.forRoot(),
+    NbMenuModule.forRoot(),
   ]
 })
 export class ProtectedModule { }

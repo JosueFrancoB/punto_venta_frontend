@@ -7,57 +7,43 @@
             <h1 id="title" class="title">Bienvenido al inicio de sesión</h1>
             <p class="sub-title">Inicia sesión con tu correo</p>
 
-            <nb-alert *ngIf="" outline="danger" role="alert">
-            <p class="alert-title"><b>Oh snap!</b></p>
-            <ul class="alert-message-list">
-                <li *ngFor="" class="alert-message">Error</li>
-            </ul>
-            </nb-alert>
-
-            <nb-alert *ngIf="" outline="success" role="alert">
-            <p class="alert-title"><b>Hooray!</b></p>
-            <ul class="alert-message-list">
-                <li *ngFor="" class="alert-message"></li>
-            </ul>
-            </nb-alert>
-
-            <form #form="" aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="login()">
+            <form aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="login()">
 
             <div class="form-control-group">
                 <label class="label" for="input-email">Correo:</label>
-                <input nbInput fullWidth #email="" class="status-danger" formControlName="email" id="input-email" pattern=".+@.+..+" placeholder="Ingrese su correo" autofocus [attr.aria-invalid]="">
-                <ng-container *ngIf="miFormulario.invalid">
-                <p class="caption status-danger" *ngIf="miFormulario.value.email.trim() === ''">
-                    El correo es obligatorio!
+                <input nbInput fullWidth [ngClass]="miFormularioControls.correo.invalid ? 'status-danger' : 'status-success'" formControlName="correo" id="input-email" placeholder="Ingrese su correo" autofocus>
+                <ng-container *ngIf="miFormulario.controls['correo'].invalid || msg_err != ''">
+                <p class="caption status-danger" *ngIf="msg_err != ''">
+                    {{msg_err}}
                 </p>
-                <p class="caption status-danger" *ngIf="miFormulario.invalid">
-                    El correo debe ser real!
+                <p class="caption status-danger" *ngIf="campoNoValido('correo')">
+                    {{EmailErrorMsg}}
                 </p>
                 </ng-container>
             </div>
 
             <div class="form-control-group">
                 <label class="label" for="input-password">Contraseña:</label>
-                <input nbInput fullWidth class="status-danger" #password="" formControlName="password" type="password" id="input-password" placeholder="Ingrese su contraseña">
-                <ng-container *ngIf="miFormulario.invalid">
-                <p class="caption status-danger" *ngIf="miFormulario.value.password.trim() === ''">
-                    La contraseña es obligatoria!
+                <input nbInput fullWidth [ngClass]="miFormularioControls.password.invalid ? 'status-danger' : 'status-success'" #password="" formControlName="password" type="password" id="input-password" placeholder="Ingrese su contraseña">
+                <ng-container *ngIf="miFormulario.controls['password'].invalid || msg_err != ''">
+                <p class="caption status-danger" *ngIf="campoNoValido('password')">
+                    {{PasswordErrorMsg}}
                 </p>
-                <p class="caption status-danger" *ngIf="miFormulario.value.password.trim().length < 6">
-                    La contraseña debe de tener 6 o más caracteres
+                <p class="caption status-danger" *ngIf="msg_err.includes('contraseña')">
+                    La contraseña es incorrecta!
                 </p>
                 </ng-container>
             </div>
             <!-- TODO: Hacer que solo se muestren los mensajes de obligatorio si se presiona el boton de iniciar session -->
-            <button nbButton fullWidth status="success" [class.btn-pulse]="" [disabled]="miFormulario.invalid">
+            <button nbButton fullWidth status="success">
                 Iniciar Sesión
             </button>
         </form>
     </nb-auth-block>
 </nb-card-body>
 <nb-card-footer class="auth-footer">
-    <span style="font-weight: bolder;" class="text-center">¿No tienes Cuenta?</span>
-    <a routerLink="/auth/register" class="text-center">Crea una aquí</a>
+    <span style="font-weight: bolder; margin: 5px;" class="text-center">¿No tienes cuenta?</span>
+    <a routerLink="/auth/register" style="margin: 5px;" class="text-center">Crea una aquí</a>
 </nb-card-footer>
 </nb-card>
 

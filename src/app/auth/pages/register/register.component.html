@@ -7,67 +7,46 @@
             <h1 id="title" class="title">Bienvenido al registro</h1>
             <p class="sub-title">Registrate con un nuevo usuario</p>
 
-            <nb-alert *ngIf="" outline="danger" role="alert">
-            <p class="alert-title"><b>Oh snap!</b></p>
-            <ul class="alert-message-list">
-                <li *ngFor="" class="alert-message">Error</li>
-            </ul>
-            </nb-alert>
-
-            <nb-alert *ngIf="" outline="success" role="alert">
-            <p class="alert-title"><b>Hooray!</b></p>
-            <ul class="alert-message-list">
-                <li *ngFor="" class="alert-message"></li>
-            </ul>
-            </nb-alert>
-
-            <form #form="" aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="register()">
+            <form #form="" aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="registro()">
 
             <div class="form-control-group">
                 <label class="label" for="input-username">Nombre de usuario:</label>
-                <input nbInput fullWidth #email="" formControlName="name"  name="username" id="input-username" pattern="" placeholder="Ingrese su nombre" autofocus>
-                <ng-container *ngIf="">
-                <p class="caption status-danger" *ngIf="">
-                    User name is required!
+                <input nbInput fullWidth formControlName="nombre"  name="username" id="input-username" [ngClass]="miFormularioControls.nombre.invalid ? 'status-danger' : 'status-success'" placeholder="Ingrese su nombre" autofocus>
+                <ng-container *ngIf="miFormulario.controls['nombre'].invalid">
+                <p class="caption status-danger" *ngIf="campoNoValido('nombre')">
+                    El nombre es obligatorio
                 </p>
                 </ng-container>
             </div>
 
             <div class="form-control-group">
                 <label class="label" for="input-email">Correo:</label>
-                <input nbInput fullWidth #email="" formControlName="email"  name="email" id="input-email" pattern=".+@.+..+" placeholder="Ingrese su correo" autofocus [attr.aria-invalid]="">
-                <ng-container *ngIf="">
-                <p class="caption status-danger" *ngIf="">
-                    Email is required!
-                </p>
-                <p class="caption status-danger" *ngIf="">
-                    Email should be the real one!
+                <input nbInput fullWidth [ngClass]="miFormularioControls.correo.invalid ? 'status-danger' : 'status-success'" formControlName="correo"  name="email" id="input-email" placeholder="Ingrese su correo" autofocus>
+                <ng-container *ngIf="miFormulario.controls['correo'].invalid">
+                <p class="caption status-danger" *ngIf="campoNoValido('correo')">
+                    {{EmailErrorMsg}}
                 </p>
                 </ng-container>
             </div>
 
             <div class="form-control-group">
                 <label class="label" for="input-password">Contraseña:</label>
-                <input nbInput fullWidth #password="" formControlName="password"  name="password" type="password" id="input-password" placeholder="Ingrese su contraseña">
-                <ng-container *ngIf="miFormulario.invalid">
-                <p class="caption status-danger" *ngIf="miFormulario.value.password.trim() === ''">
-                    Password is required!
-                </p>
-                <p class="caption status-danger" *ngIf="miFormulario.value.password.length < 6">
-                    Password should contains
-                    characters
+                <input nbInput fullWidth formControlName="password"  name="password" type="password" [ngClass]="miFormularioControls.password.invalid ? 'status-danger' : 'status-success'" id="input-password" placeholder="Ingrese su contraseña">
+                <ng-container *ngIf="miFormulario.controls['password'].invalid">
+                <p class="caption status-danger" *ngIf="campoNoValido('password')">
+                    {{PasswordErrorMsg}}
                 </p>
                 </ng-container>
             </div>
 
-            <button nbButton fullWidth status="success" [class.btn-pulse]="" [disabled]="miFormulario.invalid">
+            <button nbButton fullWidth status="success">
                 Registrarme
             </button>
             </form>
         </nb-auth-block>
     </nb-card-body>
     <nb-card-footer class="auth-footer">
-        <span style="font-weight: bolder;" class="text-center">¿Ya tienes Cuenta?</span>
-        <a routerLink="/auth/login" class="text-center">Ingresa aquí</a>
+        <span style="font-weight: bolder; margin: 5px;" class="text-center">¿Ya tienes cuenta?</span>
+        <a routerLink="/auth/login" style="margin: 5px;" class="text-center">Ingresa aquí</a>
     </nb-card-footer>
 </nb-card>
