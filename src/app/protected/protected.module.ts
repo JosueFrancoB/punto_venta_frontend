@@ -7,12 +7,14 @@ import { NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbFormFi
 import { NbAuthModule } from '@nebular/auth';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './users/users.component';
+import { ProductsComponent } from './products/products.component';
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    UsersComponent
+    UsersComponent,
+    ProductsComponent
   ],
   imports: [
     CommonModule,

@@ -37,17 +37,26 @@ export class DashboardComponent {
     return false;
   }
 
+  // uncompact(): boolean {
+  //   this.sidebarService.compact();
+  // }
+
   items: NbMenuItem[] = [
     {
-      title: 'Home',
+      title: 'Inicio',
       icon: 'home-outline',
       link: '/dashboard',
       home: true
     },
     {
-      title: 'Users',
+      title: 'Usuarios',
       icon: 'people-outline',
-      link: '/users'
+      link: '/dashboard/users'
+    },
+    {
+      title: 'Productos',
+      icon: 'shopping-bag',
+      link: '/dashboard/products'
     }
   ];
 }
