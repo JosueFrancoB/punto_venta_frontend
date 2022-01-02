@@ -47,7 +47,7 @@ export class DashboardComponent {
     {
       title: 'Users',
       icon: 'people-outline',
-      link: '/dashboard/users'
+      link: '/users'
     }
   ];
 }

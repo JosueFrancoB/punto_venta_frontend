@@ -1,11 +1,17 @@
 
 <nb-card>
     <nb-card-header>
-        <nav class="navigation"><a href="#" aria-label="Back" class="link back-link"><nb-icon icon="arrow-back" ng-reflect-icon="arrow-back"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" class="eva eva-arrow-back" fill="currentColor"><g data-name="Layer 2"><g data-name="arrow-back"><rect width="24" height="24" transform="rotate(90 12 12)" opacity="0"></rect><path d="M19 11H7.14l3.63-4.36a1 1 0 1 0-1.54-1.28l-5 6a1.19 1.19 0 0 0-.09.15c0 .05 0 .08-.07.13A1 1 0 0 0 4 12a1 1 0 0 0 .07.36c0 .05 0 .08.07.13a1.19 1.19 0 0 0 .09.15l5 6A1 1 0 0 0 10 19a1 1 0 0 0 .64-.23 1 1 0 0 0 .13-1.41L7.14 13H19a1 1 0 0 0 0-2z"></path></g></g></svg></nb-icon></a></nav></nb-card-header>
+        <nav class="navigation" style="height: 80px; display: flex; justify-content: center; align-items: center;">
+            <a class="wrench">
+                <img src="../../../../assets/logo.png"/>
+            </a>
+            <h1 style="color: #6eb9ff;">IronPoint</h1>
+        </nav>
+    </nb-card-header>
     <nb-card-body class="card-content">
         <nb-auth-block aria-labelledby="title">
-            <h1 id="title" class="title">Bienvenido al inicio de sesión</h1>
-            <p class="sub-title">Inicia sesión con tu correo</p>
+            <h1 id="title" class="title success">Inicio de sesión</h1>
+            <p class="sub-title">Administra y controla tu ferretería</p>
 
             <form aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="login()">
 

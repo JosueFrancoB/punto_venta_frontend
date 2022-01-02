@@ -8,6 +8,7 @@ const routes: Routes = [
     path: '',
     children: [
       {path: '', component: DashboardComponent},
+      //TODO: Arreglar esta ruta de users
       {path: '/users', component: UsersComponent},
       {path: '**', redirectTo: ''},
     ]
