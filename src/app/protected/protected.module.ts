@@ -3,23 +3,27 @@ import { CommonModule } from '@angular/common';
 
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSidebarModule } from '@nebular/theme';
+import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSidebarModule, NbUserModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UsersComponent } from './users/users.component';
-import { ProductsComponent } from './products/products.component';
+import { UsersComponent } from './pages/users/users.component';
+import { ProductsComponent } from './pages/products/products.component';
+import { LayoutComponent } from './pages/layout/layout.component';
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
     UsersComponent,
-    ProductsComponent
+    ProductsComponent,
+    LayoutComponent
   ],
   imports: [
     CommonModule,
     ProtectedRoutingModule,
     NbCardModule,
+    NbUserModule,
+    NbActionsModule,
     NbLayoutModule,
     NbFormFieldModule,
     NbInputModule,

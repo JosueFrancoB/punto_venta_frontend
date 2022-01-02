@@ -1,0 +1,60 @@
+<nb-flip-card>
+    <nb-card-front>
+      <nb-card accent="danger">
+        <nb-card-body>
+          A nebula is an interstellar cloud of dust, hydrogen,
+          helium and other ionized gases.
+          Originally, nebula was a name for
+          any diffuse astronomical object,
+          including galaxies beyond the Milky Way.
+        </nb-card-body>
+      </nb-card>
+    </nb-card-front>
+    <nb-card-back>
+        <nb-card>
+            <nb-card-body class="card-content">
+                <nb-auth-block aria-labelledby="title">
+                    <h1 id="title" class="title">Bienvenido al registro</h1>
+                    <p class="sub-title">Registrate con un nuevo usuario</p>
+        
+                    <form #form="" aria-labelledby="title">
+        
+                    <div class="form-control-group">
+                        <label class="label" for="input-username">Nombre de usuario:</label>
+                        <input nbInput fullWidth formControlName="nombre"  name="username" id="input-username" placeholder="Ingrese su nombre" autofocus>
+                        <ng-container >
+                        <p class="caption status-danger">
+                            El nombre es obligatorio
+                        </p>
+                        </ng-container>
+                    </div>
+        
+                    <div class="form-control-group">
+                        <label class="label" for="input-email">Correo:</label>
+                        <input nbInput fullWidth formControlName="correo"  name="email" id="input-email" placeholder="Ingrese su correo" autofocus>
+                        <ng-container>
+                        <p class="caption status-danger">
+                            Email
+                        </p>
+                        </ng-container>
+                    </div>
+        
+                    <div class="form-control-group">
+                        <label class="label" for="input-password">Contraseña:</label>
+                        <input nbInput fullWidth formControlName="password"  name="password" type="password" id="input-password" placeholder="Ingrese su contraseña">
+                        <ng-container >
+                        <p class="caption status-danger">
+                            PasswordErr
+                        </p>
+                        </ng-container>
+                    </div>
+        
+                    <button nbButton fullWidth status="success">
+                        Registrarme
+                    </button>
+                    </form>
+                </nb-auth-block>
+            </nb-card-body>
+        </nb-card>        
+    </nb-card-back>
+</nb-flip-card>

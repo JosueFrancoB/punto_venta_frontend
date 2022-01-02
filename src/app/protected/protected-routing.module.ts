@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ProductsComponent } from './products/products.component';
-import { UsersComponent } from './users/users.component';
+import { LayoutComponent } from './pages/layout/layout.component';
+import { ProductsComponent } from './pages/products/products.component';
+import { UsersComponent } from './pages/users/users.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent,
+    component: LayoutComponent,
     children: [
-      //TODO: Arreglar esta ruta de users
+      {path: '', component: DashboardComponent},
       {path: 'users', component: UsersComponent},
       {path: 'products', component: ProductsComponent},
       {path: '**', redirectTo: ''},

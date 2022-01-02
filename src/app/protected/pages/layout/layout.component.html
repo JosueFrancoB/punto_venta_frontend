@@ -1,0 +1,37 @@
+<nb-layout>
+    <nb-layout-header fixed >
+        <nb-icon (click)="toggleSidebar()" class="sidebar-toggle" icon="menu-2-outline" style="cursor: pointer;"></nb-icon>
+        <h2>IronPoint</h2>
+        <img src="../../../../assets/images/logo.png" alt="Logo" style="padding: 10px;"/>
+        <nb-user size="medium"
+             name="Josue Franco"
+             title="Engineer"
+             color="#cccccc">
+      </nb-user>
+      <!-- <nb-actions size="small" style="justify-self: flex-end;">
+        <nb-action icon="search-outline"></nb-action>
+        <nb-action icon="power-outline"></nb-action>
+        <nb-action icon="person-outline"></nb-action>
+        <nb-action icon="home-outline"></nb-action>
+        <nb-action>
+          Custom Action
+        </nb-action>
+      </nb-actions> -->
+      </nb-layout-header>
+    
+      <nb-sidebar class="menu-sidebar" responsive start>
+        <nb-menu [items]="items"></nb-menu>
+      </nb-sidebar>
+    
+      <nb-layout-column>
+        <router-outlet></router-outlet>
+      </nb-layout-column>
+    
+      <nb-layout-footer fixed>
+        This is the footer
+      </nb-layout-footer>
+
+      <!-- <pre>{{ usuario | json }}</pre>
+    
+      <button nbButton status="warning" (click)="logout()">Cerrar sesión</button> -->
+</nb-layout>
