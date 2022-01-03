@@ -13,5 +13,6 @@ export interface AuthResponse{
 
 export interface Usuario{
     uid?:string,
-    nombre?:string
+    nombre?:string,
+    picture?: string,
 }
