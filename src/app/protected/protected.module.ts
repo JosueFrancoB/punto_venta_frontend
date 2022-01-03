@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './pages/users/users.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { LayoutComponent } from './pages/layout/layout.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 
 @NgModule({
@@ -34,6 +35,7 @@ import { LayoutComponent } from './pages/layout/layout.component';
     ReactiveFormsModule,
     NbCheckboxModule,
     NbIconModule,
+    Ng2SmartTableModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
   ]

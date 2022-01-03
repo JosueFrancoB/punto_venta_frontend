@@ -1,51 +1,11 @@
 <div class="components-list">
     <h3 class="group-title h4 ng-star-inserted">Categorias</h3>
-    <div class="component-card-wrapper ng-star-inserted">
+    <div class="component-card-wrapper ng-star-inserted" *ngFor="let categoria of categorias">
       <a class="component-navigate-link" href="/nebular/docs/components/layout">
         <nb-card title="Layout" class="card-product">
           <nb-card-body class="card-body-product">
             <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-            <label class="component-name">Layout</label>
-        </nb-card-body>
-        </nb-card>
-      </a>
-    </div>
-    <div class="component-card-wrapper ng-star-inserted">
-      <a class="component-navigate-link" href="/nebular/docs/components/layout">
-        <nb-card title="Layout" class="card-product">
-          <nb-card-body class="card-body-product">
-            <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-            <label class="component-name">Layout</label>
-        </nb-card-body>
-        </nb-card>
-      </a>
-    </div>
-    <div class="component-card-wrapper ng-star-inserted">
-      <a class="component-navigate-link" href="/nebular/docs/components/layout">
-        <nb-card title="Layout" class="card-product">
-          <nb-card-body class="card-body-product">
-            <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-            <label class="component-name">Layout</label>
-        </nb-card-body>
-        </nb-card>
-      </a>
-    </div>
-    <div class="component-card-wrapper ng-star-inserted">
-      <a class="component-navigate-link" href="/nebular/docs/components/layout">
-        <nb-card title="Layout" class="card-product">
-          <nb-card-body class="card-body-product">
-            <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-            <label class="component-name">Layout</label>
-        </nb-card-body>
-        </nb-card>
-      </a>
-    </div>
-    <div class="component-card-wrapper ng-star-inserted">
-      <a class="component-navigate-link" href="/nebular/docs/components/layout">
-        <nb-card title="Layout" class="card-product">
-          <nb-card-body class="card-body-product">
-            <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-            <label class="component-name">Layout</label>
+            <label class="component-name">{{categoria}}</label>
         </nb-card-body>
         </nb-card>
       </a>

@@ -1,4 +1,4 @@
-<nb-flip-card>
+<!-- <nb-flip-card>
     <nb-card-front>
       <nb-card accent="danger">
         <nb-card-body>
@@ -58,3 +58,15 @@
         </nb-card>        
     </nb-card-back>
 </nb-flip-card>
+ -->
+
+<nb-card>
+    <nb-card-header>
+        Usuarios
+    </nb-card-header>
+
+    <nb-card-body>
+        <ng2-smart-table [settings]="settings" [source]="usuarios" (deleteConfirm)="onDeleteConfirm($event)">
+        </ng2-smart-table>
+    </nb-card-body>
+  </nb-card>
