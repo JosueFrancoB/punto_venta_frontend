@@ -13,15 +13,17 @@
             <h1 id="title" class="title success">Inicio de sesión</h1>
             <p class="sub-title">Administra y controla tu ferretería</p>
 
+
+            <nb-alert *ngIf="msg_err != ''" outline="danger" role="alert">
+                <p class="alert-title" class="caption status-danger"><b>El correo de la cuenta y/o la contraseña que has introducido son incorrectos.</b></p>
+            </nb-alert>
+
             <form aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="login()">
 
             <div class="form-control-group">
                 <label class="label" for="input-email">Correo:</label>
                 <input nbInput fullWidth [ngClass]="miFormularioControls.correo.invalid ? 'status-danger' : 'status-success'" formControlName="correo" id="input-email" placeholder="Ingrese su correo" autofocus>
-                <ng-container *ngIf="miFormulario.controls['correo'].invalid || msg_err != ''">
-                <p class="caption status-danger" *ngIf="msg_err != ''">
-                    {{msg_err}}
-                </p>
+                <ng-container *ngIf="miFormulario.controls['correo'].invalid">
                 <p class="caption status-danger" *ngIf="campoNoValido('correo')">
                     {{EmailErrorMsg}}
                 </p>
@@ -35,13 +37,10 @@
                 <p class="caption status-danger" *ngIf="campoNoValido('password')">
                     {{PasswordErrorMsg}}
                 </p>
-                <p class="caption status-danger" *ngIf="msg_err.includes('contraseña')">
-                    La contraseña es incorrecta!
-                </p>
                 </ng-container>
             </div>
             <!-- TODO: Hacer que solo se muestren los mensajes de obligatorio si se presiona el boton de iniciar session -->
-            <button nbButton fullWidth status="success">
+            <button nbButton fullWidth status="success" (click)="msg_err = ''">
                 Iniciar Sesión
             </button>
         </form>

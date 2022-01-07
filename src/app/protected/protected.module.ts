@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSidebarModule, NbUserModule } from '@nebular/theme';
+import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSelectModule, NbSidebarModule, NbUserModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './pages/users/users.component';
@@ -17,7 +17,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     DashboardComponent,
     UsersComponent,
     ProductsComponent,
-    LayoutComponent
+    LayoutComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +39,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     NbContextMenuModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
+    NbDialogModule.forChild(),
+    NbSelectModule
   ]
 })
 export class ProtectedModule { }

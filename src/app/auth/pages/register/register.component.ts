@@ -2,6 +2,8 @@ import { Component} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NbWindowRef } from '@nebular/theme';
+
 
 @Component({
   selector: 'app-register',
@@ -52,7 +54,8 @@ export class RegisterComponent {
   }
 
   constructor(private fb: FormBuilder, private router:Router, 
-              private authService:AuthService) { }
+              private authService:AuthService,
+              public windowRef: NbWindowRef) { }
   registro(){
       if (this.miFormulario.invalid){
         this.miFormulario.markAllAsTouched()
@@ -76,6 +79,10 @@ export class RegisterComponent {
 
   campoNoValido(campo:string){
     return this.miFormularioControls[campo].errors && this.miFormularioControls[campo].touched
+  }
+
+  close() {
+    this.windowRef.close();
   }
   
 
