@@ -3,8 +3,9 @@ export interface UserBody{
     nombre: string;
     correo: string;
     password?: string;
+    estado?: boolean;
     rol?: string;
-    estado?: string;
+    img?: string;
 }
 
 export interface UserData{

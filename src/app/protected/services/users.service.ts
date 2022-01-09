@@ -29,26 +29,70 @@ export class UsersService {
         catchError(err => {
           console.log(`${err.error.msg}`)
           // of(err.error.msg)
-          return of()
+          return of(err.error.msg)
         })
       )
   }
   getUser(id:string){
     const headers = this.getToken()
-    return this.http.get(`${this.baseUrl}/users`, {headers})
+    return this.http.get(`${this.baseUrl}/users/${id}`, {headers}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      console.log(`${err.error.msg}`)
+      // of(err.error.msg)
+      return of(err.error.msg)
+    })
+  )
   }
-  addUser(user_data: UserBody){
+  addUser(nombre: string, correo: string, password: string, rol:string = 'Usuario', img:string = ''){
     const headers = this.getToken()
-    let body = {user_data}
-    return this.http.post(`${this.baseUrl}/users`, {headers, body})
+    const body = {nombre, correo, password, rol, img};
+    return this.http.post(`${this.baseUrl}/users`, {headers, body}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      console.log(err)
+      // of(err.error.msg)
+      return of(err.error.msg)
+    })
+  )
   }
-  updateUser(id:string, user_data: UserBody){
+  updateUser(id:string, body: UserBody){
     const headers = this.getToken()
-    let body = {user_data}
-    return this.http.put(`${this.baseUrl}/users/${id}`, {headers, body})
+    console.log(body);
+    return this.http.put(`${this.baseUrl}/users/${id}`, {headers, body}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      console.log(`${err.error.msg}`)
+      // of(err.error.msg)
+      return of(err.error.msg)
+    })
+  )
   }
   deleteUser(id:string){
     const headers = this.getToken()
-    return this.http.delete(`${this.baseUrl}/users/${id}`, {headers})
+    return this.http.delete(`${this.baseUrl}/users/${id}`, {headers}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      console.log(`${err.error.msg}`)
+      // of(err.error.msg)
+      return of(err.error.msg)
+    })
+  )
+  }
+
+  subirArchivo(archivos: Array<string>, id:string){
+    const formularioDatos = new FormData();
+    archivos.forEach(archivo => {
+      formularioDatos.append('archivo', archivo)
+    });
+    return this.http.post(`${this.baseUrl}/uploads/users/${id}`, formularioDatos)
   }
 }

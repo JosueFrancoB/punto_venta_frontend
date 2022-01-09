@@ -21,10 +21,10 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  registro(nombre: string, correo: string, password: string, rol:string = 'USER_ROLE'){
+  registro(nombre: string, correo: string, password: string, rol:string = 'Usuario', img:string = ''){
     //TODO: Hacer eue el administrador pueda crear otro usuario administrador
     const url = `${this.baseUrl}/users`;
-    const body = {nombre, correo, password, rol};
+    const body = {nombre, correo, password, rol, img};
     return this.http.post<AuthResponse>(url, body)
     .pipe(
       tap(resp =>{

@@ -3,9 +3,12 @@ import { NbWindowService } from '@nebular/theme';
 import { UsersService } from '../../services/users.service';
 import { NbDialogService } from '@nebular/theme';
 import { RegisterComponent } from '../../../auth/pages/register/register.component';
+import Swal from 'sweetalert2'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { LocalDataSource } from 'ng2-smart-table';
+import { Usuario } from 'src/app/auth/interfaces/interfaces';
+import { UserBody } from '../../interfaces/protected-interfaces';
 
 
 @Component({
@@ -16,25 +19,34 @@ import { LocalDataSource } from 'ng2-smart-table';
 export class UsersComponent implements OnInit {
   
   usuarios: any
+  user_id: string = ''
+  user_rol: string = 'Usuario'
+  user: UserBody = {
+    nombre: '',
+    password: '',
+    correo: '',
+    estado: true,
+    rol: ''
+  }
+
+  checkedEstado = true;
+  selectedRol = 'Usuario';
+  changesEdit = false;
+
+  modalEdit:boolean = false;
   source: LocalDataSource;
   @ViewChild('Usuario') Usuario!: TemplateRef<any>;
 
   constructor(private usersService:UsersService,
-              private windowService: NbWindowService,
               private dialogService: NbDialogService,
-              private fb: FormBuilder,
-              private authService: AuthService) {
+              private fb: FormBuilder) {
                 this.source = new LocalDataSource(this.usuarios);
               }
 
   users_roles:Array<string> = ['Usuario', 'Administrador']
   
   ngOnInit() {
-    this.usersService.getUsers().subscribe(res =>{
-      const {usuarios} = res
-      console.log(usuarios);
-      this.source.load(usuarios)
-    })
+    this.getUsers()
   }
 
   correoPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"
@@ -66,6 +78,23 @@ export class UsersComponent implements OnInit {
     return '';
   }
 
+  getUsers(){
+    this.usersService.getUsers().subscribe(res =>{
+      const {usuarios} = res
+      console.log(usuarios);
+      usuarios.forEach((user:any) => {
+        user.estado = user.estado ? 'Activo' :  'Inactivo';
+      });
+      this.source.load(usuarios)
+    })
+  }
+
+  getRol(event:any): void{
+    console.log(event);
+    this.changesEdit = true
+    this.user_rol = event
+  }
+
   addUser(){
       if (this.addUserForm.invalid){
         this.addUserForm.markAllAsTouched()
@@ -73,15 +102,32 @@ export class UsersComponent implements OnInit {
       }
       console.log(this.addUserForm.value)
       const {nombre, correo, password} = this.addUserForm.value
-      this.authService.registro(nombre, correo, password)
+      const rol = this.user_rol
+      //TODO: Arreglar esto para que añada antes estaba el de registro pero me cambie el token en el backend y verificar lo de resp === true porque en este regreso otra cosa
+      this.usersService.addUser(nombre, correo, password, rol)
         .subscribe(resp =>{
           if (resp === true){
-            // this.router.navigateByUrl('/dashboard')
+            this.getUsers()
+            
           }else{
             //TODO: Mostrar mensaje de error
             //+Correo repetido
+            Swal.fire('Error', resp, 'error')
           }
         })
+  }
+
+  updateUser(id: string){
+    this.usersService.updateUser(id, this.user).subscribe(resp => {
+      if(resp === true){
+        console.log(resp);
+      }else{
+        Swal.fire('Error', resp, 'error')
+      }
+    },
+      err => {
+        console.log(err);
+    })
   }
 
   get addUserFormControls(): any {
@@ -93,8 +139,47 @@ export class UsersComponent implements OnInit {
   }
 
   onUserRowSelect(event:any): void {
-      console.log(event.data);
-  }
+      this.modalEdit = true;
+      this.changesEdit = false;
+      let {rol} = event.data
+      console.log(`El nuevo rol ${rol}`);
+      delete event.data.password
+      this.user_rol = rol
+      this.selectedRol = rol
+      this.user_id = event.data.uid
+      // console.log(this.user);
+      // console.log(event.data);
+      this.usersService.getUser(this.user_id).subscribe(resp => {
+        console.log(resp);
+        
+        this.user = resp
+      },err => console.log(err))
+      
+    }
+
+    nameChange(event: any){
+      console.log(event);
+      this.changesEdit = true
+    }
+    emailChange(event: any){
+      console.log(event);
+      this.changesEdit = true
+    }
+
+    statusChange(event: any){
+      console.log(event);
+      this.changesEdit = true
+    }
+    
+
+    userReset(){
+    this.user.nombre = ''
+    this.user.password = ''
+    this.user.correo = ''
+    this.user.rol = ''
+    this.selectedRol = 'Usuario';
+    }
+
 
   settings = {
     actions: {
@@ -105,6 +190,12 @@ export class UsersComponent implements OnInit {
       // position: 'right'
     },
     columns: {
+      img: {
+        filter: false,
+        title: 'Foto',
+        type: 'html',
+        valuePrepareFunction: (img:string) => { return `<img width="50px" src="${img}" />`; },
+        },
       uid: {
         title: 'ID',
         type: 'number',
@@ -129,33 +220,23 @@ export class UsersComponent implements OnInit {
         title: 'Rol de usuario',
         type: 'string',
         filter: false,
-      },
-      google: {
-        title: 'Age',
-        type: 'boolean',
-        filter: false,
       }
     },
+    
   };
 
   
-  openDialog(dialog: TemplateRef<any>) {
-    this.dialogService.open(dialog, { context: 'this is some additional data passed to dialog' });
+  openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
+    this.dialogService.open(dialog, { closeOnBackdropClick });
   }
 
   cancelDialog(){
     this.addUserForm.reset()
   }
-
-  getRol(event:any): void{
-    console.log(event.value);
-    // if (event){
-    // }
-  }
+  
+  
 
   onSearch(query: string = '') {
-    console.log(this.source);
-    console.log(query.length);
     if(query == ''){
       this.source.setFilter([]);
     }else{
@@ -191,6 +272,13 @@ export class UsersComponent implements OnInit {
   //     event.confirm.reject();
   //   }
   // }
+
+  capturarFile(event: any){
+    const archivo = event.target.files[0]
+    console.log(event.target.files);
+  }
+
+  
 
 
 }

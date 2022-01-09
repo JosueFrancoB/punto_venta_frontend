@@ -30,6 +30,7 @@
     "ng2-completer": "^9.0.1",
     "ng2-smart-table": "^1.7.2",
     "rxjs": "~7.4.0",
+    "sweetalert2": "^11.3.4",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

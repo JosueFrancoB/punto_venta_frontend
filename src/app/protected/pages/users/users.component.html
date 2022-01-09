@@ -11,7 +11,7 @@
                         <div class="col-lg-10">
                             <div class="form-control-group" fullWidth size="medium">
                                 <label class="label" for="input-username">Nombre de usuario:</label>
-                                <input nbInput fullWidth formControlName="nombre"  name="username" id="input-username" [ngClass]="addUserFormControls.nombre.invalid ? 'status-danger' : 'status-success'" placeholder="Ingrese su nombre" autofocus>
+                                <input nbInput fullWidth formControlName="nombre"  name="username" id="input-username" [ngClass]="addUserFormControls.nombre.invalid ? 'status-danger' : 'status-success'" placeholder="Ingrese su nombre" [(ngModel)]="user.nombre" (input)="nameChange($event)">
                                 <ng-container *ngIf="addUserForm.controls['nombre'].invalid">
                                 <p class="caption status-danger" *ngIf="campoNoValido('nombre')">
                                     El nombre es obligatorio
@@ -26,7 +26,7 @@
                         <div class="col-lg-10">
                             <div class="form-control-group" size="medium">
                                 <label class="label" for="input-email">Correo:</label>
-                                <input nbInput fullWidth [ngClass]="addUserFormControls.correo.invalid ? 'status-danger' : 'status-success'" formControlName="correo"  name="email" id="input-email" placeholder="Ingrese su correo" autofocus>
+                                <input nbInput fullWidth [ngClass]="addUserFormControls.correo.invalid ? 'status-danger' : 'status-success'" formControlName="correo" (input)="emailChange($event)"  name="email" id="input-email" placeholder="Ingrese su correo" [(ngModel)]="user.correo">
                                 <ng-container *ngIf="addUserForm.controls['correo'].invalid">
                                 <p class="caption status-danger" *ngIf="campoNoValido('correo')">
                                     {{EmailErrorMsg}}
@@ -36,11 +36,11 @@
                         </div>
                     </div>
                     
-                    <div class="row" style="display: flex; justify-content: center;">
+                    <div class="row" style="display: flex; justify-content: center;" *ngIf="!modalEdit">
                         <div class="col-lg-10">
                             <div class="form-control-group" size="medium">
                                 <label class="label" for="input-password">Contraseña:</label>
-                                <input nbInput fullWidth formControlName="password"  name="password" type="password" [ngClass]="addUserFormControls.password.invalid ? 'status-danger' : 'status-success'" id="input-password" placeholder="Ingrese su contraseña">
+                                <input nbInput fullWidth formControlName="password"  name="password" type="password" [ngClass]="addUserFormControls.password.invalid ? 'status-danger' : 'status-success'" id="input-password" placeholder="Ingrese su contraseña" [(ngModel)]="user.password">
                                 <ng-container *ngIf="addUserForm.controls['password'].invalid">
                                 <p class="caption status-danger" *ngIf="campoNoValido('password')">
                                     {{PasswordErrorMsg}}
@@ -49,10 +49,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="display: flex; justify-content: center;">
+                    <div class="row" style="display: flex; justify-content: center; flex-direction: row;">
                         <div class="col-lg-5">
-                            <nb-select>
-                                <nb-option *ngFor="let rol of users_roles" [value]='rol' (selectionChange)="getRol($event)">{{rol}}</nb-option>
+                            <nb-toggle [(checked)]="checkedEstado" status="success" (checkedChange)="statusChange($event)" labelPosition="end">Estado del Usuario</nb-toggle>
+                        </div>
+                        <div class="col-lg-5">
+                            <nb-select (selectedChange)="getRol($event)" [selected]="selectedRol">
+                                <nb-option value=Usuario>Usuario</nb-option>
+                                <nb-option value=Administrador>Administrador</nb-option>
                             </nb-select>
                         </div>
                     </div>
@@ -61,9 +65,12 @@
             </nb-auth-block>
         </nb-card-body>
         <nb-card-footer style="display: flex; justify-content: space-between;">
-        <button nbButton (click)="cancelDialog(); ref.close()" size="small" appearance="outline" >Cancelar</button>
-        <button *ngIf="addUserForm.valid" nbButton size="small" appearance="outline" status="success">
+        <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
+        <button *ngIf="addUserForm.valid && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="ref.close(); addUser();">
             Agregar Usuario
+        </button>
+        <button *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="ref.close(); updateUser(user_id);">
+            Actualizar Usuario
         </button>
         </nb-card-footer>
     </nb-card>
@@ -75,15 +82,15 @@
     <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
         <nb-form-field>
             <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
-            <input nbInput #search class="search" type="text" placeholder="Search..." (keydown.enter)="onSearch(search.value)"> 
+            <input nbInput #search class="search" name="search-user" type="text" placeholder="Search..." (keydown.enter)="onSearch(search.value)"> 
         </nb-form-field>
-        <button nbButton size="medium" (click)="openDialog(Usuario)"status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
+        <button nbButton size="medium" (click)="openDialog(Usuario, false); modalEdit = false; userReset()"status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
     </nb-card-header>
 
     <nb-card-body>
         
         <!-- <h1 *ngIf="usuarios.length == 0">Aun no hay</h1> -->
-        <ng2-smart-table [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event)">
+        <ng2-smart-table [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event); openDialog(Usuario, false)" style="cursor: pointer;">
         </ng2-smart-table>
     </nb-card-body>
 </nb-card>
