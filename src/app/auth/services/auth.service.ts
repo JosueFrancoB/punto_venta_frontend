@@ -73,7 +73,6 @@ export class AuthService {
     return this.http.get<AuthResponse>(url, {headers})
       .pipe(
         map( resp => {
-          console.log(`${resp.token}`);
             localStorage.setItem('x-token', resp.token!);
             this._usuario = {
               nombre: resp.nombre,

@@ -1,13 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { NbWindowService } from '@nebular/theme';
 import { UsersService } from '../../services/users.service';
 import { NbDialogService } from '@nebular/theme';
-import { RegisterComponent } from '../../../auth/pages/register/register.component';
 import Swal from 'sweetalert2'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/auth/services/auth.service';
 import { LocalDataSource } from 'ng2-smart-table';
-import { Usuario } from 'src/app/auth/interfaces/interfaces';
 import { UserBody } from '../../interfaces/protected-interfaces';
 
 
@@ -28,11 +24,13 @@ export class UsersComponent implements OnInit {
     estado: true,
     rol: ''
   }
-
-  checkedEstado = true;
+  
+  toastMixin: any
+  checkedEstado: boolean | undefined = true;
   selectedRol = 'Usuario';
   changesEdit = false;
-
+  actionSuccess = true;
+  
   modalEdit:boolean = false;
   source: LocalDataSource;
   @ViewChild('Usuario') Usuario!: TemplateRef<any>;
@@ -41,6 +39,19 @@ export class UsersComponent implements OnInit {
               private dialogService: NbDialogService,
               private fb: FormBuilder) {
                 this.source = new LocalDataSource(this.usuarios);
+                this.toastMixin = Swal.mixin({
+                  toast: true,
+                  icon: 'success',
+                  title: '',
+                  position: 'top-right',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                  }
+                })
               }
 
   users_roles:Array<string> = ['Usuario', 'Administrador']
@@ -95,41 +106,74 @@ export class UsersComponent implements OnInit {
     this.user_rol = event
   }
 
-  addUser(){
+  addUser(ref: any){
       if (this.addUserForm.invalid){
         this.addUserForm.markAllAsTouched()
         return
       }
       console.log(this.addUserForm.value)
       const {nombre, correo, password} = this.addUserForm.value
-      const rol = this.user_rol
-      //TODO: Arreglar esto para que añada antes estaba el de registro pero me cambie el token en el backend y verificar lo de resp === true porque en este regreso otra cosa
-      this.usersService.addUser(nombre, correo, password, rol)
+      const user = {nombre, correo, password, rol: this.user_rol}
+      this.usersService.addUser(user)
         .subscribe(resp =>{
-          if (resp === true){
+          console.log(resp);
+          if (resp.ok === true){
             this.getUsers()
-            
+            ref.close()
+            this.toastMixin.fire({
+              title: 'Usuario agregado'
+            });
           }else{
-            //TODO: Mostrar mensaje de error
-            //+Correo repetido
             Swal.fire('Error', resp, 'error')
           }
         })
   }
 
-  updateUser(id: string){
+  updateUser(id: string, ref: any){
+    this.user.estado = this.checkedEstado
     this.usersService.updateUser(id, this.user).subscribe(resp => {
-      if(resp === true){
+      if(resp.ok === true){
         console.log(resp);
+        this.toastMixin.fire({
+          title: 'Usuario actualizado'
+        });
+        this.getUsers()
+        ref.close()
       }else{
         Swal.fire('Error', resp, 'error')
       }
-    },
-      err => {
-        console.log(err);
     })
   }
 
+  deleteUser(id: string, ref: any){
+    Swal.fire({
+      title: '¿Estás seguro de eliminarlo?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.usersService.deleteUser(id).subscribe(resp => {
+            console.log(resp)
+            if (resp.ok === true){
+              this.getUsers()
+              ref.close()
+              this.toastMixin.fire({
+              title: 'Usuario eliminado'
+            });
+            }else{
+              Swal.fire('Error', resp, 'error')
+              console.log(resp)
+            }
+          },
+        )
+        
+      }
+    })
+    
+  }
   get addUserFormControls(): any {
     return this.addUserForm['controls'];
   }
@@ -142,32 +186,28 @@ export class UsersComponent implements OnInit {
       this.modalEdit = true;
       this.changesEdit = false;
       let {rol} = event.data
-      console.log(`El nuevo rol ${rol}`);
       delete event.data.password
       this.user_rol = rol
       this.selectedRol = rol
       this.user_id = event.data.uid
-      // console.log(this.user);
-      // console.log(event.data);
       this.usersService.getUser(this.user_id).subscribe(resp => {
-        console.log(resp);
-        
-        this.user = resp
-      },err => console.log(err))
+        if (resp.ok === true){
+          this.user = resp.usuario
+          this.checkedEstado = this.user.estado
+        }
+      })
       
     }
 
     nameChange(event: any){
-      console.log(event);
       this.changesEdit = true
     }
     emailChange(event: any){
-      console.log(event);
       this.changesEdit = true
     }
 
     statusChange(event: any){
-      console.log(event);
+      this.checkedEstado = event
       this.changesEdit = true
     }
     
@@ -180,7 +220,6 @@ export class UsersComponent implements OnInit {
     this.selectedRol = 'Usuario';
     }
 
-
   settings = {
     actions: {
       add: false,
@@ -189,6 +228,13 @@ export class UsersComponent implements OnInit {
       // custom: [{ name: 'ourCustomAction', title: '<i class="nb-compose"></i>' }],
       // position: 'right'
     },
+    // rowClassFunction: ((row:any) =>{
+    //   if(row.data.estado == 'Activo'){
+    //     return 'solved';
+    //   }else {
+    //     return 'aborted'
+    //   }
+    // }),
     columns: {
       img: {
         filter: false,
@@ -227,14 +273,15 @@ export class UsersComponent implements OnInit {
 
   
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
+    this.checkedEstado = true
     this.dialogService.open(dialog, { closeOnBackdropClick });
+    // this.dialogRef = this.dialogService.open(dialog, { closeOnBackdropClick });
   }
 
   cancelDialog(){
     this.addUserForm.reset()
   }
-  
-  
+
 
   onSearch(query: string = '') {
     if(query == ''){
@@ -272,13 +319,10 @@ export class UsersComponent implements OnInit {
   //     event.confirm.reject();
   //   }
   // }
-
+  
   capturarFile(event: any){
     const archivo = event.target.files[0]
     console.log(event.target.files);
   }
-
-  
-
 
 }

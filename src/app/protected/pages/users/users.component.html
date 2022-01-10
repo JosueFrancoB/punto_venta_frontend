@@ -1,10 +1,15 @@
 <ng-template #Usuario let-data let-ref="dialogRef">
     <nb-card>
-        <nb-card-header style="display:flex; justify-content: flex-end;"><nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem; align-self: flex-end;" status="danger"></nb-icon></nb-card-header>
+        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit ? 'space-between' : 'flex-end' }">
+            <button *ngIf="modalEdit" nbButton size="small" appearance="outline" status="danger" (click)="deleteUser(user_id, ref);">
+                Eliminar Usuario
+            </button>
+            <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
+        </nb-card-header>
         <nb-card-body>
             <nb-auth-block aria-labelledby="title">
     
-                <form #form="" aria-labelledby="title" [formGroup]="addUserForm" (ngSubmit)="addUser()">
+                <form #form="" aria-labelledby="title" [formGroup]="addUserForm">
                 <!-- Se necesito encerrar todo el body en esta row de abajo y ya despues divido en row cada input -->
                 <div class="row">
                     <div class="row" style="display: flex; justify-content: center;">
@@ -50,8 +55,8 @@
                         </div>
                     </div>
                     <div class="row" style="display: flex; justify-content: center; flex-direction: row;">
-                        <div class="col-lg-5">
-                            <nb-toggle [(checked)]="checkedEstado" status="success" (checkedChange)="statusChange($event)" labelPosition="end">Estado del Usuario</nb-toggle>
+                        <div class="col-lg-5" *ngIf="modalEdit">
+                            <nb-toggle [(checked)]="checkedEstado" [nbTooltip]="(checkedEstado) ? 'Activo' : 'Inactivo'" status="success" (checkedChange)="statusChange($event)" labelPosition="end">Estado del Usuario</nb-toggle>
                         </div>
                         <div class="col-lg-5">
                             <nb-select (selectedChange)="getRol($event)" [selected]="selectedRol">
@@ -66,10 +71,10 @@
         </nb-card-body>
         <nb-card-footer style="display: flex; justify-content: space-between;">
         <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
-        <button *ngIf="addUserForm.valid && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="ref.close(); addUser();">
+        <button *ngIf="addUserForm.valid && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addUser(ref);">
             Agregar Usuario
         </button>
-        <button *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="ref.close(); updateUser(user_id);">
+        <button *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateUser(user_id, ref);">
             Actualizar Usuario
         </button>
         </nb-card-footer>
@@ -81,10 +86,10 @@
 <nb-card>
     <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
         <nb-form-field>
-            <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
-            <input nbInput #search class="search" name="search-user" type="text" placeholder="Search..." (keydown.enter)="onSearch(search.value)"> 
+            <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+            <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
         </nb-form-field>
-        <button nbButton size="medium" (click)="openDialog(Usuario, false); modalEdit = false; userReset()"status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
+        <button nbButton size="medium" nbTooltip="Crear nuevo usuario" (click)="openDialog(Usuario, false); modalEdit = false; userReset()"status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
     </nb-card-header>
 
     <nb-card-body>

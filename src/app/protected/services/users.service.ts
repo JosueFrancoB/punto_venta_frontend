@@ -40,35 +40,32 @@ export class UsersService {
         return resp
     }),
     catchError(err => {
-      console.log(`${err.error.msg}`)
-      // of(err.error.msg)
-      return of(err.error.msg)
+      return of(err.error.errors[0].msg)
     })
   )
   }
-  addUser(nombre: string, correo: string, password: string, rol:string = 'Usuario', img:string = ''){
+  addUser(user_data: UserBody){
     const headers = this.getToken()
-    const body = {nombre, correo, password, rol, img};
-    return this.http.post(`${this.baseUrl}/users`, {headers, body}).pipe(
+    const body = user_data;
+    console.log('tipo de body', typeof body);
+    return this.http.post(`${this.baseUrl}/users`, body, {headers}).pipe(
       map( resp => {
         return resp
     }),
     catchError(err => {
-      console.log(err)
-      // of(err.error.msg)
-      return of(err.error.msg)
+      return of(err.error.errors[0].msg)
     })
   )
   }
-  updateUser(id:string, body: UserBody){
+  updateUser(id:string, user_data: UserBody){
     const headers = this.getToken()
-    console.log(body);
-    return this.http.put(`${this.baseUrl}/users/${id}`, {headers, body}).pipe(
+    const body = user_data
+    return this.http.put(`${this.baseUrl}/users/${id}`, body, {headers}).pipe(
       map( resp => {
         return resp
     }),
     catchError(err => {
-      console.log(`${err.error.msg}`)
+      console.log(err.error)
       // of(err.error.msg)
       return of(err.error.msg)
     })
@@ -81,8 +78,6 @@ export class UsersService {
         return resp
     }),
     catchError(err => {
-      console.log(`${err.error.msg}`)
-      // of(err.error.msg)
       return of(err.error.msg)
     })
   )
