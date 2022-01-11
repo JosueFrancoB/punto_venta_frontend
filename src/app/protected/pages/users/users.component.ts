@@ -30,7 +30,11 @@ export class UsersComponent implements OnInit {
   selectedRol = 'Usuario';
   changesEdit = false;
   actionSuccess = true;
-  
+  viewLoading = false;
+  modalLoading = false;
+  delLoading = false;
+  addLoading = false;
+  updLoading = false;
   modalEdit:boolean = false;
   source: LocalDataSource;
   @ViewChild('Usuario') Usuario!: TemplateRef<any>;
@@ -90,13 +94,14 @@ export class UsersComponent implements OnInit {
   }
 
   getUsers(){
+    this.viewLoading = true
     this.usersService.getUsers().subscribe(res =>{
       const {usuarios} = res
-      console.log(usuarios);
       usuarios.forEach((user:any) => {
         user.estado = user.estado ? 'Activo' :  'Inactivo';
       });
       this.source.load(usuarios)
+      this.viewLoading = false
     })
   }
 
@@ -111,12 +116,10 @@ export class UsersComponent implements OnInit {
         this.addUserForm.markAllAsTouched()
         return
       }
-      console.log(this.addUserForm.value)
       const {nombre, correo, password} = this.addUserForm.value
       const user = {nombre, correo, password, rol: this.user_rol}
       this.usersService.addUser(user)
         .subscribe(resp =>{
-          console.log(resp);
           if (resp.ok === true){
             this.getUsers()
             ref.close()
@@ -126,11 +129,13 @@ export class UsersComponent implements OnInit {
           }else{
             Swal.fire('Error', resp, 'error')
           }
+          this.addLoading = false
         })
   }
 
   updateUser(id: string, ref: any){
     this.user.estado = this.checkedEstado
+    this.updLoading = true
     this.usersService.updateUser(id, this.user).subscribe(resp => {
       if(resp.ok === true){
         console.log(resp);
@@ -142,6 +147,7 @@ export class UsersComponent implements OnInit {
       }else{
         Swal.fire('Error', resp, 'error')
       }
+      this.updLoading = false
     })
   }
 
@@ -154,19 +160,20 @@ export class UsersComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Confirmar'
     }).then((result) => {
+      this.delLoading = true
       if (result.isConfirmed) {
         this.usersService.deleteUser(id).subscribe(resp => {
-            console.log(resp)
             if (resp.ok === true){
               this.getUsers()
               ref.close()
               this.toastMixin.fire({
-              title: 'Usuario eliminado'
-            });
+                title: 'Usuario eliminado'
+              });
             }else{
               Swal.fire('Error', resp, 'error')
               console.log(resp)
             }
+            this.delLoading = false
           },
         )
         
@@ -190,11 +197,13 @@ export class UsersComponent implements OnInit {
       this.user_rol = rol
       this.selectedRol = rol
       this.user_id = event.data.uid
+      this.modalLoading = true
       this.usersService.getUser(this.user_id).subscribe(resp => {
         if (resp.ok === true){
           this.user = resp.usuario
           this.checkedEstado = this.user.estado
         }
+        this.modalLoading = false
       })
       
     }

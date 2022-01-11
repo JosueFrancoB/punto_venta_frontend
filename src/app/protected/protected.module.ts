@@ -3,13 +3,17 @@ import { CommonModule } from '@angular/common';
 
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSelectModule, NbSidebarModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
+import { NbActionsModule, NbAlertModule, NbAutocompleteModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './pages/users/users.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { LayoutComponent } from './pages/layout/layout.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { CategoriasComponent } from './pages/categorias/categorias.component';
+import { ClientesComponent } from './pages/clientes/clientes.component';
+import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
+import { ImageUploaderComponent } from './helpers/image-uploader/image-uploader.component';
 
 
 @NgModule({
@@ -18,6 +22,10 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     UsersComponent,
     ProductsComponent,
     LayoutComponent,
+    CategoriasComponent,
+    ClientesComponent,
+    ProveedoresComponent,
+    ImageUploaderComponent,
   ],
   imports: [
     CommonModule,
@@ -43,6 +51,9 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     NbSelectModule,
     NbToggleModule,
     NbTooltipModule,
+    NbSpinnerModule,
+    NbSearchModule,
+    NbAutocompleteModule,
   ]
 })
 export class ProtectedModule { }

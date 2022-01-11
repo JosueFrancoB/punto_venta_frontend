@@ -1,7 +1,7 @@
 <ng-template #Usuario let-data let-ref="dialogRef">
-    <nb-card>
+    <nb-card [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
         <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit ? 'space-between' : 'flex-end' }">
-            <button *ngIf="modalEdit" nbButton size="small" appearance="outline" status="danger" (click)="deleteUser(user_id, ref);">
+            <button *ngIf="modalEdit" nbButton size="small" appearance="outline" status="danger" (click)="deleteUser(user_id, ref);" [nbSpinner]="delLoading" nbSpinnerStatus="danger">
                 Eliminar Usuario
             </button>
             <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
@@ -71,10 +71,10 @@
         </nb-card-body>
         <nb-card-footer style="display: flex; justify-content: space-between;">
         <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
-        <button *ngIf="addUserForm.valid && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addUser(ref);">
+        <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="addUserForm.valid && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addUser(ref);">
             Agregar Usuario
         </button>
-        <button *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateUser(user_id, ref);">
+        <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateUser(user_id, ref);">
             Actualizar Usuario
         </button>
         </nb-card-footer>
@@ -83,7 +83,7 @@
 
 
 <h3 class="group-title h4 ng-star-inserted">Usuarios</h3>
-<nb-card>
+<nb-card [nbSpinner]="viewLoading" nbSpinnerStatus="danger">
     <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
         <nb-form-field>
             <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
@@ -95,7 +95,7 @@
     <nb-card-body>
         
         <!-- <h1 *ngIf="usuarios.length == 0">Aun no hay</h1> -->
-        <ng2-smart-table [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event); openDialog(Usuario, false)" style="cursor: pointer;">
+        <ng2-smart-table [nbSpinner]="viewLoading" nbSpinnerStatus="danger"   [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event); openDialog(Usuario, false)" style="cursor: pointer;">
         </ng2-smart-table>
     </nb-card-body>
 </nb-card>

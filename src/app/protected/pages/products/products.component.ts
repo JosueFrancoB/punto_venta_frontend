@@ -8,16 +8,16 @@ import { CategoriasService } from '../../services/categorias.service';
 })
 export class ProductsComponent implements OnInit{
 
-  categorias: Array<string> = []
+  // categorias: Array<string> = []
   constructor(private categoriasService: CategoriasService) { }
   ngOnInit() {
-    this.categoriasService.getCategories().subscribe(res =>{
-      const {categorias} = res
-      console.log(categorias);
-      categorias.forEach(categoria => {
-        this.categorias.push(categoria.nombre)
-      });
-    })
+    // this.categoriasService.getCategories().subscribe(res =>{
+    //   const {categorias} = res
+    //   console.log(categorias);
+    //   categorias.forEach(categoria => {
+    //     this.categorias.push(categoria.nombre)
+    //   });
+    // })
   }
 
 }

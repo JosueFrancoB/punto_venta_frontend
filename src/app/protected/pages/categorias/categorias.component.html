@@ -1,8 +1,30 @@
-<!-- <div class="components-list">
-    <h3 class="group-title h4 ng-star-inserted">Categorias</h3>
+<h3 class="group-title h4 ng-star-inserted">Categorias</h3>
+<nb-layout-header subheader>
+  <input #autoInput
+  nbInput
+  type="text"
+  (input)="onChange()"
+  placeholder="Buscar ..."
+  [nbAutocomplete]="auto" class="search"/>
+  <nb-autocomplete #auto (selectedChange)="onSelectionChange($event)">
+    
+    <nb-option *ngFor="let option of filteredOptions$ | async" [value]="option">
+      {{ option }}
+    </nb-option>
+    
+  </nb-autocomplete>
+  <nb-actions>
+    <nb-action icon="search-outline"></nb-action>
+    <nb-action icon="plus-outline" (click)="openDialog(category, true)"></nb-action>
+    <nb-action icon="edit-outline"></nb-action>
+    <nb-action icon="trash-outline"></nb-action>
+  </nb-actions>
+</nb-layout-header>
+<hr>
+<div class="components-list">
     <div class="component-card-wrapper ng-star-inserted" *ngFor="let categoria of categorias">
       <a class="component-navigate-link" href="/nebular/docs/components/layout">
-        <nb-card title="Layout" class="card-product">
+            <nb-card title="{{categoria}}" class="card-product">
           <nb-card-body class="card-body-product">
             <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
             <label class="component-name">{{categoria}}</label>
@@ -10,7 +32,30 @@
         </nb-card>
       </a>
     </div>
-</div> -->
+</div>
+
+<ng-template #category>
+  <div class="components-list">
+    <div class="component-card-wrapper ng-star-inserted">
+      <a class="component-navigate-link">
+            <nb-card title="" class="card-product">
+          <nb-card-body class="card-body-product">
+            <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
+            <label class="component-name"><input type="text"></label>
+        </nb-card-body>
+        </nb-card>
+      </a>
+    </div>
+</div>
+</ng-template>
+
+
+<div class="upload">
+  <form>
+    <image-uploader [activeColor]="'orangered'" [baseColor]="'lightgray'"></image-uploader>
+  </form>
+</div>
+
 
 <!-- <div class="container">
     <div class="row">

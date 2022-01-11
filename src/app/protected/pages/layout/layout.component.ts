@@ -52,7 +52,7 @@ export class LayoutComponent implements OnInit {
     {
       title: 'Productos',
       icon: 'shopping-bag',
-      link: '/dashboard/products'
+      link: '/dashboard/categories'
     }
   ];
 
