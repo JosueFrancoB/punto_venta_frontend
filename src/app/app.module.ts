@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NbThemeModule, NbLayoutModule, NbWindowModule, NbDialogModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
+import {NgxDropzoneModule} from 'ngx-dropzone';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
     NbEvaIconsModule,
     HttpClientModule,
     NbWindowModule.forRoot(),
-    NbDialogModule.forChild()
+    NbDialogModule.forChild(),
+    NgxDropzoneModule
   ],
   providers: [],
   bootstrap: [AppComponent]

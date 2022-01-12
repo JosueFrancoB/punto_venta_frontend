@@ -158,7 +158,8 @@ export class UsersComponent implements OnInit {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Confirmar'
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar',
     }).then((result) => {
       this.delLoading = true
       if (result.isConfirmed) {

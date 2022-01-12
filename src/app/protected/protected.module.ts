@@ -13,7 +13,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { CategoriasComponent } from './pages/categorias/categorias.component';
 import { ClientesComponent } from './pages/clientes/clientes.component';
 import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
-import { ImageUploaderComponent } from './helpers/image-uploader/image-uploader.component';
+import {NgxDropzoneModule} from 'ngx-dropzone';
 
 
 @NgModule({
@@ -25,7 +25,6 @@ import { ImageUploaderComponent } from './helpers/image-uploader/image-uploader.
     CategoriasComponent,
     ClientesComponent,
     ProveedoresComponent,
-    ImageUploaderComponent,
   ],
   imports: [
     CommonModule,
@@ -54,6 +53,7 @@ import { ImageUploaderComponent } from './helpers/image-uploader/image-uploader.
     NbSpinnerModule,
     NbSearchModule,
     NbAutocompleteModule,
+    NgxDropzoneModule
   ]
 })
 export class ProtectedModule { }
