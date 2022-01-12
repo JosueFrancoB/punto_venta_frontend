@@ -27,6 +27,11 @@ export class CategoriasComponent implements OnInit {
   changeImg = true
   searchText = ''
 
+  viewLoading = false
+  modalLoading = false;
+  addLoading = false;
+  updLoading = false;
+
   uploadsUrl:string = environment.baseUrl + '/uploads/categorias'
 
   constructor(private categoriasService: CategoriasService,
@@ -52,7 +57,7 @@ export class CategoriasComponent implements OnInit {
   }
 
   getCategories(){
-    // this.viewLoading = true
+    this.viewLoading = true
     this.categoriasService.getCategories().subscribe(res =>{
       const {categorias} = res
       categorias.forEach(categoria => {
@@ -60,9 +65,8 @@ export class CategoriasComponent implements OnInit {
           this.categorias.push(categoria)
         }
       });
+      this.viewLoading = false
     })
-    this.filteredOptions$ = of(this.categorias);
-      // this.viewLoading = false
     }
 
   addCategory(category: string, ref: any){
@@ -83,6 +87,7 @@ export class CategoriasComponent implements OnInit {
   }
 
   cargarCategoryImg(id:string) {
+    if(this.files.length > 0){
     this.uploadsService.cargarImg(this.files, 'categorias', id).subscribe(resp =>{
       if(resp.ok === true){
         console.log(resp.modelo.img)
@@ -91,16 +96,26 @@ export class CategoriasComponent implements OnInit {
       }
     })
   }
+  }
 
   updateCategory(category:string, ref: any){
     let id = this.categoryID
-    console.log(category);
     this.categoriasService.updateCategory(id, category).subscribe(resp =>{
       if(resp.ok === true){
         if (this.changeImg === true){
         this.cargarCategoryImg(id)
         }
+        let nombre = resp.categoria.nombre
+        let _id = resp.categoria._id
+        let img = resp.categoria.img
+        let index = 0
+        this.categorias.forEach(function(cat, i){
+          if(cat._id === id){
+            index = i
+          }
+        })
         this.categorias = this.categorias.filter(item => item._id !== id)
+        this.categorias.splice(index, 0, {_id,nombre,img});
         ref.close()
         this.getCategories()
         this.toastMixin.fire({
@@ -119,7 +134,6 @@ export class CategoriasComponent implements OnInit {
         this.categoryValue = resp.categoria.nombre
         this.categoryID = resp.categoria._id
         this.categorySrc = this.uploadsUrl + '/' + resp.categoria._id
-        console.log(resp);
       }else{
       console.log('error', resp)
       Swal.fire('Error', resp, 'error')
@@ -188,33 +202,4 @@ export class CategoriasComponent implements OnInit {
     return this.cardMouseOver.includes(categoria) ? true : false
   }
   
-  // deleteCategoria(id: string, ref: any){
-  //   Swal.fire({
-  //     title: '¿Estás seguro de eliminarlo?',
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     confirmButtonColor: '#3085d6',
-  //     cancelButtonColor: '#d33',
-  //     confirmButtonText: 'Confirmar'
-  //   }).then((result) => {
-  //     this.delLoading = true
-  //     if (result.isConfirmed) {
-  //       this.usersService.deleteUser(id).subscribe(resp => {
-  //           if (resp.ok === true){
-  //             this.getUsers()
-  //             ref.close()
-  //             this.toastMixin.fire({
-  //               title: 'Usuario eliminado'
-  //             });
-  //           }else{
-  //             Swal.fire('Error', resp, 'error')
-  //             console.log(resp)
-  //           }
-  //           this.delLoading = false
-  //         },
-  //       )
-        
-  //     }
-  //   })
-    
 }

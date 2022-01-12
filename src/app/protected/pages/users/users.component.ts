@@ -176,9 +176,11 @@ export class UsersComponent implements OnInit {
             }
             this.delLoading = false
           },
-        )
-        
-      }
+          )
+        }else{
+
+          this.delLoading = false
+        }
     })
     
   }
@@ -248,15 +250,10 @@ export class UsersComponent implements OnInit {
     columns: {
       img: {
         filter: false,
-        title: 'Foto',
+        title: 'Foto perfil',
         type: 'html',
-        valuePrepareFunction: (img:string) => { return `<img width="50px" src="${img}" />`; },
+        valuePrepareFunction: (img:string) => { return `<img class="rounded-circle UserProfileimg user" width="30" src="../../../../assets/images/agu.jpg" alt="foto" />`; },
         },
-      uid: {
-        title: 'ID',
-        type: 'number',
-        filter: false,
-      },
       nombre: {
         title: 'Nombre',
         type: 'string',
@@ -300,10 +297,6 @@ export class UsersComponent implements OnInit {
     this.source.setFilter([
       // fields we want to include in the search
       {
-        field: 'uid',
-        search: query
-      },
-      {
         field: 'nombre',
         search: query
       },
@@ -322,13 +315,6 @@ export class UsersComponent implements OnInit {
     ], false); 
   }
   }
-  // onDeleteConfirm(event:any): void {
-  //   if (window.confirm('Are you sure you want to delete?')) {
-  //     event.confirm.resolve();
-  //   } else {
-  //     event.confirm.reject();
-  //   }
-  // }
   
   capturarFile(event: any){
     const archivo = event.target.files[0]

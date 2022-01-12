@@ -59,7 +59,7 @@
                             <nb-toggle [(checked)]="checkedEstado" [nbTooltip]="(checkedEstado) ? 'Activo' : 'Inactivo'" status="success" (checkedChange)="statusChange($event)" labelPosition="end">Estado del Usuario</nb-toggle>
                         </div>
                         <div class="col-lg-5">
-                            <nb-select (selectedChange)="getRol($event)" [selected]="selectedRol">
+                            <nb-select (selectedChange)="getRol($event)" [selected]="selectedRol" nbTooltip="Rol de Usuario">
                                 <nb-option value=Usuario>Usuario</nb-option>
                                 <nb-option value=Administrador>Administrador</nb-option>
                             </nb-select>

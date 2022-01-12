@@ -166,3 +166,6 @@
         width: 300px;
         margin: 30px auto;
       }
+      :host nb-layout-header ::ng-deep nav {
+        justify-content: space-between;
+      }

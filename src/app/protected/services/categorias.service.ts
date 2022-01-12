@@ -23,7 +23,6 @@ export class CategoriasService {
     return this.http.get<CategoriasData>(`${this.baseUrl}/categorias`, {headers})
       .pipe(
         map( resp => {
-          console.log(resp);
             return resp
         }),
         catchError(err => {
@@ -37,7 +36,6 @@ export class CategoriasService {
     const headers = this.getToken()
     return this.http.get(`${this.baseUrl}/categorias/${id}`, {headers}).pipe(
       map( resp => {
-        console.log(resp);
         return resp
     }),
     catchError(err => {
@@ -57,10 +55,7 @@ export class CategoriasService {
         return resp
     }),
     catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
+      return of(err.error.msg)
     })
     )
   }

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { ProductosData } from '../interfaces/protected-interfaces';
+import { ProductosBody, ProductosData } from '../interfaces/protected-interfaces';
 import {Observable, of} from 'rxjs'
 import { map, catchError, tap } from 'rxjs/operators';
 
@@ -34,20 +34,64 @@ export class ProductsService {
   }
   getProduct(id:string){
     const headers = this.getToken()
-    return this.http.get(`${this.baseUrl}/productos`, {headers})
+    return this.http.get<ProductosBody>(`${this.baseUrl}/productos`, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors[0].msg);
+      return of(err.error.errors[0].msg)
+    })
+    )
   }
-  addProduct(product_data: ProductosData){
+  addProduct(product_data: ProductosBody){
     const headers = this.getToken()
     let body = {product_data}
-    return this.http.post(`${this.baseUrl}/productos`, {headers, body})
+    return this.http.post(`${this.baseUrl}/productos`, body, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors[0].msg);
+      return of(err.error.errors[0].msg)
+    })
+    )
   }
-  updateProduct(id:string, product_data: ProductosData){
+  updateProduct(id:string, product_data: ProductosBody){
     const headers = this.getToken()
     let body = {product_data}
-    return this.http.put(`${this.baseUrl}/productos/${id}`, {headers, body})
+    return this.http.put(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors[0].msg);
+      return of(err.error.errors[0].msg)
+    })
+    )
   }
   deleteProduct(id:string){
     const headers = this.getToken()
-    return this.http.delete(`${this.baseUrl}/productos/${id}`, {headers})
+    return this.http.delete(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors[0].msg);
+      return of(err.error.errors[0].msg)
+    })
+    )
   }
 }
