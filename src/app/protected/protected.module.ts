@@ -14,6 +14,7 @@ import { CategoriasComponent } from './pages/categorias/categorias.component';
 import { ClientesComponent } from './pages/clientes/clientes.component';
 import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
 import {NgxDropzoneModule} from 'ngx-dropzone';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import {NgxDropzoneModule} from 'ngx-dropzone';
     NbSearchModule,
     NbAutocompleteModule,
     NgxDropzoneModule,
-    FormsModule
+    FormsModule,
+    Ng2SearchPipeModule
   ]
 })
 export class ProtectedModule { }

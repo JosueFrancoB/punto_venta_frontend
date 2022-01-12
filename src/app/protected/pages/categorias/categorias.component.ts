@@ -25,6 +25,7 @@ export class CategoriasComponent implements OnInit {
   categoryValue = ''
   categorySrc = ''
   changeImg = true
+  searchText = ''
 
   uploadsUrl:string = environment.baseUrl + '/uploads/categorias'
 
@@ -150,26 +151,6 @@ export class CategoriasComponent implements OnInit {
       })
     }
   })
-  }
-
-  private filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.categorias.filter(optionValue => optionValue.toLowerCase().includes(filterValue));
-  }
-
-  getFilteredOptions(value: string): Observable<string[]> {
-    return of(value).pipe(
-      map(filterString => this.filter(filterString)),
-    );
-  }
-
-  onChange() {
-    this.filteredOptions$ = this.getFilteredOptions(this.input.nativeElement.value);
-  }
-
-  onSelectionChange($event: any) {
-    this.filteredOptions$ = this.getFilteredOptions($event);
-    console.log($event);
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {

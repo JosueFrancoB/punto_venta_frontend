@@ -7,20 +7,12 @@
   <input #autoInput
   nbInput
   type="text"
-  (input)="onChange()"
-  placeholder="Buscar ..."
-  [nbAutocomplete]="auto" class="search"/>
-  <nb-autocomplete #auto (selectedChange)="onSelectionChange($event)">
-    
-    <nb-option *ngFor="let option of filteredOptions$ | async" [value]="option">
-      {{ option }}
-    </nb-option>
-    
-  </nb-autocomplete>
+  [(ngModel)]="searchText"
+  placeholder="Buscar ..." class="search"/>
 </nb-layout-header>
 <hr>
 <div class="components-list">
-    <div class="component-card-wrapper ng-star-inserted" *ngFor="let categoria of categorias">
+    <div class="component-card-wrapper ng-star-inserted" *ngFor="let categoria of categorias |filter:searchText" >
       <a class="component-navigate-link">
             <nb-card title="{{categoria.nombre}}" class="card-product" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
               <div style="position: absolute;" *ngIf="isDisplay(categoria.nombre)">
