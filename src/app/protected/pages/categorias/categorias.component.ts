@@ -19,9 +19,12 @@ export class CategoriasComponent implements OnInit {
   @ViewChild('autoInput') input:any;
   @ViewChild('category') category!: TemplateRef<any>;
   toastMixin: any
-  categoryName:string = ''
+  categoryID:string = ''
   cardMouseOver: Array<any> = []
-  
+  modalEdit = false
+  categoryValue = ''
+  categorySrc = ''
+  changeImg = true
 
   uploadsUrl:string = environment.baseUrl + '/uploads/categorias'
 
@@ -78,29 +81,51 @@ export class CategoriasComponent implements OnInit {
     })
   }
 
-  cargarCategoryImg(id:string){
+  cargarCategoryImg(id:string) {
     this.uploadsService.cargarImg(this.files, 'categorias', id).subscribe(resp =>{
       if(resp.ok === true){
-        console.log(resp.nombre)
+        console.log(resp.modelo.img)
       }else{
-        console.log('error', resp)
+        Swal.fire('Error', resp, 'error')
+      }
+    })
+  }
+
+  updateCategory(category:string, ref: any){
+    let id = this.categoryID
+    console.log(category);
+    this.categoriasService.updateCategory(id, category).subscribe(resp =>{
+      if(resp.ok === true){
+        if (this.changeImg === true){
+        this.cargarCategoryImg(id)
+        }
+        this.categorias = this.categorias.filter(item => item._id !== id)
+        ref.close()
+        this.getCategories()
+        this.toastMixin.fire({
+          title: 'Categoria actualizada'
+        });
+      }else{
         Swal.fire('Error', resp.msg, 'error')
       }
     })
   }
 
-  updateCategory(id:string){
-    console.log(id);
-    // this.categoriasService.updateCategory(id, '').subscribe(resp =>{
-    //   if(resp.ok === true){
-    //     this.toastMixin.fire({
-    //       title: 'Categoria actualizada'
-    //     });
-    //   }else{
-    //     Swal.fire('Error', resp.msg, 'error')
-    //   }
-    // })
+  getCategory(id:string){
+    this.modalEdit = true;
+    this.categoriasService.getCategory(id).subscribe(resp => {
+      if (resp.ok === true){
+        this.categoryValue = resp.categoria.nombre
+        this.categoryID = resp.categoria._id
+        this.categorySrc = this.uploadsUrl + '/' + resp.categoria._id
+        console.log(resp);
+      }else{
+      console.log('error', resp)
+      Swal.fire('Error', resp, 'error')
+      }
+    })
   }
+
   deleteCategory(id:string){
     Swal.fire({
       title: '¿Estás seguro de eliminarlo?',

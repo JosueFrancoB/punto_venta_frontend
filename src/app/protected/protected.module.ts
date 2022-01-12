@@ -5,7 +5,7 @@ import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NbActionsModule, NbAlertModule, NbAutocompleteModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './pages/users/users.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { LayoutComponent } from './pages/layout/layout.component';
@@ -53,7 +53,8 @@ import {NgxDropzoneModule} from 'ngx-dropzone';
     NbSpinnerModule,
     NbSearchModule,
     NbAutocompleteModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    FormsModule
   ]
 })
 export class ProtectedModule { }

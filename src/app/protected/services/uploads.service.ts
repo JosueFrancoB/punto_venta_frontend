@@ -10,6 +10,7 @@ import { map, catchError, tap } from 'rxjs/operators';
 export class UploadsService {
 
   private baseUrl:string = environment.baseUrl
+  private files: File[] = [];
   constructor(private http:HttpClient) { }
 
   getToken(){
@@ -44,7 +45,6 @@ export class UploadsService {
   cargarImg(files: Array<any>, collection: string, id: string){
     const formularioDatos = new FormData;
     files.forEach(file =>{
-      console.log('entre a cargar img', file);
       formularioDatos.append('archivo', file)
     })
 
@@ -52,17 +52,34 @@ export class UploadsService {
     return this.http.put(`${this.baseUrl}/uploads/${collection}/${id}`, formularioDatos, {headers})
       .pipe(
         map( resp => {
-          console.log(resp);
             return resp
         }),
         catchError(err => {
-          console.log(err.error.msg)
-          console.log(err.error)
-          console.log(err)
-          // of(err.error.msg)
-          return of(err)
+          return of(err.error.msg)
         })
       )
   }
+
+  // getImagen(collection: string, id: string){
+  //   const headers = this.getToken()
+  //   return this.http.get(`${this.baseUrl}/uploads/${collection}/${id}`, {headers})
+  //     .pipe(
+  //       map( (resp:any) => {
+  //         this.files.push(resp)
+  //         console.log(this.files);
+  //         return this.files
+  //         // console.log(resp);
+          
+  //           // return resp
+  //       }),
+  //       catchError(err => {
+  //         console.log(err.error.msg)
+  //         console.log(err.error)
+  //         console.log(err)
+  //         // of(err.error.msg)
+  //         return of(err)
+  //       })
+  //     )
+  // }
 
 }

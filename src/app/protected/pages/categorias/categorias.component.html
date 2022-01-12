@@ -2,7 +2,7 @@
 <nb-layout-header subheader>
   <nb-actions>
     <nb-action icon="search-outline"></nb-action>
-    <nb-action icon="plus-outline" (click)="openDialog(category, true)"></nb-action>
+    <nb-action icon="plus-outline" (click)="openDialog(category, true); modalEdit = false"></nb-action>
   </nb-actions>
   <input #autoInput
   nbInput
@@ -24,7 +24,7 @@
       <a class="component-navigate-link">
             <nb-card title="{{categoria.nombre}}" class="card-product" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
               <div style="position: absolute;" *ngIf="isDisplay(categoria.nombre)">
-                <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="updateCategory(categoria._id)"></nb-icon></button>
+                <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getCategory(categoria._id); openDialog(category, true); changeImg = false; categoryValue = ''"></nb-icon></button>
                 <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" aria-disabled="false" (click)="deleteCategory(categoria._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
               </div>
           <nb-card-body class="card-body-product">
@@ -42,7 +42,11 @@
       <a class="component-navigate-link">
         <nb-card title="" class="card-product">
           <nb-card-body class="card-body-product">
-            <div class="custom-dropzone" ngx-dropzone [multiple]='false'  [accept]="'image/*'" (change)="onSelectDrag($event)">
+            <div *ngIf="modalEdit && !changeImg" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <img class="component-icon" [src]="categorySrc" alt="Layout">
+              <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" (click)="changeImg = true"><nb-icon icon="flip-2-outline" pack="eva" class="icon"></nb-icon>Cambiar imagen</button>
+            </div>
+            <div *ngIf="!modalEdit || changeImg" class="custom-dropzone" ngx-dropzone [multiple]='false'  [accept]="'image/*'" (change)="onSelectDrag($event)">
               <ngx-dropzone-label>
                 <div>
                   <h4>Agrega una imagen</h4>
@@ -51,13 +55,14 @@
               <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f" [removable]="true" (removed)="onRemoveDrag(f)">
               </ngx-dropzone-image-preview>
             </div>
-            <label class="component-name"><input #categoryName nbInput placeholder="Nombre de Categoría" type="text" style="text-align:center;" class="component-name"></label>
+              <label class="component-name"><input #categoryName nbInput placeholder="Nombre de Categoría" type="text" ngModel="{{categoryValue}}" style="text-align:center;" class="component-name"></label>
           </nb-card-body>
           <nb-card-footer>
             <div class="row" style="width: 100%;">
               <div class="col-sm-12" style="display: flex; justify-content: space-between; flex-direction: row;">
                 <button nbbutton="" class="toggle-settings appearance-outline size-small shape-rectangle status-danger nb-transition" aria-disabled="false" nbTooltip="Cancelar" (click)="ref.close();"><nb-icon icon="close" pack="eva" class="icon" ></nb-icon></button>
-                <button nbbutton="" class="toggle-settings appearance-outline size-small shape-rectangle status-success nb-transition" aria-disabled="false" nbTooltip="Agregar categoría" (click)="addCategory(categoryName.value, ref)"><nb-icon icon="checkmark-circle" pack="eva" class="icon"></nb-icon></button>
+                <button nbbutton="" *ngIf="!modalEdit" class="toggle-settings appearance-outline size-small shape-rectangle status-success nb-transition" aria-disabled="false" nbTooltip="Agregar categoría" (click)="addCategory(categoryName.value, ref)"><nb-icon icon="checkmark-circle" pack="eva" class="icon"></nb-icon></button>
+                <button nbbutton="" *ngIf="modalEdit" class="toggle-settings appearance-outline size-small shape-rectangle status-info nb-transition" aria-disabled="false" nbTooltip="Actualizar categoría" (click)="updateCategory(categoryName.value, ref)"><nb-icon icon="checkmark-circle" pack="eva" class="icon"></nb-icon></button>
               </div>
               
             </div>
@@ -67,43 +72,3 @@
     </div>
 </div>
 </ng-template>
-
-
-<!-- <div class="container">
-    <div class="row">
-      <div class="col-md-3">
-          <nb-card title="Layout">
-            <nb-card-body>
-                <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-                <label class="component-name">Layout</label>
-            </nb-card-body>
-        </nb-card>
-      </div>
-      <div class="col-md-3">
-        <nb-card title="Layout">
-          <nb-card-body>
-                <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-                <label class="component-name">Layout</label>
-          </nb-card-body>
-        </nb-card>
-      </div>
-      <div class="col-md-3">
-        <nb-card title="Layout">
-          <nb-card-body >
-                <div style="width: 50%; height: 50%;">
-                  <img class="component-icon" src="assets/images/components/layout.svg" alt="Layout">
-                </div>
-                <label class="component-name">Layout</label>
-          </nb-card-body>
-        </nb-card>
-      </div>
-      <div class="col-md-3">
-        <nb-card title="Layout">
-          <nb-card-body style="cursor: pointer;">
-            <img class="component-icon" src="https://img.icons8.com/office/80/000000/plus-math.png" alt="+"/>
-              <label >Crear Categoría</label>
-          </nb-card-body>
-        </nb-card>
-      </div>
-    </div>
-  </div> -->
