@@ -126,6 +126,7 @@ export class UsersComponent implements OnInit {
             this.toastMixin.fire({
               title: 'Usuario agregado'
             });
+            this.addUserForm.reset()
           }else{
             Swal.fire('Error', resp, 'error')
           }
