@@ -1,0 +1,45 @@
+table {
+    width: 100%;
+  }
+  
+  .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .group-title{
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    box-sizing: inherit;
+    font-size: 1.625rem;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-weight: 700;
+    line-height: 0.2rem;
+    flex: 1 1 100%;
+    color: #8994a3;
+    margin: 0.5rem 0 2rem;
+    text-align: center;
+}
+
+.colored-toast.swal2-icon-success {
+    background-color: #a5dc86 !important;
+  }
+  
+.colored-toast .swal2-title {
+    color: white;
+  }
+  
+  .colored-toast .swal2-close {
+    color: white;
+  }
+  
+  .colored-toast .swal2-html-container {
+    color: white;
+  }
+  
+.solved {
+    background: rgba(86, 241, 86, 0.5);
+}
+.aborted {
+    background: rgba(243, 69, 69, 0.5);
+}

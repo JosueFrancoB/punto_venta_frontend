@@ -1,61 +1,53 @@
-<nb-card style="justify-content: center; align-items: center; align-content: center;">
-    <nb-card-header></nb-card-header>
-    <nb-card-body>
+
+<nb-card>
+    <nb-card-header>
+        <nav class="navigation" style="height: 80px; display: flex; justify-content: center; align-items: center;">
+            <a class="wrench">
+                <img src="../../../../assets/images/logo.png" alt="Logo"/>
+            </a>
+            <h1 style="color: #6eb9ff;">IronPoint</h1>
+        </nav>
+    </nb-card-header>
+    <nb-card-body class="card-content">
         <nb-auth-block aria-labelledby="title">
-            <h1 id="title" class="title">Bienvenido al inicio de sesión</h1>
-            <p class="sub-title">Inicia sesión con tu correo</p>
+            <h1 id="title" class="title success">Inicio de sesión</h1>
+            <p class="sub-title">Administra y controla tu ferretería</p>
 
-            <nb-alert *ngIf="" outline="danger" role="alert">
-            <p class="alert-title"><b>Oh snap!</b></p>
-            <ul class="alert-message-list">
-                <li *ngFor="" class="alert-message">Error</li>
-            </ul>
+
+            <nb-alert *ngIf="msg_err != ''" outline="danger" role="alert">
+                <p class="alert-title" class="caption status-danger"><b>El correo de la cuenta y/o la contraseña que has introducido son incorrectos.</b></p>
             </nb-alert>
 
-            <nb-alert *ngIf="" outline="success" role="alert">
-            <p class="alert-title"><b>Hooray!</b></p>
-            <ul class="alert-message-list">
-                <li *ngFor="" class="alert-message"></li>
-            </ul>
-            </nb-alert>
-
-            <form #form="" aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="login()">
+            <form aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="login()">
 
             <div class="form-control-group">
                 <label class="label" for="input-email">Correo:</label>
-                <input nbInput fullWidth #email="" formControlName="email" id="input-email" pattern=".+@.+..+" placeholder="Ingrese su correo" autofocus [attr.aria-invalid]="">
-                <ng-container *ngIf="">
-                <p class="caption status-danger" *ngIf="">
-                    Email is required!
-                </p>
-                <p class="caption status-danger" *ngIf="">
-                    Email should be the real one!
+                <input nbInput fullWidth [ngClass]="miFormularioControls.correo.invalid ? 'status-danger' : 'status-success'" formControlName="correo" id="input-email" placeholder="Ingrese su correo" autofocus>
+                <ng-container *ngIf="miFormulario.controls['correo'].invalid">
+                <p class="caption status-danger" *ngIf="campoNoValido('correo')">
+                    {{EmailErrorMsg}}
                 </p>
                 </ng-container>
             </div>
 
             <div class="form-control-group">
                 <label class="label" for="input-password">Contraseña:</label>
-                <input nbInput fullWidth #password="" formControlName="password" type="password" id="input-password" placeholder="Ingrese su contraseña">
-                <ng-container *ngIf="">
-                <p class="caption status-danger" *ngIf="">
-                    La contraseña es obligatoria!
-                </p>
-                <p class="caption status-danger" *ngIf="">
-                    Password should contains
-                    characters
+                <input nbInput fullWidth [ngClass]="miFormularioControls.password.invalid ? 'status-danger' : 'status-success'" #password="" formControlName="password" type="password" id="input-password" placeholder="Ingrese su contraseña">
+                <ng-container *ngIf="miFormulario.controls['password'].invalid || msg_err != ''">
+                <p class="caption status-danger" *ngIf="campoNoValido('password')">
+                    {{PasswordErrorMsg}}
                 </p>
                 </ng-container>
             </div>
-
-            <button nbButton fullWidth status="success" [class.btn-pulse]="" [disabled]="miFormulario.invalid">
+            <button nbButton fullWidth status="success" (click)="msg_err = ''">
                 Iniciar Sesión
             </button>
-            </form>
-        </nb-auth-block>
-    </nb-card-body>
-    <nb-card-footer>
-        <span style="font-weight: bolder;">¿No tienes Cuenta?</span>
-        <a routerLink="/auth/register">Crea una aquí</a>
-    </nb-card-footer>
+        </form>
+    </nb-auth-block>
+</nb-card-body>
+<nb-card-footer class="auth-footer">
+    <span style="font-weight: bolder; margin: 5px;" class="text-center">¿No tienes cuenta?</span>
+    <a routerLink="/auth/register" style="margin: 5px;" class="text-center">Crea una aquí</a>
+</nb-card-footer>
 </nb-card>
+
