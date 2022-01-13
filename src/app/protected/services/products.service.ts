@@ -65,16 +65,13 @@ export class ProductsService {
   }
   addProduct(product_data: ProductosBody){
     const headers = this.getToken()
-    let body = {product_data}
-    return this.http.post(`${this.baseUrl}/productos`, body, {headers}).pipe(
+    console.log(product_data);
+    return this.http.post(`${this.baseUrl}/productos`, {body: product_data}, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
     }),
     catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
       return of(err.error.errors[0].msg)
     })
     )

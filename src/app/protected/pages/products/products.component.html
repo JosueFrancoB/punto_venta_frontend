@@ -1,93 +1,130 @@
 <h3 class="group-title h4 ng-star-inserted">{{title}}</h3>
-<nb-card [nbSpinner]="viewLoading" nbSpinnerStatus="danger">
-    <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
-        <nb-form-field>
-            <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
-            <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
-        </nb-form-field>
-        <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="openDialog(Producto, false)" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
+<div style="display: flex; flex-direction: row;">
+  <nb-card [nbSpinner]="viewLoading" nbSpinnerStatus="danger" style="width: 70%;">
+      <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
+          <nb-form-field>
+              <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+              <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
+          </nb-form-field>
+          <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="openDialog(Producto, false)" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
+      </nb-card-header>
+  
+      <nb-card-body>        
+          <ng2-smart-table [nbSpinner]="viewLoading" nbSpinnerStatus="danger"   [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event);" style="cursor: pointer;">
+          </ng2-smart-table>
+      </nb-card-body>
+  </nb-card>
+  <nb-card accent="info" style="width: 30%;">
+    <nb-card-header>
+      <h6>Articulo seleccionado</h6>
+      <div *ngIf="product_selected">
+        <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
+        <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
+      </div>
     </nb-card-header>
-
-    <nb-card-body>        
-        <ng2-smart-table [nbSpinner]="viewLoading" nbSpinnerStatus="danger"   [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event);" style="cursor: pointer;">
-        </ng2-smart-table>
+    <nb-card-body>
+      <div class="custom-dropzone" ngx-dropzone [multiple]='false'  [accept]="'image/*'" (change)="onSelectDrag($event)">
+      <ngx-dropzone-label>
+        <div>
+          <nb-icon icon="image-outline" style="font-size: 5rem;"></nb-icon>
+          <h5>Agrega una imagen</h5>
+        </div>
+      </ngx-dropzone-label>
+      <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f" [removable]="true" (removed)="onRemoveDrag(f)">
+      </ngx-dropzone-image-preview>
+    </div>
+    <div class="row">
+      <h3 style="color: royalblue;">{{active_product.nombre}}</h3>
+    </div>
+    <div class="row">
+      {{active_product.descripcion}}
+    </div>
     </nb-card-body>
-</nb-card>
+    <nb-card-footer>
+      <b>Cantidad disponible: {{active_product.existencias}}</b>
+    </nb-card-footer>
+  </nb-card>
+</div>
 
 
 
-<!--+ Modal Template +-->
+
+
+<!--? Modal  -->
+
 <ng-template #Producto let-data let-ref="dialogRef">
   <nb-card [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
-      <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit ? 'space-between' : 'flex-end' }">
-          <button *ngIf="modalEdit" nbButton size="small" appearance="outline" status="danger" (click)="deleteProduct('', ref);" [nbSpinner]="delLoading" nbSpinnerStatus="danger">
-              Eliminar Usuario
-          </button>
-          <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
-      </nb-card-header>
-      <nb-card-body>
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="row" size="medium">
-              <div class="col-lg-5">
-                <label class="label" for="input-clave" id="input-clave">Clave:</label>
-                  <input type="password" nbInput  placeholder="Password">
-              </div>
-              <div class="col-lg-5">
-                <label class="label" for="input-clave-alt" id="input-clave-alt">Clave Alterna:</label>
-                  <input type="text" nbInput  shape="rectangle" placeholder="Rectangle border">
-              </div>
-            </div>
-            <div class="row" size="medium">
-              <div class="col-lg-5">
-                <label class="label" for="input-nombre" id="input-nombre">Nombre:</label>
-                  <input type="password" nbInput  placeholder="Password">
-              </div>
-              <div class="col-lg-5">
-                <label class="label" for="input-desc" id="input-desc">Descripcion:</label>
-                  <input type="text" nbInput  shape="rectangle" placeholder="Rectangle border">
-              </div>
-          </div>
-            <div class="row" size="medium">
-              <div class="col-lg-3">
-                <label class="label" for="input-uni-comp" id="input-uni-comp">Unidad de compra:</label>
-                  <input type="text" nbInput  shape="rectangle" placeholder="Rectangle border">
-              </div>
-              <div class="col-lg-3">
-                <label class="label" for="input-uni-ven" id="input-uni-ven">Unidad de venta:</label>
-                  <input type="text" nbInput  shape="rectangle" placeholder="Rectangle border">
-              </div>
-              <div class="col-lg-3">
-                <label class="label" for="input-factor" id="input-factor">Factor:</label>
-                  <input type="text" nbInput  shape="rectangle" placeholder="Rectangle border">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-5">
-                <label class="label" for="input-categoria" id="input-categoria">Categoria:</label>
-                <nb-select (selectedChange)="getCategory($event)" [selected]="selectedCategory" placeholder="Categoria" nbTooltip="Categoria">
-                    <nb-option value=Usuario>Tornillos</nb-option>
-                    <nb-option value=Administrador>Herramientas</nb-option>
-                </nb-select>
-              </div>
-              <div class="col-lg-5">
-                <label class="label" for="input-img" id="input-img">Imagen:</label>
-                <input type="file" nbInput  shape="rectangle" placeholder="Rectangle border">
-              </div>
-            </div>
-        </div>
-        </div>
-      </nb-card-body>
-      <nb-card-footer style="display: flex; justify-content: space-between;">
-      <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
-      <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="addProductForm.valid && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addProduct(ref);">
-          Agregar Usuario
+    <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit ? 'space-between' : 'flex-end' }">
+      <button *ngIf="modalEdit" nbButton size="small" appearance="outline" status="danger" (click)="deleteProduct('', ref);" [nbSpinner]="delLoading" nbSpinnerStatus="danger">
+          Eliminar Producto
       </button>
-      <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateProduct('', ref);">
-          Actualizar Usuario
-      </button>
-      </nb-card-footer>
+      <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
+  </nb-card-header>
+  <nb-card-body>
+  <div class="container">
+    <div>
+    <div class="row">
+      <div class="col-sm-6" style="margin-top: 5px">
+              <span style="font-size:14px;">Clave:</span>
+              <input placeholder="Clave principal" type="text" id="input-clave" class="form-control input-sm" style="background: #fff;" name="clave" ngDefaultControl [ngModel]="new_producto.clave">
+      </div>
+      <div class="col-sm-6" style="margin-top: 5px">
+        <span style="font-size:14px;">Clave Alterna:</span>
+              <input placeholder="Clave Alterna" type="text" id="input-clave-alt" class="form-control input-sm" style="background: #fff;" name="clave_alterna" ngDefaultControl [ngModel]="new_producto.clave_alterna">
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-sm-6" style="margin-top: 5px;">
+          <span class="input-group-addon" style="font-size:14px;">Descripcion:</span>
+          <input placeholder="Descripcion" type="text" id="input-desc" class="form-control input-sm" name="descripcion" ngDefaultControl [ngModel]="new_producto.descripcion" style="background: #fff;">
+      </div>
+      <div class="col-sm-6" style="margin-top: 5px">
+          <span class="input-group-addon" style="font-size:14px;">Categoria:</span>
+          <input type="text" id="input-desc" class="form-control input-sm" name="categoria" ngDefaultControl [ngModel]="new_producto.categoria" disabled style="background: #fff;">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-5" style="margin-top: 5px">
+            <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span>
+            <select class="form-control input-sm ">
+              <option *ngFor="let unit of products_units" name="fieldName" ngDefaultControl [ngModel]="new_producto.unidad_compra" value="{{unit}}">{{unit}}</option>
+            </select>
+      </div>
+      <div class="col-sm-5" style="margin-top: 5px;">
+              <span class="input-group-addon" style="font-size:14px;">Unidad de Venta:</span>
+              <select style="background: #fff;" class="form-control input-sm ">
+              <option *ngFor="let unit of products_units" [value]="unit" name="fieldName" ngDefaultControl [ngModel]="new_producto.unidad_venta">{{unit}}</option></select>
+      </div>
+      <div class="col-sm-2" style="margin-top: 5px;">
+            <span class="input-group-addon" style="font-size:14px;">Factor:</span>
+            <input placeholder="1" [ngModel]="new_producto.factor" type="text" id="input-desc" class="form-control input-sm" ngModel="1" style="background: #fff;">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-5" style="margin-top: 5px;">
+          <span class="input-group-addon" style="font-size:14px;">Precio de Compra</span>
+          <input type="text" class="form-control input-sm" style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [ngModel]="new_producto.precio_compra">
+      </div>
+      <div class="col-sm-5" style="margin-top: 5px;">
+          <span class="input-group-addon" style="font-size:14px;">Precio de Venta</span>
+          <input type="text" class="form-control input-sm " style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [ngModel]="new_producto.precio_venta">
+    </div>
+    </div>
+    
+    </div>
+  </div>
+  </nb-card-body>
+  <nb-card-footer style="display: flex; justify-content: space-between;">
+    <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
+    <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_producto.nombre != '' && new_producto.descripcion != ''" nbButton size="small" appearance="outline" status="success" (click)="addProduct(ref);">
+        Agregar Producto
+    </button>
+    <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateProduct(product_edit, ref);">
+        Actualizar Producto
+    </button>
+    </nb-card-footer>
   </nb-card>
 </ng-template>
-
-
