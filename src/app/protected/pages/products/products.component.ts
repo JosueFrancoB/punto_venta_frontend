@@ -6,6 +6,7 @@ import { CategoriasService } from '../../services/categorias.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
+import { ProductosBody } from '../../interfaces/protected-interfaces';
 
 @Component({
   selector: 'app-products',
@@ -27,7 +28,15 @@ export class ProductsComponent implements OnInit{
   delLoading: boolean = false
   title:string = ''
   selectedCategory:string =  ''
+  active_product: ProductosBody = {}
+  new_producto: ProductosBody = {}
   changesEdit = true
+  product_selected = false
+  product_edit = ''
+  products_units: Array<any> = [
+    'cm', 'm', 'gr', 'kg', 'pza'
+  ]
+
   @ViewChild('Producto') Producto!: TemplateRef<any>;
 
   // @ViewChild('Usuario') Usuario!: TemplateRef<any>; 
@@ -77,7 +86,7 @@ export class ProductsComponent implements OnInit{
   }
 
   addProduct(ref: any){
-    this.productsService.addProduct(this.productos)
+    this.productsService.addProduct(this.new_producto)
       .subscribe(resp =>{
         if (resp.ok === true){
           // this.getProducts()
@@ -148,13 +157,16 @@ export class ProductsComponent implements OnInit{
       console.log(resp);
       if(resp.ok === true){
         this.title = resp.categoria.nombre
+        this.new_producto.categoria = resp.categoria.nombre
       }
     })
   }
 
   onUserRowSelect(event:any): void {
-    this.modalEdit = true;
     console.log(event);
+    this.product_selected = true
+    this.active_product = event.data
+    this.product_edit = event.data._id
     // this.modalEdit = true;
     // this.changesEdit = false;
     // let {rol} = event.data
@@ -186,6 +198,19 @@ export class ProductsComponent implements OnInit{
     this.addProductForm.reset()
   }
 
+  files: File[] = [];
+
+  onSelectDrag(event:any) {
+    if(this.files && this.files.length >=1) {
+      this.onRemoveDrag(this.files[0]);
+    }
+    this.files.push(...event.addedFiles);
+    console.log(...event.addedFiles);
+  }
+   
+  onRemoveDrag(event:any) {
+    this.files.splice(this.files.indexOf(event), 1);
+  }
 
 
   settings = {

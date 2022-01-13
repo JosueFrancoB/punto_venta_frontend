@@ -43,7 +43,8 @@
             <div *ngIf="!modalEdit || changeImg" class="custom-dropzone" ngx-dropzone [multiple]='false'  [accept]="'image/*'" (change)="onSelectDrag($event)">
               <ngx-dropzone-label>
                 <div>
-                  <h4>Agrega una imagen</h4>
+                  <nb-icon icon="image-outline" style="font-size: 3rem;"></nb-icon>
+                  <h6>Agrega una imagen</h6>
                 </div>
               </ngx-dropzone-label>
               <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f" [removable]="true" (removed)="onRemoveDrag(f)">

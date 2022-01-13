@@ -252,7 +252,7 @@ export class UsersComponent implements OnInit {
         filter: false,
         title: 'Foto perfil',
         type: 'html',
-        valuePrepareFunction: (img:string) => { return `<img class="rounded-circle UserProfileimg user" width="30" src="../../../../assets/images/agu.jpg" alt="foto" />`; },
+        valuePrepareFunction: (img:string) => { return `<img class="rounded-circle UserProfileimg user" width="30" src="../../../../assets/images/user.png" alt="foto" />`; },
         },
       nombre: {
         title: 'Nombre',

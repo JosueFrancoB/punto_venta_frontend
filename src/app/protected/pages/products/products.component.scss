@@ -1,12 +1,3 @@
-table {
-    width: 100%;
-  }
-  
-  .mat-form-field {
-    font-size: 14px;
-    width: 100%;
-  }
-
   .group-title{
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
@@ -42,4 +33,8 @@ table {
 }
 .aborted {
     background: rgba(243, 69, 69, 0.5);
+}
+.upload {
+  width: 300px;
+  margin: 30px auto;
 }
