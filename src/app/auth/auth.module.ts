@@ -28,7 +28,7 @@ import { NbActionsComponent, NbActionsModule, NbAlertModule, NbButtonModule, NbC
     NbAlertModule,
     NbButtonModule, 
     ReactiveFormsModule,
-    NbCheckboxModule
+    NbCheckboxModule,
   ]
 })
 export class AuthModule { }

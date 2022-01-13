@@ -47,7 +47,6 @@ export class UsersService {
   addUser(user_data: UserBody){
     const headers = this.getToken()
     const body = user_data;
-    console.log('tipo de body', typeof body);
     return this.http.post(`${this.baseUrl}/users`, body, {headers}).pipe(
       map( resp => {
         return resp

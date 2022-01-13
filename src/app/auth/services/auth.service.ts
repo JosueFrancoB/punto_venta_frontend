@@ -23,12 +23,11 @@ export class AuthService {
 
   registro(nombre: string, correo: string, password: string, rol:string = 'Usuario', img:string = ''){
     //TODO: Hacer eue el administrador pueda crear otro usuario administrador
-    const url = `${this.baseUrl}/users`;
+    const url = `${this.baseUrl}/users/register`;
     const body = {nombre, correo, password, rol, img};
     return this.http.post<AuthResponse>(url, body)
     .pipe(
       tap(resp =>{
-        console.log(`La respuesta ${resp}`);
         if (resp.ok){
           localStorage.setItem('x-token', resp.token!);
           this._usuario = {
@@ -39,9 +38,7 @@ export class AuthService {
       }),
       map(resp => resp.ok),
       catchError(err => {
-        console.log(`${err.error.msg}`)
-        // of(err.error.msg)
-        return of()
+        return of(err.error.errors[0].msg)
       })
     )
   }
@@ -85,6 +82,6 @@ export class AuthService {
   }
 
   logout(){
-    localStorage.removeItem('x-token');
+    localStorage.clear();
   }
 }

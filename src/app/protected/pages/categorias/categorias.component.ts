@@ -143,7 +143,7 @@ export class CategoriasComponent implements OnInit {
 
   deleteCategory(id:string){
     Swal.fire({
-      title: '¿Estás seguro de eliminarlo?',
+      title: '¿Estás seguro de eliminarla?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

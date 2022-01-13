@@ -2,7 +2,6 @@ import { Component} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { NbWindowRef } from '@nebular/theme';
 
 
 @Component({
@@ -25,7 +24,7 @@ import { NbWindowRef } from '@nebular/theme';
 export class RegisterComponent {
 
   correoPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"
-
+  msg_err = ''
   miFormulario: FormGroup = this.fb.group({
     nombre: ['', [Validators.required] ],
     correo: ['', [Validators.required, Validators.pattern(this.correoPattern)] ],
@@ -55,7 +54,7 @@ export class RegisterComponent {
 
   constructor(private fb: FormBuilder, private router:Router, 
               private authService:AuthService,
-              public windowRef: NbWindowRef) { }
+              ) { }
   registro(){
       if (this.miFormulario.invalid){
         this.miFormulario.markAllAsTouched()
@@ -68,7 +67,7 @@ export class RegisterComponent {
           if (resp === true){
             this.router.navigateByUrl('/dashboard')
           }else{
-            //TODO: Mostrar mensaje de error
+            this.msg_err = resp
           }
         })
   }
@@ -79,11 +78,6 @@ export class RegisterComponent {
 
   campoNoValido(campo:string){
     return this.miFormularioControls[campo].errors && this.miFormularioControls[campo].touched
-  }
-
-  close() {
-    this.windowRef.close();
-  }
-  
+  } 
 
 }

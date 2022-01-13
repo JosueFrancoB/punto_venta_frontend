@@ -26,7 +26,6 @@ export interface ProductosData{
     productos: Array<ProductosBody>;
     total: number;
 }
-
 export interface ProductosBody{
     nombre: string;
     clave: string;

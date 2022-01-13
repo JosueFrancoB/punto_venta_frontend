@@ -6,6 +6,9 @@
         <nb-auth-block aria-labelledby="title">
             <h1 id="title" class="title">Bienvenido al registro</h1>
             <p class="sub-title">Registrate con un nuevo usuario</p>
+            <nb-alert *ngIf="msg_err != ''" outline="danger" role="alert">
+                <p class="alert-title" class="caption status-danger"><b>{{msg_err}}</b></p>
+            </nb-alert>
 
             <form #form="" aria-labelledby="title" [formGroup]="miFormulario" (ngSubmit)="registro()">
 
@@ -39,7 +42,7 @@
                 </ng-container>
             </div>
 
-            <button nbButton fullWidth status="success">
+            <button nbButton fullWidth status="success" (click)="msg_err = ''">
                 Registrarme
             </button>
             </form>

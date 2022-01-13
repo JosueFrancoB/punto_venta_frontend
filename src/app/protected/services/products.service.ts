@@ -32,6 +32,22 @@ export class ProductsService {
         })
       )
   }
+
+  getProductsByCategoria(id: string){
+    const headers = this.getToken()
+    return this.http.get<ProductosData>(`${this.baseUrl}/productos/categoria/${id}`, {headers})
+      .pipe(
+        map( resp => {
+            return resp
+        }),
+        catchError(err => {
+          console.log(`${err.error.msg}`)
+          // of(err.error.msg)
+          return of()
+        })
+      )
+  }
+
   getProduct(id:string){
     const headers = this.getToken()
     return this.http.get<ProductosBody>(`${this.baseUrl}/productos`, {headers}).pipe(
