@@ -47,3 +47,28 @@ export interface ProductosBody{
     existencias?:number;
 
 }
+
+
+export interface ClientesData{
+    clientes: Array<ClientesBody>;
+    total: number;
+}
+
+export interface ClientesBody{
+    nombre: string;
+}
+export interface ProveedoresData{
+    proveedores: Array<ProveedoresBody>;
+    total: number;
+}
+
+export interface ProveedoresBody{
+    _id?: string;
+    nombre_contacto?: string;
+    nombre_empresa?: string;
+    telefono?: string;
+    correo?: string;
+    rfc?: string;
+    img?: string;
+    direccion?: string;
+}

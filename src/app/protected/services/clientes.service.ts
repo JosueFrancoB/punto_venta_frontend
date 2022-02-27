@@ -1,14 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { ProductosBody, ProductosData } from '../interfaces/protected-interfaces';
+import { ClientesData } from '../interfaces/protected-interfaces';
 import {Observable, of} from 'rxjs'
 import { map, catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductsService {
+export class ClientesService {
 
   private baseUrl:string = environment.baseUrl
   constructor(private http:HttpClient) { }
@@ -18,9 +18,9 @@ export class ProductsService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getProducts(){
+  getClients(){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos`, {headers})
+    return this.http.get<ClientesData>(`${this.baseUrl}/categorias`, {headers})
       .pipe(
         map( resp => {
             return resp
@@ -32,25 +32,37 @@ export class ProductsService {
         })
       )
   }
-
-  getProductsByCategoria(id: string){
+  getClient(id:string){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos/categoria/${id}`, {headers})
-      .pipe(
-        map( resp => {
-            return resp
-        }),
-        catchError(err => {
-          console.log(`${err.error.msg}`)
-          // of(err.error.msg)
-          return of()
-        })
-      )
+    return this.http.get(`${this.baseUrl}/categorias/${id}`, {headers}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors[0].msg);
+      return of(err.error.errors[0].msg)
+    })
+    )
   }
-
-  getProduct(id:string){
+  addClient(categoria_data: any){
     const headers = this.getToken()
-    return this.http.get<ProductosBody>(`${this.baseUrl}/productos`, {headers}).pipe(
+    let body = categoria_data
+    return this.http.post(`${this.baseUrl}/categorias`, body, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      return of(err.error.msg)
+    })
+    )
+  }
+  updateClient(id:string, nombre: any){
+    const headers = this.getToken()
+    let body = {nombre}
+    return this.http.patch(`${this.baseUrl}/categorias/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -63,48 +75,15 @@ export class ProductsService {
     })
     )
   }
-  addProduct(product_data: ProductosBody){
+  deleteClient(id:string){
     const headers = this.getToken()
-    console.log(product_data);
-    let body = product_data
-    return this.http.post(`${this.baseUrl}/productos`, body, {headers}).pipe(
+    return this.http.delete(`${this.baseUrl}/categorias/${id}`, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
     }),
     catchError(err => {
-      return of(err.error.errors[0].msg)
-    })
-    )
-  }
-  updateProduct(id:string, product_data: ProductosBody){
-    const headers = this.getToken()
-    let body = {product_data}
-    return this.http.put(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
-      map( resp => {
-        console.log(resp);
-        return resp
-    }),
-    catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
-    })
-    )
-  }
-  deleteProduct(id:string){
-    const headers = this.getToken()
-    return this.http.delete(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
-      map( resp => {
-        console.log(resp);
-        return resp
-    }),
-    catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
+      return of(err.error.msg)
     })
     )
   }

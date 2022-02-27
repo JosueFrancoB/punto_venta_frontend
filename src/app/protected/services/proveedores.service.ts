@@ -1,14 +1,14 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ProductosBody, ProductosData } from '../interfaces/protected-interfaces';
+import { ProveedoresData } from '../interfaces/protected-interfaces';
 import {Observable, of} from 'rxjs'
 import { map, catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductsService {
+export class ProveedoresService {
 
   private baseUrl:string = environment.baseUrl
   constructor(private http:HttpClient) { }
@@ -18,9 +18,9 @@ export class ProductsService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getProducts(){
+  getProveedores(){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos`, {headers})
+    return this.http.get<ProveedoresData>(`${this.baseUrl}/providers`, {headers})
       .pipe(
         map( resp => {
             return resp
@@ -32,25 +32,38 @@ export class ProductsService {
         })
       )
   }
-
-  getProductsByCategoria(id: string){
+  getProveedor(id:string){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos/categoria/${id}`, {headers})
-      .pipe(
-        map( resp => {
-            return resp
-        }),
-        catchError(err => {
-          console.log(`${err.error.msg}`)
-          // of(err.error.msg)
-          return of()
-        })
-      )
+    return this.http.get(`${this.baseUrl}/providers/${id}`, {headers}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors[0].msg);
+      return of(err.error.errors[0].msg)
+    })
+    )
   }
-
-  getProduct(id:string){
+  addProveedor(provedor_data: any){
     const headers = this.getToken()
-    return this.http.get<ProductosBody>(`${this.baseUrl}/productos`, {headers}).pipe(
+    console.log(provedor_data);
+    let body = provedor_data
+    return this.http.post(`${this.baseUrl}/providers`, body, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      return of(err.error.errors[0].msg)
+    })
+    )
+  }
+  updateProveedor(id:string, nombre: any){
+    const headers = this.getToken()
+    let body = {nombre}
+    return this.http.patch(`${this.baseUrl}/providers/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -63,48 +76,15 @@ export class ProductsService {
     })
     )
   }
-  addProduct(product_data: ProductosBody){
+  deleteProveedor(id:string){
     const headers = this.getToken()
-    console.log(product_data);
-    let body = product_data
-    return this.http.post(`${this.baseUrl}/productos`, body, {headers}).pipe(
+    return this.http.delete(`${this.baseUrl}/providers/${id}`, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
     }),
     catchError(err => {
-      return of(err.error.errors[0].msg)
-    })
-    )
-  }
-  updateProduct(id:string, product_data: ProductosBody){
-    const headers = this.getToken()
-    let body = {product_data}
-    return this.http.put(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
-      map( resp => {
-        console.log(resp);
-        return resp
-    }),
-    catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
-    })
-    )
-  }
-  deleteProduct(id:string){
-    const headers = this.getToken()
-    return this.http.delete(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
-      map( resp => {
-        console.log(resp);
-        return resp
-    }),
-    catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
+      return of(err.error.msg)
     })
     )
   }

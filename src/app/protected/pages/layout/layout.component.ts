@@ -53,6 +53,16 @@ export class LayoutComponent implements OnInit {
       title: 'Productos',
       icon: 'shopping-bag',
       link: '/dashboard/categories'
+    },
+    {
+      title: 'Clientes',
+      icon: 'award-outline',
+      link: '/dashboard/clients'
+    },
+    {
+      title: 'Proveedores',
+      icon: 'car-outline',
+      link: '/dashboard/providers'
     }
   ];
 

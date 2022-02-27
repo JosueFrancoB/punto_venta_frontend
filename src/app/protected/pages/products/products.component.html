@@ -66,22 +66,22 @@
     <div class="row">
       <div class="col-sm-6" style="margin-top: 5px">
               <span style="font-size:14px;">Clave:</span>
-              <input placeholder="Clave principal" type="text" id="input-clave" class="form-control input-sm" style="background: #fff;" name="clave" ngDefaultControl [ngModel]="new_producto.clave">
+              <input placeholder="Clave principal" type="text" id="input-clave" class="form-control input-sm" style="background: #fff;" name="clave" ngDefaultControl [(ngModel)]="new_producto.clave">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
         <span style="font-size:14px;">Clave Alterna:</span>
-              <input placeholder="Clave Alterna" type="text" id="input-clave-alt" class="form-control input-sm" style="background: #fff;" name="clave_alterna" ngDefaultControl [ngModel]="new_producto.clave_alterna">
+              <input placeholder="Clave Alterna" type="text" id="input-clave-alt" class="form-control input-sm" style="background: #fff;" name="clave_alterna" ngDefaultControl [(ngModel)]="new_producto.clave_alterna">
       </div>
     </div>
     
     <div class="row">
       <div class="col-sm-6" style="margin-top: 5px;">
-          <span class="input-group-addon" style="font-size:14px;">Descripcion:</span>
-          <input placeholder="Descripcion" type="text" id="input-desc" class="form-control input-sm" name="descripcion" ngDefaultControl [ngModel]="new_producto.descripcion" style="background: #fff;">
+          <span class="input-group-addon" style="font-size:14px;">Descripción o Nombre del Producto:</span>
+          <input placeholder="Descripción o Nombre" type="text" id="input-desc" class="form-control input-sm" name="descripcion" ngDefaultControl [(ngModel)]="new_producto.descripcion" style="background: #fff;">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
-          <span class="input-group-addon" style="font-size:14px;">Categoria:</span>
-          <input type="text" id="input-desc" class="form-control input-sm" name="categoria" ngDefaultControl [ngModel]="new_producto.categoria" disabled style="background: #fff;">
+          <span class="input-group-addon" style="font-size:14px;">Categoría:</span>
+          <input type="text" id="input-desc" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{new_producto.categoria}}" disabled style="background: #fff;">
       </div>
     </div>
 
@@ -89,28 +89,28 @@
       <div class="col-sm-5" style="margin-top: 5px">
             <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span>
             <select class="form-control input-sm ">
-              <option *ngFor="let unit of products_units" name="fieldName" ngDefaultControl [ngModel]="new_producto.unidad_compra" value="{{unit}}">{{unit}}</option>
+              <option *ngFor="let unit of products_units" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_compra" value="{{unit}}">{{unit}}</option>
             </select>
       </div>
       <div class="col-sm-5" style="margin-top: 5px;">
               <span class="input-group-addon" style="font-size:14px;">Unidad de Venta:</span>
               <select style="background: #fff;" class="form-control input-sm ">
-              <option *ngFor="let unit of products_units" [value]="unit" name="fieldName" ngDefaultControl [ngModel]="new_producto.unidad_venta">{{unit}}</option></select>
+              <option *ngFor="let unit of products_units" [value]="unit" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_venta">{{unit}}</option></select>
       </div>
       <div class="col-sm-2" style="margin-top: 5px;">
             <span class="input-group-addon" style="font-size:14px;">Factor:</span>
-            <input placeholder="1" [ngModel]="new_producto.factor" type="text" id="input-desc" class="form-control input-sm" ngModel="1" style="background: #fff;">
+            <input placeholder="1" [(ngModel)]="new_producto.factor" type="text" id="input-desc" class="form-control input-sm" ngModel="1" style="background: #fff;">
       </div>
     </div>
 
     <div class="row">
       <div class="col-sm-5" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Precio de Compra</span>
-          <input type="text" class="form-control input-sm" style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [ngModel]="new_producto.precio_compra">
+          <input type="text" class="form-control input-sm" style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_compra">
       </div>
       <div class="col-sm-5" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Precio de Venta</span>
-          <input type="text" class="form-control input-sm " style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [ngModel]="new_producto.precio_venta">
+          <input type="text" class="form-control input-sm " style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_venta">
     </div>
     </div>
     
