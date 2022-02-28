@@ -102,8 +102,9 @@ export class ProveedoresComponent implements OnInit {
   }
   }
 
-  updateProvider(provider:string, ref: any){
-    let id = this.providerID
+  updateProvider(provider:ProveedoresBody, ref: any){
+    let id = provider._id ? provider._id : ''
+
     this.proveedoresService.updateProveedor(id, provider).subscribe(resp =>{
       if(resp.ok === true){
         if (this.changeImg === true){
@@ -135,8 +136,9 @@ export class ProveedoresComponent implements OnInit {
     this.modalEdit = true;
     this.proveedoresService.getProveedor(id).subscribe(resp => {
       if (resp.ok === true){
-        this.providerValue = resp.proveedor.nombre_empresa
-        this.providerID = resp.proveedor._id
+        this.new_proveedor = resp.proveedor
+        // this.providerValue = resp.proveedor.nombre_empresa
+        // this.providerID = resp.proveedor._id
         this.providerSrc = this.uploadsUrl + '/' + resp.proveedor._id
       }else{
       console.log('error', resp)
@@ -178,8 +180,12 @@ export class ProveedoresComponent implements OnInit {
     // this.dialogRef = this.dialogService.open(dialog, { closeOnBackdropClick });
   }
 
+  resetProvider(){
+    this.new_proveedor = {}
+  }
+
   cancelDialog(){
-    // this.addUserForm.reset()
+    this.resetProvider()
   }
   onSelectDrag(event:any) {
     if(this.files && this.files.length >=1) {

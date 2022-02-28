@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ProveedoresData } from '../interfaces/protected-interfaces';
+import { ProveedoresData, ProveedoresBody } from '../interfaces/protected-interfaces';
 import {Observable, of} from 'rxjs'
 import { map, catchError, tap } from 'rxjs/operators';
 
@@ -60,10 +60,10 @@ export class ProveedoresService {
     })
     )
   }
-  updateProveedor(id:string, nombre: any){
+  updateProveedor(id:string|undefined, proveedor: ProveedoresBody){
     const headers = this.getToken()
-    let body = {nombre}
-    return this.http.patch(`${this.baseUrl}/providers/${id}`, body, {headers}).pipe(
+    let body = proveedor
+    return this.http.put(`${this.baseUrl}/providers/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
