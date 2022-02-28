@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { ClientesData } from '../interfaces/protected-interfaces';
+import { ClientesData, ClientesBody } from '../interfaces/protected-interfaces';
 import {Observable, of} from 'rxjs'
 import { map, catchError, tap } from 'rxjs/operators';
 
@@ -18,9 +18,9 @@ export class ClientesService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getClients(){
+  getClientes(){
     const headers = this.getToken()
-    return this.http.get<ClientesData>(`${this.baseUrl}/categorias`, {headers})
+    return this.http.get<ClientesData>(`${this.baseUrl}/clientes`, {headers})
       .pipe(
         map( resp => {
             return resp
@@ -32,9 +32,9 @@ export class ClientesService {
         })
       )
   }
-  getClient(id:string){
+  getCliente(id:string){
     const headers = this.getToken()
-    return this.http.get(`${this.baseUrl}/categorias/${id}`, {headers}).pipe(
+    return this.http.get(`${this.baseUrl}/clientes/${id}`, {headers}).pipe(
       map( resp => {
         return resp
     }),
@@ -46,23 +46,24 @@ export class ClientesService {
     })
     )
   }
-  addClient(categoria_data: any){
+  addCliente(client: any){
     const headers = this.getToken()
-    let body = categoria_data
-    return this.http.post(`${this.baseUrl}/categorias`, body, {headers}).pipe(
+    console.log(client);
+    let body = client
+    return this.http.post(`${this.baseUrl}/clientes`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
     }),
     catchError(err => {
-      return of(err.error.msg)
+      return of(err.error.errors[0].msg)
     })
     )
   }
-  updateClient(id:string, nombre: any){
+  updateCliente(id:string, client: ClientesBody){
     const headers = this.getToken()
-    let body = {nombre}
-    return this.http.patch(`${this.baseUrl}/categorias/${id}`, body, {headers}).pipe(
+    let body = client
+    return this.http.patch(`${this.baseUrl}/clientes/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -75,14 +76,15 @@ export class ClientesService {
     })
     )
   }
-  deleteClient(id:string){
+  deleteCliente(id:string){
     const headers = this.getToken()
-    return this.http.delete(`${this.baseUrl}/categorias/${id}`, {headers}).pipe(
+    return this.http.delete(`${this.baseUrl}/clientes/${id}`, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
     }),
     catchError(err => {
+      console.log(err);
       return of(err.error.msg)
     })
     )

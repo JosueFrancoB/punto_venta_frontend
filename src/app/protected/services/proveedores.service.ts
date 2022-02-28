@@ -63,7 +63,7 @@ export class ProveedoresService {
   updateProveedor(id:string|undefined, proveedor: ProveedoresBody){
     const headers = this.getToken()
     let body = proveedor
-    return this.http.put(`${this.baseUrl}/providers/${id}`, body, {headers}).pipe(
+    return this.http.patch(`${this.baseUrl}/providers/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -84,6 +84,7 @@ export class ProveedoresService {
         return resp
     }),
     catchError(err => {
+      console.log(err);
       return of(err.error.msg)
     })
     )

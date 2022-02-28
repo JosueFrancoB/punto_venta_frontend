@@ -114,8 +114,8 @@ export class ProveedoresComponent implements OnInit {
         let _id = resp.proveedor._id
         let img = resp.proveedor.img
         let index = 0
-        this.proveedores.forEach(function(cat, i){
-          if(cat._id === id){
+        this.proveedores.forEach(function(prov, i){
+          if(prov._id === id){
             index = i
           }
         })
@@ -149,7 +149,7 @@ export class ProveedoresComponent implements OnInit {
 
   deleteProvider(id:string){
     Swal.fire({
-      title: '¿Estás seguro de eliminarla?',
+      title: '¿Estás seguro de eliminarlo?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

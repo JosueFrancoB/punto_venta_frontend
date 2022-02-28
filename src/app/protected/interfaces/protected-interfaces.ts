@@ -55,7 +55,13 @@ export interface ClientesData{
 }
 
 export interface ClientesBody{
-    nombre: string;
+    _id?: string;
+    nombre?: string;
+    nombre_empresa?: string;
+    telefono?: string;
+    correo?: string;
+    img?: string;
+    direccion?: string;
 }
 export interface ProveedoresData{
     proveedores: Array<ProveedoresBody>;
