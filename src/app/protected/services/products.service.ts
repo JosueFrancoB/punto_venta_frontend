@@ -50,7 +50,7 @@ export class ProductsService {
 
   getProduct(id:string){
     const headers = this.getToken()
-    return this.http.get<ProductosBody>(`${this.baseUrl}/productos`, {headers}).pipe(
+    return this.http.get<ProductosBody>(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp

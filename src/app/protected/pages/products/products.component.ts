@@ -17,7 +17,7 @@ export class ProductsComponent implements OnInit{
 
   // categorias: Array<string> = []
   toastMixin: any;
-  productos: any;
+  productos: Array<ProductosBody> = [];
   source: LocalDataSource;
   params: any;
   modalEdit: boolean = false
@@ -28,7 +28,7 @@ export class ProductsComponent implements OnInit{
   delLoading: boolean = false
   title:string = ''
   selectedCategory:string =  ''
-  active_product: ProductosBody = {}
+  product: ProductosBody = {}
   new_producto: ProductosBody = {}
   changesEdit = true
   product_selected = false
@@ -85,6 +85,21 @@ export class ProductsComponent implements OnInit{
     })
   }
 
+  getClickedProduct(id: string|undefined){
+    
+    this.viewLoading = true
+    if (id !== undefined)
+      this.productsService.getProduct(id).subscribe(resp =>{
+        if (resp.ok === true){
+          console.log(resp);
+          this.new_producto = resp.producto
+          if (this.new_producto.categoria)
+            this.new_producto.categoria = resp.producto.categoria.nombre
+        }
+        this.viewLoading = false
+      })
+  }
+
   addProduct(ref: any){
     this.productsService.addProduct(this.new_producto)
       .subscribe(resp =>{
@@ -103,7 +118,7 @@ export class ProductsComponent implements OnInit{
 
   updateProduct(id: string, ref: any){
     this.updLoading = true
-    this.productsService.updateProduct(id, this.productos).subscribe(resp => {
+    this.productsService.updateProduct(id, this.product).subscribe(resp => {
       if(resp.ok === true){
         console.log(resp);
         this.toastMixin.fire({
@@ -165,8 +180,7 @@ export class ProductsComponent implements OnInit{
   onUserRowSelect(event:any): void {
     console.log(event);
     this.product_selected = true
-    this.active_product = event.data
-    this.product_edit = event.data._id
+    this.product = event.data
     // this.modalEdit = true;
     // this.changesEdit = false;
     // let {rol} = event.data

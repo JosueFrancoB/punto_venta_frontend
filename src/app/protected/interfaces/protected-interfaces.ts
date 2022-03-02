@@ -27,6 +27,7 @@ export interface ProductosData{
     total: number;
 }
 export interface ProductosBody{
+    _id?: string;
     nombre?: string;
     clave?: string;
     clave_alterna?: string;
