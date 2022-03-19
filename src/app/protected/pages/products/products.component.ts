@@ -27,6 +27,7 @@ export class ProductsComponent implements OnInit{
   updLoading: boolean = false
   delLoading: boolean = false
   title:string = ''
+  categoria:string = ''
   selectedCategory:string =  ''
   product: ProductosBody = {}
   new_producto: ProductosBody = {}
@@ -75,7 +76,7 @@ export class ProductsComponent implements OnInit{
   }
 
   getProducts(id: string){
-    
+    this.categoria = id
     this.viewLoading = true
     this.productsService.getProductsByCategoria(id).subscribe(res =>{
       const {productos} = res
@@ -92,6 +93,7 @@ export class ProductsComponent implements OnInit{
       this.productsService.getProduct(id).subscribe(resp =>{
         if (resp.ok === true){
           console.log(resp);
+          this.modalEdit = true
           this.new_producto = resp.producto
           if (this.new_producto.categoria)
             this.new_producto.categoria = resp.producto.categoria.nombre
@@ -104,7 +106,7 @@ export class ProductsComponent implements OnInit{
     this.productsService.addProduct(this.new_producto)
       .subscribe(resp =>{
         if (resp.ok === true){
-          // this.getProducts()
+          this.getProducts(this.categoria)
           ref.close()
           this.toastMixin.fire({
             title: 'Producto agregado'
@@ -117,6 +119,7 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
+    this.product = this.new_producto
     this.updLoading = true
     this.productsService.updateProduct(id, this.product).subscribe(resp => {
       if(resp.ok === true){
@@ -124,7 +127,7 @@ export class ProductsComponent implements OnInit{
         this.toastMixin.fire({
           title: 'Producto actualizado'
         });
-        // this.getProducts()
+        this.getProducts(this.categoria)
         ref.close()
       }else{
         Swal.fire('Error', resp, 'error')
@@ -147,7 +150,7 @@ export class ProductsComponent implements OnInit{
       if (result.isConfirmed) {
         this.productsService.deleteProduct(id).subscribe(resp => {
             if (resp.ok === true){
-              // this.getProducts()
+              this.getProducts(this.categoria)
               ref.close()
               this.toastMixin.fire({
                 title: 'Producto eliminado'
@@ -209,7 +212,9 @@ export class ProductsComponent implements OnInit{
   }
 
   cancelDialog(){
-    this.addProductForm.reset()
+    let tmp_categoria = this.new_producto['categoria']
+    this.new_producto = {};
+    this.new_producto.categoria = tmp_categoria
   }
 
   files: File[] = [];
@@ -248,11 +253,6 @@ export class ProductsComponent implements OnInit{
         type: 'string',
         filter: false,
       },
-      nombre: {
-        title: 'Nombre',
-        type: 'string',
-        filter: false,
-      },
       descripcion:{
         title: 'Descripción',
         type: 'boolean',
@@ -281,10 +281,6 @@ export class ProductsComponent implements OnInit{
       // fields we want to include in the search
       {
         field: 'clave',
-        search: query
-      },
-      {
-        field: 'nombre',
         search: query
       },
       {

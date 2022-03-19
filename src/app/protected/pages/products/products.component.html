@@ -1,4 +1,4 @@
-<h3 class="group-title h4 ng-star-inserted">{{title}}</h3>
+  <h3 class="group-title h4 ng-star-inserted">{{title}}</h3>
 <div style="display: flex; flex-direction: row;">
   <nb-card [nbSpinner]="viewLoading" nbSpinnerStatus="danger" style="width: 70%;">
       <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
@@ -119,10 +119,10 @@
   </nb-card-body>
   <nb-card-footer style="display: flex; justify-content: space-between;">
     <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
-    <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_producto.nombre != '' && new_producto.descripcion != ''" nbButton size="small" appearance="outline" status="success" (click)="addProduct(ref);">
+    <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_producto.nombre != '' && new_producto.descripcion != '' && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addProduct(ref);">
         Agregar Producto
     </button>
-    <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateProduct(product_edit, ref);">
+    <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateProduct(product._id!, ref);">
         Actualizar Producto
     </button>
     </nb-card-footer>

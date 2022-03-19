@@ -79,8 +79,8 @@ export class ProductsService {
   }
   updateProduct(id:string, product_data: ProductosBody){
     const headers = this.getToken()
-    let body = {product_data}
-    return this.http.put(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
+    let body = product_data
+    return this.http.patch(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
