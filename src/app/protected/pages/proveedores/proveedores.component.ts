@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 import { ProveedoresService } from '../../services/proveedores.service';
 import { ProveedoresBody } from '../../interfaces/protected-interfaces';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, Input, HostBinding } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -37,6 +37,7 @@ export class ProveedoresComponent implements OnInit {
   modalLoading = false;
   addLoading = false;
   updLoading = false;
+  tele = false;
 
   uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
 
@@ -172,6 +173,19 @@ export class ProveedoresComponent implements OnInit {
     }
   })
   }
+  isFlipped: boolean= false;
+  selectedItem:any;
+  info_selected = ''
+
+  flip_card(index:number) {
+    this.selectedItem = index
+    this.isFlipped = !this.isFlipped;
+  }
+
+  content_back_card(elementSelected: string){
+    this.info_selected = elementSelected
+  }
+  
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     // this.checkedEstado = true
