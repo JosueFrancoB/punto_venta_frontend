@@ -1,6 +1,6 @@
 import Swal from 'sweetalert2';
 import { ProveedoresService } from '../../services/proveedores.service';
-import { ProveedoresBody } from '../../interfaces/protected-interfaces';
+import { ProveedoresBody, NewProveedoresBody } from '../../interfaces/protected-interfaces';
 import { Component, OnInit, TemplateRef, ViewChild, Input, HostBinding } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -30,8 +30,16 @@ export class ProveedoresComponent implements OnInit {
   providerSrc = ''
   changeImg = true
   searchText = ''
-  new_proveedor:ProveedoresBody = {}
+  new_proveedor:NewProveedoresBody = {}
+  edit_proveedor:NewProveedoresBody = {}
+  active_proveedor:ProveedoresBody = {}
   changesEdit = true
+
+  correos:Array<string> = []
+  telefonos:Array<string> = []
+  direcciones:Array<string> = []
+  editList = false
+  list_edited = false
 
   viewLoading = false
   modalLoading = false;
@@ -137,7 +145,7 @@ export class ProveedoresComponent implements OnInit {
     this.modalEdit = true;
     this.proveedoresService.getProveedor(id).subscribe(resp => {
       if (resp.ok === true){
-        this.new_proveedor = resp.proveedor
+        this.active_proveedor = resp.proveedor
         // this.providerValue = resp.proveedor.nombre_empresa
         // this.providerID = resp.proveedor._id
         this.providerSrc = this.uploadsUrl + '/' + resp.proveedor._id
@@ -173,6 +181,7 @@ export class ProveedoresComponent implements OnInit {
     }
   })
   }
+
   isFlipped: boolean= false;
   selectedItem:any;
   info_selected = ''
@@ -186,6 +195,89 @@ export class ProveedoresComponent implements OnInit {
     this.info_selected = elementSelected
   }
   
+  addListElement(list: string,value: string|undefined){
+    switch (list) {
+      case 'telefono':
+        this.new_proveedor.telefono = ''
+        if (value?.trim() !== '' && value !== undefined)
+          this.active_proveedor.telefonos?.push(value)
+        break;
+      case 'correo':
+        this.new_proveedor.correo = ''
+        if (value?.trim() !== '' && value !== undefined)
+          this.active_proveedor.correos?.push(value)
+        break;
+      case 'direccion':
+        this.new_proveedor.direccion = ''
+        if (value?.trim() !== '' && value !== undefined)
+          this.active_proveedor.direcciones?.push(value)
+        break;
+      default:
+        break;
+      }
+  }
+
+  clickio(data:any){
+    console.log(data);
+  }
+  
+  editListElement(list:string, old_value:string|undefined, new_value:string|undefined){
+    
+    switch (list) {
+      case 'telefono':
+        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.filter(function(item) {
+          return item !== old_value
+        })
+        this.active_proveedor.telefonos?.push(new_value)
+        break;
+      case 'correo':
+        this.active_proveedor.correos = this.active_proveedor.correos?.filter(function(item) {
+          return item !== old_value
+        })
+        this.active_proveedor.correos?.push(new_value)
+        break;
+      case 'direccion':
+        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.filter(function(item) {
+          return item !== old_value
+        })
+        this.active_proveedor.direcciones?.push(new_value)
+        break;
+      default:
+        break;
+      }
+    this.editList = false
+  }
+
+  cancelEdit(){
+    this.list_edited = false;
+    this.editList = false
+  }
+
+  delListElement(list:string, value:string|undefined){
+    switch (list) {
+      case 'telefono':
+        this.new_proveedor.telefono = ''
+        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.filter(function(item) {
+          return item !== value
+        })
+        break;
+      case 'correo':
+        this.new_proveedor.correo = ''
+        this.active_proveedor.correos = this.active_proveedor.correos?.filter(function(item) {
+          return item !== value
+        })
+        break;
+      case 'direccion':
+        this.new_proveedor.direccion = ''
+        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.filter(function(item) {
+          return item !== value
+        })
+        break;
+      default:
+        break;
+      }
+  }
+
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     // this.checkedEstado = true
@@ -200,6 +292,7 @@ export class ProveedoresComponent implements OnInit {
 
   cancelDialog(){
     this.resetProvider()
+    this.editList = false
   }
   onSelectDrag(event:any) {
     if(this.files && this.files.length >=1) {

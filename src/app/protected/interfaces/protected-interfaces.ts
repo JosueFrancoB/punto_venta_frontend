@@ -73,6 +73,16 @@ export interface ProveedoresBody{
     _id?: string;
     nombre_contacto?: string;
     nombre_empresa?: string;
+    telefonos?: Array<string|undefined>;
+    correos?: Array<string|undefined>;
+    rfc?: string;
+    img?: string;
+    direcciones?: Array<string|undefined>;
+}
+export interface NewProveedoresBody{
+    _id?: string;
+    nombre_contacto?: string;
+    nombre_empresa?: string;
     telefono?: string;
     correo?: string;
     rfc?: string;

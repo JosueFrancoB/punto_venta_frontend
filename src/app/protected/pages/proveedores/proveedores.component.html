@@ -27,12 +27,11 @@
                 <img class="component-icon" src="assets/images/components/layout.svg" alt="{{proveedor.nombre_empresa}}">
                 <label class="component-name">{{proveedor.nombre_empresa}}</label>
               </nb-card-body>
-              
               <nb-card-footer>
                 <nb-actions class="full-width size-small">
-                  <nb-action icon="phone-outline" nbTooltip="Teléfonos" (click)="flip_card(i); content_back_card('telefonos');"></nb-action>
-                  <nb-action icon="email-outline" nbTooltip="Correos" (click)="flip_card(i); content_back_card('correos');"></nb-action>
-                  <nb-action icon="pin-outline" nbTooltip="Direcciones"(click)="flip_card(i); content_back_card('direcciones');"></nb-action>
+                  <nb-action style="padding: 2px;" icon="phone-outline" nbTooltip="Teléfonos" (click)="flip_card(i); content_back_card('telefonos');"></nb-action>
+                  <nb-action style="padding: 2px;" icon="email-outline" nbTooltip="Correos" (click)="flip_card(i); content_back_card('correos');"></nb-action>
+                  <nb-action style="padding: 2px;" icon="pin-outline" nbTooltip="Direcciones"(click)="flip_card(i); content_back_card('direcciones');"></nb-action>
                 </nb-actions>
               </nb-card-footer>
             </nb-card>
@@ -79,7 +78,7 @@
 
 
 
-<!--? Modal  -->
+<!--? Modal Actualizar  -->
 
 <ng-template #provider let-data let-ref="dialogRef">
   <nb-card [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
@@ -87,52 +86,142 @@
       <h6>Proveedor</h6>
       <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
   </nb-card-header>
-  <nb-card-body>
-  <div class="container">
-    <div>
-    <div class="row">
-      <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Nombre de Contacto</span>
-              <input placeholder="Contacto" type="text" id="input-contacto" class="form-control input-sm" style="background: #fff;" name="contacto" [(ngModel)]="new_proveedor.nombre_contacto">
-      </div>
-      <div class="col-sm-6" style="margin-top: 5px">
-        <span style="font-size:14px;">Nombre de Empresa:</span>
-              <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm" style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="new_proveedor.nombre_empresa">
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="col-sm-6" style="margin-top: 5px;">
-          <span class="input-group-addon" style="font-size:14px;">Correo:</span>
-          <input placeholder="Correo" type="text" id="input-correo" class="form-control input-sm" name="correo" ngDefaultControl [(ngModel)]="new_proveedor.correo" style="background: #fff;">
-      </div>
-      <div class="col-sm-6" style="margin-top: 5px">
-          <span class="input-group-addon" style="font-size:14px;">Dirección:</span>
-          <input type="text" id="input-direccion" placeholder="Dirección" class="form-control input-sm" name="direccion" ngDefaultControl [(ngModel)]="new_proveedor.direccion" style="background: #fff;">
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-sm-6" style="margin-top: 5px;">
-          <span class="input-group-addon" style="font-size:14px;">Número de Teléfono:</span>
-          <input placeholder="Teléfono" type="text" id="input-telefono" class="form-control input-sm" name="telefono" ngDefaultControl [(ngModel)]="new_proveedor.telefono" style="background: #fff;">
+  <!-- ? Modal Body de Agregar -->
+  <nb-card-body *ngIf="!modalEdit">
+    <div class="container">
+      <div>
+      <div class="row">
+        <div class="col-sm-6" style="margin-top: 5px">
+                <span style="font-size:14px;">Nombre de Contacto</span>
+                <input placeholder="Contacto" type="text" id="input-contacto" class="form-control input-sm" style="background: #fff;" name="contacto" [(ngModel)]="new_proveedor.nombre_contacto">
+        </div>
+        <div class="col-sm-6" style="margin-top: 5px">
+          <span style="font-size:14px;">Nombre de Empresa:</span>
+                <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm" style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="new_proveedor.nombre_empresa">
+        </div>
       </div>
-      <div class="col-sm-6" style="margin-top: 5px">
-          <span class="input-group-addon" style="font-size:14px;">RFC:</span>
-          <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="new_proveedor.rfc" style="background: #fff;">
+      
+      <div class="row">
+        <div class="col-sm-6" style="margin-top: 5px;">
+            <span class="input-group-addon" style="font-size:14px;">Correo:</span>
+            <input placeholder="Correo" type="text" id="input-correo" class="form-control input-sm" name="correo" ngDefaultControl [(ngModel)]="new_proveedor.correo" style="background: #fff;">
+        </div>
+        <div class="col-sm-6" style="margin-top: 5px">
+            <span class="input-group-addon" style="font-size:14px;">Dirección:</span>
+            <input type="text" id="input-direccion" placeholder="Dirección" class="form-control input-sm" name="direccion" ngDefaultControl [(ngModel)]="new_proveedor.direccion" style="background: #fff;">
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-sm-6" style="margin-top: 5px;">
+            <span class="input-group-addon" style="font-size:14px;">Número de Teléfono:</span>
+            <input placeholder="Teléfono" type="text" id="input-telefono" class="form-control input-sm" name="telefono" ngDefaultControl [(ngModel)]="new_proveedor.telefono" style="background: #fff;">
+        </div>
+        <div class="col-sm-6" style="margin-top: 5px">
+            <span class="input-group-addon" style="font-size:14px;">RFC:</span>
+            <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="new_proveedor.rfc" style="background: #fff;">
+        </div>
+      </div>
       </div>
     </div>
-
-
-    </div>
-  </div>
   </nb-card-body>
+
+  <!-- ? Modal Body de Editar -->
+  <nb-card-body *ngIf="modalEdit">
+        <nb-tabset>
+          <nb-tab tabTitle="General">
+            <div class="row">
+              <div class="col-sm-6" style="margin-top: 5px">
+                      <span style="font-size:14px;">Nombre de Contacto</span>
+                      <input placeholder="Contacto" type="text" id="input-contacto" class="form-control input-sm" style="background: #fff;" name="contacto" [(ngModel)]="active_proveedor.nombre_contacto">
+              </div>
+              <div class="col-sm-6" style="margin-top: 5px">
+                <span style="font-size:14px;">Nombre de Empresa:</span>
+                      <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm" style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="active_proveedor.nombre_empresa">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6" style="margin-top: 5px">
+                <span class="input-group-addon" style="font-size:14px;">RFC:</span>
+                <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="active_proveedor.rfc" style="background: #fff;">
+              </div>
+            </div>
+          </nb-tab>
+
+          <nb-tab tabTitle="Correos">
+            <div class="row">
+              <div class="col-sm-12" style="margin-top: 5px;">
+                  <div style="display: flex;">
+                    <input placeholder="Nuevo Correo" type="text" id="input-correo" class="form-control input-sm" name="correo" ngDefaultControl [(ngModel)]="new_proveedor.correo" style="background: #fff;">
+                    <button class="btn btn-primary btn-sm" (click)="addListElement('correo', new_proveedor.correo);" style="border: none;"><i class="fas fa-plus"></i></button>
+                  </div>
+
+                  <nb-card size="small" style="max-height: 150px; margin: 0px;">
+                    <nb-list>
+                      <nb-list-item *ngFor="let correo of active_proveedor.correos" style="justify-content: space-between; padding: 5px 10px;" (click)="clickio($event)">
+                            <label *ngIf="!editList" class="component-name">{{correo}}</label>
+                            <input nbInput *ngIf="editList" type="text" [(ngModel)]="edit_proveedor.correo">
+                            <div>
+                              <button class="btn btn-secondary btn-sm" *ngIf="!editList" (click)="edit_proveedor.correo = correo; editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
+                              </button>
+                              <button class="btn btn-danger btn-sm" *ngIf="!editList" (click)="delListElement('correo', correo)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
+                              <button class="btn btn-success btn-sm" *ngIf="editList" (click)="editListElement('correo', correo, edit_proveedor.correo)" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
+                              <button class="btn btn-danger btn-sm" *ngIf="editList" (click)="cancelEdit()" nbTooltip="Cancelar"><i class="fas fa-times"></i></button>
+                            </div>
+                      </nb-list-item>
+                    </nb-list>
+                  </nb-card>
+              </div>
+            </div>
+          </nb-tab>
+
+          <nb-tab tabTitle="Direcciones">
+            <div class="row">
+              <div class="col-sm-12" style="margin-top: 5px;">
+                  <div style="display: flex;">
+                    <input placeholder="Nueva Dirección" type="text" id="input-direccion" class="form-control input-sm" name="direccion" ngDefaultControl [(ngModel)]="new_proveedor.direccion" style="background: #fff;">
+                    <button class="btn btn-primary btn-sm" (click)="addListElement('direccion', new_proveedor.direccion);" style="border: none;"><i class="fas fa-plus"></i></button>
+                  </div>
+
+                  <nb-card size="small" style="max-height: 150px;">
+                    <nb-list>
+                      <nb-list-item *ngFor="let direccion of active_proveedor.direcciones" style="justify-content: space-between; padding: 5px 10px;">
+                          <label class="component-name">{{direccion}}</label>
+                      </nb-list-item>
+                    </nb-list>
+                  </nb-card>
+              </div>
+            </div>
+          </nb-tab>
+
+          <nb-tab tabTitle="Teléfonos">
+            <div class="row">
+              <div class="col-sm-12" style="margin-top: 5px;">
+                  <div style="display: flex;">
+                    <input placeholder="Nuevo Teléfono" type="text" id="input-telefono" class="form-control input-sm" name="telefono" ngDefaultControl [(ngModel)]="new_proveedor.telefono" style="background: #fff;">
+                    <button (click)="addListElement('telefono', new_proveedor.telefono);" class="btn btn-primary btn-sm" style="border: none;" ><i class="fas fa-plus"></i></button>
+                  </div>
+
+                  <nb-card size="small" style="max-height: 150px;">
+                    <nb-list>
+                      <nb-list-item style="justify-content: space-between; padding: 5px 10px;" *ngFor="let telefono of active_proveedor.telefonos">
+                          <label class="component-name">{{telefono}}</label>
+                      </nb-list-item>
+                    </nb-list>
+                  </nb-card>
+              </div>
+            </div>
+          </nb-tab>
+        </nb-tabset>
+  </nb-card-body>
+
   <nb-card-footer style="display: flex; justify-content: space-between;">
     <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
     <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_proveedor.nombre_contacto != '' && new_proveedor.nombre_empresa != '' && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addProvider(ref);">
         Agregar Proveedor
     </button>
-    <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateProvider(new_proveedor, ref);">
+    <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateProvider(active_proveedor, ref);">
         Actualizar Proveedor
     </button>
     </nb-card-footer>
