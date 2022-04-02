@@ -94,7 +94,7 @@
         overflow: auto;
         position: relative;
         height: 200px;
-        padding: 2rem;
+        padding: 1rem;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -165,9 +165,66 @@
     .upload {
         width: 300px;
         margin: 30px auto;
-      }
-      :host nb-layout-header ::ng-deep nav {
+    }
+    :host nb-layout-header ::ng-deep nav {
         justify-content: space-between;
-      }
+    }
     
-      
+
+
+    @mixin white-gradient {
+        background: linear-gradient(to right,  rgb(255, 255, 255) 0%,rgba(255,255,255,0) 100%);
+    }
+    
+    $animationSpeed: 40s;
+    
+    // Animation
+    @keyframes scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-15.625rem * 7));}
+    }
+    
+    
+    // Styling
+    .slider {
+        background: #ededed;
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .125);
+        // height: 3.125rem;
+        // margin: 0.625rem auto;
+        overflow:hidden;
+        position: relative;
+        // width: 15.625rem;
+        
+        &::before,
+        &::after {
+            @include white-gradient;
+            content: "";
+            height: 3.125rem;
+            position: absolute;
+            width: 15.625rem;
+            z-index: 2;
+        }
+        
+        &::after {
+            right: 0;
+            top: 0;
+            transform: rotateZ(180deg);
+        }
+    
+        &::before {
+            left: 0;
+            top: 0;
+        }
+        
+        .slide-track {
+            animation: scroll $animationSpeed linear infinite;
+            display: flex;
+            // width: calc(18.75rem * 2);   
+            -webkit-animation: scroll $animationSpeed linear infinite;
+    }
+        
+        .slide {
+            height: 3.125rem;
+            width: 15.625rem;
+        }
+    }

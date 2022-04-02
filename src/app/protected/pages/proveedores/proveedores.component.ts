@@ -31,7 +31,7 @@ export class ProveedoresComponent implements OnInit {
   changeImg = true
   searchText = ''
   new_proveedor:NewProveedoresBody = {}
-  edit_proveedor:NewProveedoresBody = {}
+  edit_proveedor:ProveedoresBody = {}
   active_proveedor:ProveedoresBody = {}
   changesEdit = true
 
@@ -65,10 +65,17 @@ export class ProveedoresComponent implements OnInit {
                     toast.addEventListener('mouseleave', Swal.resumeTimer);
                   }
                 })
+                this.edit_proveedor.correos = []
+                this.edit_proveedor.telefonos = []
+                this.edit_proveedor.direcciones = []
               }
 
   ngOnInit() {
     this.getProviders()
+  }
+
+  pri(old_idx:number){
+    console.log(this.edit_proveedor.correos![old_idx]);
   }
 
   getProviders(){
@@ -80,6 +87,8 @@ export class ProveedoresComponent implements OnInit {
       this.viewLoading = false
     })
     }
+  
+
 
   addProvider(ref: any){
     console.log(this.new_proveedor);
@@ -217,29 +226,20 @@ export class ProveedoresComponent implements OnInit {
       }
   }
 
-  clickio(data:any){
-    console.log(data);
-  }
   
-  editListElement(list:string, old_value:string|undefined, new_value:string|undefined){
+  editListElement(list:string, idx_old_value:number, new_value:string|undefined){
     
     switch (list) {
       case 'telefono':
-        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.filter(function(item) {
-          return item !== old_value
-        })
+        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.splice(idx_old_value,1)
         this.active_proveedor.telefonos?.push(new_value)
         break;
       case 'correo':
-        this.active_proveedor.correos = this.active_proveedor.correos?.filter(function(item) {
-          return item !== old_value
-        })
+        this.active_proveedor.correos = this.active_proveedor.correos?.splice(idx_old_value,1)
         this.active_proveedor.correos?.push(new_value)
         break;
       case 'direccion':
-        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.filter(function(item) {
-          return item !== old_value
-        })
+        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.splice(idx_old_value,1)
         this.active_proveedor.direcciones?.push(new_value)
         break;
       default:
@@ -251,27 +251,24 @@ export class ProveedoresComponent implements OnInit {
   cancelEdit(){
     this.list_edited = false;
     this.editList = false
+    this.edit_proveedor.correos = []
+    this.edit_proveedor.telefonos = []
+    this.edit_proveedor.direcciones = []
   }
 
-  delListElement(list:string, value:string|undefined){
+  delListElement(list:string, idx_value:number){
     switch (list) {
       case 'telefono':
         this.new_proveedor.telefono = ''
-        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.filter(function(item) {
-          return item !== value
-        })
+        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.splice(idx_value,1)
         break;
       case 'correo':
         this.new_proveedor.correo = ''
-        this.active_proveedor.correos = this.active_proveedor.correos?.filter(function(item) {
-          return item !== value
-        })
+        this.active_proveedor.correos = this.active_proveedor.correos?.splice(idx_value,1)
         break;
       case 'direccion':
         this.new_proveedor.direccion = ''
-        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.filter(function(item) {
-          return item !== value
-        })
+        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.splice(idx_value,1)
         break;
       default:
         break;

@@ -14,6 +14,7 @@
 </nb-layout-header>
 <hr>
 
+<!-- Card -->
 <div class="components-list" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
     <div class="component-card-wrapper ng-star-inserted" *ngFor="let proveedor of proveedores |filter:searchText; let i = index">
       <nb-flip-card [showToggleButton]="false" [ngClass]="isFlipped && i == selectedItem  ? 'flipped' : ''">
@@ -24,7 +25,6 @@
                 <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProvider(proveedor._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
               </div>
               <nb-card-body class="card-body-product">
-                <img class="component-icon" src="assets/images/components/layout.svg" alt="{{proveedor.nombre_empresa}}">
                 <label class="component-name">{{proveedor.nombre_empresa}}</label>
               </nb-card-body>
               <nb-card-footer>
@@ -47,7 +47,23 @@
                   <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
                 </nb-actions>
               </nb-card-header>
-              <nb-card-body >
+              <nb-card-body class="slider" style="padding: 0px;"  >
+                  <div class="slide-track">
+                      <div class="slide" style="margin: auto;" *ngFor="let telefono of proveedor.telefonos">
+                        <h5>{{telefono}} | </h5>
+                      </div>
+                      <!-- <div *ngFor="let correo of proveedor.correos" style="justify-content: center; margin: auto;">
+                        <h3 >{{correo}} | </h3>
+                      </div>
+                      <div *ngFor="let direccion of proveedor.direcciones" style="justify-content: center; margin: auto;">
+                        <h3 >{{direccion}} | </h3>
+                      </div> -->
+                  </div>
+              </nb-card-body>
+              <!-- <nb-card-body >
+                <nb-actions class="left size-small">
+                  <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
+                </nb-actions>
                 <nb-card size="small" style="max-height: 130px;" *ngIf="info_selected == 'telefonos'">
                   <nb-list *ngFor="let telefono of proveedor.telefonos">
                     <nb-list-item>
@@ -69,7 +85,7 @@
                     </nb-list-item>
                   </nb-list>
                 </nb-card>
-              </nb-card-body>
+              </nb-card-body> -->
           </nb-card>
         </nb-card-back>
       </nb-flip-card>
@@ -159,14 +175,14 @@
 
                   <nb-card size="small" style="max-height: 150px; margin: 0px;">
                     <nb-list>
-                      <nb-list-item *ngFor="let correo of active_proveedor.correos" style="justify-content: space-between; padding: 5px 10px;" (click)="clickio($event)">
+                      <nb-list-item *ngFor="let correo of active_proveedor.correos; let old_idx = index" style="justify-content: space-between; padding: 5px 10px;">
                             <label *ngIf="!editList" class="component-name">{{correo}}</label>
-                            <input nbInput *ngIf="editList" type="text" [(ngModel)]="edit_proveedor.correo">
+                            <input nbInput *ngIf="editList" type="text" [(ngModel)]="edit_proveedor.correos![old_idx]">
                             <div>
-                              <button class="btn btn-secondary btn-sm" *ngIf="!editList" (click)="edit_proveedor.correo = correo; editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
+                              <button class="btn btn-secondary btn-sm" *ngIf="!editList" (click)="edit_proveedor.correos![old_idx] = correo; pri(old_idx); editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
                               </button>
-                              <button class="btn btn-danger btn-sm" *ngIf="!editList" (click)="delListElement('correo', correo)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
-                              <button class="btn btn-success btn-sm" *ngIf="editList" (click)="editListElement('correo', correo, edit_proveedor.correo)" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
+                              <button class="btn btn-danger btn-sm" *ngIf="!editList" (click)="delListElement('correo', old_idx)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
+                              <button class="btn btn-success btn-sm" *ngIf="editList" (click)="editListElement('correo', old_idx, edit_proveedor.correos![old_idx])" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
                               <button class="btn btn-danger btn-sm" *ngIf="editList" (click)="cancelEdit()" nbTooltip="Cancelar"><i class="fas fa-times"></i></button>
                             </div>
                       </nb-list-item>
@@ -186,7 +202,7 @@
 
                   <nb-card size="small" style="max-height: 150px;">
                     <nb-list>
-                      <nb-list-item *ngFor="let direccion of active_proveedor.direcciones" style="justify-content: space-between; padding: 5px 10px;">
+                      <nb-list-item *ngFor="let direccion of active_proveedor.direcciones; let old_idx = index" style="justify-content: space-between; padding: 5px 10px;">
                           <label class="component-name">{{direccion}}</label>
                       </nb-list-item>
                     </nb-list>
@@ -205,7 +221,7 @@
 
                   <nb-card size="small" style="max-height: 150px;">
                     <nb-list>
-                      <nb-list-item style="justify-content: space-between; padding: 5px 10px;" *ngFor="let telefono of active_proveedor.telefonos">
+                      <nb-list-item style="justify-content: space-between; padding: 5px 10px;" *ngFor="let telefono of active_proveedor.telefonos; let old_idx = index">
                           <label class="component-name">{{telefono}}</label>
                       </nb-list-item>
                     </nb-list>
