@@ -201,14 +201,21 @@ export class ProveedoresComponent implements OnInit {
   }
   
   addListElement(list: string,value: string|undefined){
+    let regex = ''
     switch (list) {
       case 'telefono':
+        regex = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
         this.new_proveedor.telefono = ''
-        if (value?.trim() !== '' && value !== undefined)
-          this.active_proveedor.telefonos?.push(value)
+        if (value?.trim() !== '' && value !== undefined){
+          let valid = this.validaCampos(regex, value)
+          if (valid)
+            this.active_proveedor.telefonos?.push(value)
+          else
+            Swal.fire('Error', 'Teléfono no válido', 'error')
+        }
         break;
       case 'correo':
-        let regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
+        regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
         this.new_proveedor.correo = ''
         if (value?.trim() !== '' && value !== undefined){
           let valid = this.validaCampos(regex, value)
@@ -230,16 +237,33 @@ export class ProveedoresComponent implements OnInit {
 
   
   editListElement(list:string, idx_old_value:number, new_value:string|undefined){
-    
+    let regex = ''
     switch (list) {
       case 'telefono':
-        this.active_proveedor.telefonos![idx_old_value] = new_value
+        regex = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
+        if (new_value?.trim() !== '' && new_value !== undefined){
+          let valid = this.validaCampos(regex, new_value)
+          if (valid)
+            this.active_proveedor.telefonos![idx_old_value] = new_value
+          else
+            Swal.fire('Error', 'Teléfono no válido', 'error')
+        }
         break;
       case 'correo':
-        this.active_proveedor.correos![idx_old_value] = new_value
+        regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
+        if (new_value?.trim() !== '' && new_value !== undefined){
+          let valid = this.validaCampos(regex, new_value)
+          if (valid)
+            this.active_proveedor.correos![idx_old_value] = new_value
+          else
+            Swal.fire('Error', 'Correo no válido', 'error')
+        }
         break;
       case 'direccion':
-        this.active_proveedor.direcciones![idx_old_value] = new_value
+        if (new_value?.trim() !== '' && new_value !== undefined)
+          this.active_proveedor.direcciones![idx_old_value] = new_value
+        else
+          Swal.fire('Error', 'Direccion inválida', 'error')
         break;
       default:
         break;
@@ -275,6 +299,7 @@ export class ProveedoresComponent implements OnInit {
         break;
       }
   }
+
 
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
@@ -319,9 +344,9 @@ export class ProveedoresComponent implements OnInit {
 
   
 
-  validaCampos(expresion:string, campo:string){
+  validaCampos(expresion:string, campo:string|undefined){
       let exp = new RegExp(expresion)
-      if(!exp.test(campo)){
+      if(typeof campo == 'string' && !exp.test(campo)){
           return false;
       }else{
           return true

@@ -31,7 +31,7 @@
                 <nb-actions class="full-width size-small">
                   <nb-action style="padding: 2px;" icon="phone-outline" nbTooltip="Teléfonos" (click)="flip_card(i); content_back_card('telefonos');"></nb-action>
                   <nb-action style="padding: 2px;" icon="email-outline" nbTooltip="Correos" (click)="flip_card(i); content_back_card('correos');"></nb-action>
-                  <nb-action style="padding: 2px;" icon="pin-outline" nbTooltip="Direcciones"(click)="flip_card(i); content_back_card('direcciones');"></nb-action>
+                  <nb-action style="padding: 2px;" icon="pin-outline" nbTooltip="telefonoes"(click)="flip_card(i); content_back_card('direcciones');"></nb-action>
                 </nb-actions>
               </nb-card-footer>
             </nb-card>
@@ -39,7 +39,7 @@
           <nb-card-back>
             <nb-card title="{{proveedor.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
               <div style="position: absolute; right: 0;" *ngIf="isDisplay(proveedor.nombre_empresa)">
-                <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getProvider(proveedor._id); openDialog(proveedor, false); changeImg = false; providerValue = ''"></nb-icon></button>
+                <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getProvider(proveedor._id); openDialog(provider, false); changeImg = false; providerValue = ''"></nb-icon></button>
                 <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProvider(proveedor._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
               </div>
               <nb-card-header>
@@ -114,7 +114,7 @@
         </div>
         <div class="col-sm-6" style="margin-top: 5px">
           <span style="font-size:14px;">Nombre de Empresa:</span>
-                <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm" style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="new_proveedor.nombre_empresa">
+                <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm" style="background: #fff;" name="empresa" [(ngModel)]="new_proveedor.nombre_empresa">
         </div>
       </div>
       
@@ -169,7 +169,7 @@
             <div class="row">
               <div class="col-sm-12" style="margin-top: 5px;">
                   <div style="display: flex;">
-                    <input placeholder="Nuevo Correo" type="text" id="input-correo" class="form-control input-sm" name="correo" ngDefaultControl [(ngModel)]="new_proveedor.correo" style="background: #fff;">
+                    <input placeholder="Nuevo Correo" type="text" id="input-correo" class="form-control input-sm" name="correo" [(ngModel)]="new_proveedor.correo" style="background: #fff;">
                     <button class="btn btn-primary btn-sm" (click)="addListElement('correo', new_proveedor.correo);" style="border: none;"><i class="fas fa-plus"></i></button>
                   </div>
 
@@ -179,7 +179,7 @@
                             <label *ngIf="!editList || edit_proveedor.correos![old_idx] == undefined" class="component-name">{{correo}}</label>
                             <input nbInput *ngIf="editList && edit_proveedor.correos![old_idx] != undefined" type="text" [(ngModel)]="edit_proveedor.correos![old_idx]">
                             <div>
-                              <button class="btn btn-secondary btn-sm" *ngIf="!editList || edit_proveedor.correos![old_idx] == undefined" (click)="edit_proveedor.correos![old_idx] = correo; pri(old_idx); editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
+                              <button class="btn btn-secondary btn-sm" *ngIf="!editList || edit_proveedor.correos![old_idx] == undefined" (click)="edit_proveedor.correos![old_idx] = correo; editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
                               </button>
                               <button class="btn btn-danger btn-sm" *ngIf="!editList || edit_proveedor.correos![old_idx] == undefined" (click)="delListElement('correo', old_idx)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
                               <button class="btn btn-success btn-sm" *ngIf="editList && edit_proveedor.correos![old_idx] != undefined" (click)="editListElement('correo', old_idx, edit_proveedor.correos![old_idx])" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
@@ -200,10 +200,18 @@
                     <button class="btn btn-primary btn-sm" (click)="addListElement('direccion', new_proveedor.direccion);" style="border: none;"><i class="fas fa-plus"></i></button>
                   </div>
 
-                  <nb-card size="small" style="max-height: 150px;">
+                  <nb-card size="small" style="max-height: 150px; margin: 0px;">
                     <nb-list>
                       <nb-list-item *ngFor="let direccion of active_proveedor.direcciones; let old_idx = index" style="justify-content: space-between; padding: 5px 10px;">
-                          <label class="component-name">{{direccion}}</label>
+                            <label *ngIf="!editList || edit_proveedor.direcciones![old_idx] == undefined" class="component-name">{{direccion}}</label>
+                            <input nbInput *ngIf="editList && edit_proveedor.direcciones![old_idx] != undefined" type="text" [(ngModel)]="edit_proveedor.direcciones![old_idx]">
+                            <div>
+                              <button class="btn btn-secondary btn-sm" *ngIf="!editList || edit_proveedor.direcciones![old_idx] == undefined" (click)="edit_proveedor.direcciones![old_idx] = direccion; editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
+                              </button>
+                              <button class="btn btn-danger btn-sm" *ngIf="!editList || edit_proveedor.direcciones![old_idx] == undefined" (click)="delListElement('direccion', old_idx)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
+                              <button class="btn btn-success btn-sm" *ngIf="editList && edit_proveedor.direcciones![old_idx] != undefined" (click)="editListElement('direccion', old_idx, edit_proveedor.direcciones![old_idx])" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
+                              <button class="btn btn-danger btn-sm" *ngIf="editList && edit_proveedor.direcciones![old_idx] != undefined" (click)="cancelEdit()" nbTooltip="Cancelar"><i class="fas fa-times"></i></button>
+                            </div>
                       </nb-list-item>
                     </nb-list>
                   </nb-card>
@@ -219,10 +227,18 @@
                     <button (click)="addListElement('telefono', new_proveedor.telefono);" class="btn btn-primary btn-sm" style="border: none;" ><i class="fas fa-plus"></i></button>
                   </div>
 
-                  <nb-card size="small" style="max-height: 150px;">
+                  <nb-card size="small" style="max-height: 150px; margin: 0px;">
                     <nb-list>
-                      <nb-list-item style="justify-content: space-between; padding: 5px 10px;" *ngFor="let telefono of active_proveedor.telefonos; let old_idx = index">
-                          <label class="component-name">{{telefono}}</label>
+                      <nb-list-item *ngFor="let telefono of active_proveedor.telefonos; let old_idx = index" style="justify-content: space-between; padding: 5px 10px;">
+                            <label *ngIf="!editList || edit_proveedor.telefonos![old_idx] == undefined" class="component-name">{{telefono}}</label>
+                            <input nbInput *ngIf="editList && edit_proveedor.telefonos![old_idx] != undefined" type="text" [(ngModel)]="edit_proveedor.telefonos![old_idx]">
+                            <div>
+                              <button class="btn btn-secondary btn-sm" *ngIf="!editList || edit_proveedor.telefonos![old_idx] == undefined" (click)="edit_proveedor.telefonos![old_idx] = telefono; editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
+                              </button>
+                              <button class="btn btn-danger btn-sm" *ngIf="!editList || edit_proveedor.telefonos![old_idx] == undefined" (click)="delListElement('telefono', old_idx)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
+                              <button class="btn btn-success btn-sm" *ngIf="editList && edit_proveedor.telefonos![old_idx] != undefined" (click)="editListElement('telefono', old_idx, edit_proveedor.telefonos![old_idx])" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
+                              <button class="btn btn-danger btn-sm" *ngIf="editList && edit_proveedor.telefonos![old_idx] != undefined" (click)="cancelEdit()" nbTooltip="Cancelar"><i class="fas fa-times"></i></button>
+                            </div>
                       </nb-list-item>
                     </nb-list>
                   </nb-card>
