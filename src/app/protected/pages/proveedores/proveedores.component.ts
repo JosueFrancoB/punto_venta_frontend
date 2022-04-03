@@ -125,12 +125,8 @@ export class ProveedoresComponent implements OnInit {
 
     this.proveedoresService.updateProveedor(id, provider).subscribe(resp =>{
       if(resp.ok === true){
-        if (this.changeImg === true){
-        this.cargarProviderImg(id)
-        }
         let nombre_empresa = resp.proveedor.nombre_empresa
         let _id = resp.proveedor._id
-        let img = resp.proveedor.img
         let index = 0
         this.proveedores.forEach(function(prov, i){
           if(prov._id === id){
@@ -138,7 +134,7 @@ export class ProveedoresComponent implements OnInit {
           }
         })
         this.proveedores = this.proveedores.filter(item => item._id !== id)
-        this.proveedores.splice(index, 0, {_id, nombre_empresa,img});
+        this.proveedores.splice(index, 0, {_id, nombre_empresa});
         ref.close()
         this.getProviders()
         this.toastMixin.fire({
@@ -212,9 +208,15 @@ export class ProveedoresComponent implements OnInit {
           this.active_proveedor.telefonos?.push(value)
         break;
       case 'correo':
+        let regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
         this.new_proveedor.correo = ''
-        if (value?.trim() !== '' && value !== undefined)
-          this.active_proveedor.correos?.push(value)
+        if (value?.trim() !== '' && value !== undefined){
+          let valid = this.validaCampos(regex, value)
+          if (valid)
+            this.active_proveedor.correos?.push(value)
+          else
+            Swal.fire('Error', 'Correo no válido', 'error')
+        }
         break;
       case 'direccion':
         this.new_proveedor.direccion = ''
@@ -231,16 +233,13 @@ export class ProveedoresComponent implements OnInit {
     
     switch (list) {
       case 'telefono':
-        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.splice(idx_old_value,1)
-        this.active_proveedor.telefonos?.push(new_value)
+        this.active_proveedor.telefonos![idx_old_value] = new_value
         break;
       case 'correo':
-        this.active_proveedor.correos = this.active_proveedor.correos?.splice(idx_old_value,1)
-        this.active_proveedor.correos?.push(new_value)
+        this.active_proveedor.correos![idx_old_value] = new_value
         break;
       case 'direccion':
-        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.splice(idx_old_value,1)
-        this.active_proveedor.direcciones?.push(new_value)
+        this.active_proveedor.direcciones![idx_old_value] = new_value
         break;
       default:
         break;
@@ -260,15 +259,17 @@ export class ProveedoresComponent implements OnInit {
     switch (list) {
       case 'telefono':
         this.new_proveedor.telefono = ''
-        this.active_proveedor.telefonos = this.active_proveedor.telefonos?.splice(idx_value,1)
+        //?Splice retorna el eliminado por eso no lo guardo en una constante, solo quiero que lo elimine
+        this.active_proveedor.telefonos?.splice(idx_value,1)
         break;
       case 'correo':
         this.new_proveedor.correo = ''
-        this.active_proveedor.correos = this.active_proveedor.correos?.splice(idx_value,1)
+        this.active_proveedor.correos?.splice(idx_value,1)
+        console.log(this.active_proveedor.correos);
         break;
       case 'direccion':
         this.new_proveedor.direccion = ''
-        this.active_proveedor.direcciones = this.active_proveedor.direcciones?.splice(idx_value,1)
+        this.active_proveedor.direcciones?.splice(idx_value,1)
         break;
       default:
         break;
@@ -315,5 +316,16 @@ export class ProveedoresComponent implements OnInit {
   isDisplay(provider: string): boolean{
     return this.cardMouseOver.includes(provider) ? true : false
   }
+
+  
+
+  validaCampos(expresion:string, campo:string){
+      let exp = new RegExp(expresion)
+      if(!exp.test(campo)){
+          return false;
+      }else{
+          return true
+      }
+    }
 
 }

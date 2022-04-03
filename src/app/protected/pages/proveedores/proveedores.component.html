@@ -176,14 +176,14 @@
                   <nb-card size="small" style="max-height: 150px; margin: 0px;">
                     <nb-list>
                       <nb-list-item *ngFor="let correo of active_proveedor.correos; let old_idx = index" style="justify-content: space-between; padding: 5px 10px;">
-                            <label *ngIf="!editList" class="component-name">{{correo}}</label>
-                            <input nbInput *ngIf="editList" type="text" [(ngModel)]="edit_proveedor.correos![old_idx]">
+                            <label *ngIf="!editList || edit_proveedor.correos![old_idx] == undefined" class="component-name">{{correo}}</label>
+                            <input nbInput *ngIf="editList && edit_proveedor.correos![old_idx] != undefined" type="text" [(ngModel)]="edit_proveedor.correos![old_idx]">
                             <div>
-                              <button class="btn btn-secondary btn-sm" *ngIf="!editList" (click)="edit_proveedor.correos![old_idx] = correo; pri(old_idx); editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
+                              <button class="btn btn-secondary btn-sm" *ngIf="!editList || edit_proveedor.correos![old_idx] == undefined" (click)="edit_proveedor.correos![old_idx] = correo; pri(old_idx); editList = true;" nbTooltip="Editar"><i class="fas fa-pen"></i>
                               </button>
-                              <button class="btn btn-danger btn-sm" *ngIf="!editList" (click)="delListElement('correo', old_idx)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
-                              <button class="btn btn-success btn-sm" *ngIf="editList" (click)="editListElement('correo', old_idx, edit_proveedor.correos![old_idx])" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
-                              <button class="btn btn-danger btn-sm" *ngIf="editList" (click)="cancelEdit()" nbTooltip="Cancelar"><i class="fas fa-times"></i></button>
+                              <button class="btn btn-danger btn-sm" *ngIf="!editList || edit_proveedor.correos![old_idx] == undefined" (click)="delListElement('correo', old_idx)" nbTooltip="Eliminar"><i class="fas fa-trash"></i></button>
+                              <button class="btn btn-success btn-sm" *ngIf="editList && edit_proveedor.correos![old_idx] != undefined" (click)="editListElement('correo', old_idx, edit_proveedor.correos![old_idx])" nbTooltip="Aceptar"><i class="fas fa-check"></i></button>
+                              <button class="btn btn-danger btn-sm" *ngIf="editList && edit_proveedor.correos![old_idx] != undefined" (click)="cancelEdit()" nbTooltip="Cancelar"><i class="fas fa-times"></i></button>
                             </div>
                       </nb-list-item>
                     </nb-list>
