@@ -89,3 +89,14 @@ export interface NewProveedoresBody{
     img?: string;
     direccion?: string;
 }
+
+export interface UnitsBody{
+    _id?: string;
+    nombre?:string;
+    abreviacion?:string;
+}
+
+export interface UnitsData{
+    unidades: Array<UnitsBody>;
+    total: number;
+}

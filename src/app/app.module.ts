@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import {HttpClientModule} from '@angular/common/http'
 import {FormsModule} from '@angular/forms'
 
@@ -9,14 +8,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NbThemeModule, NbLayoutModule, NbWindowModule, NbDialogModule } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {NgxDropzoneModule} from 'ngx-dropzone';
+import { RouterModule } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
+
 
 @NgModule({
   declarations: [
     AppComponent,
   ],
   imports: [
-    BrowserModule,
     FormsModule,
+    BrowserModule,
+    RouterModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     NbThemeModule.forRoot({ name: 'default' }),

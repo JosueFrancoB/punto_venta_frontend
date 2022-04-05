@@ -1,10 +1,8 @@
 import Swal from 'sweetalert2';
 import { ProveedoresService } from '../../services/proveedores.service';
 import { ProveedoresBody, NewProveedoresBody } from '../../interfaces/protected-interfaces';
-import { Component, OnInit, TemplateRef, ViewChild, Input, HostBinding } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UploadsService } from '../../services/uploads.service';
@@ -52,6 +50,7 @@ export class ProveedoresComponent implements OnInit {
   constructor(private proveedoresService: ProveedoresService,
               private uploadsService: UploadsService,
               private dialogService: NbDialogService) { 
+                
                 this.toastMixin = Swal.mixin({
                   toast: true,
                   icon: 'success',
@@ -71,6 +70,13 @@ export class ProveedoresComponent implements OnInit {
               }
 
   ngOnInit() {
+    // let body =  document.body;
+    // let script = this._renderer2.createElement('script');
+    // script.type = 'application/javascript';
+    // script.src = 'https://cdn.jsdelivr.net/npm/swiffy-slider@1.5.2/dist/js/swiffy-slider.min.js';
+    // // this.document.getElementsByTagName('head')[0].appendChild(script);
+    // let elemento = this._document.getElementsByTagName('head');
+    // this._renderer2.appendChild(elemento, script);
     this.getProviders()
   }
 
@@ -342,7 +348,28 @@ export class ProveedoresComponent implements OnInit {
     return this.cardMouseOver.includes(provider) ? true : false
   }
 
+  slideIndex:number = 0
+  aux:number= 0
+  plusSlides(n:number, proveedor:any) {
+    this.showSlides(n, proveedor);
+  }
+
+  showSlides(n:number, proveedor:any){
+  let i;
+  console.log(n);
+  // let slides = document.getElementsByClassName("mySlides");
+  let slides = proveedor.telefonos
+    if (n > slides.length) {this.slideIndex = 1}    
+    if (n < 1) {this.slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+      this.aux = i
+      console.log(this.slideIndex);
+    }
+    // slides[this.slideIndex-1].style.display = "block";  
+  }
+
   
+
 
   validaCampos(expresion:string, campo:string|undefined){
       let exp = new RegExp(expresion)

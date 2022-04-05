@@ -15,6 +15,8 @@ import { ClientesComponent } from './pages/clientes/clientes.component';
 import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
 import {NgxDropzoneModule} from 'ngx-dropzone';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { UnitsComponent } from './pages/units/units.component';
+import { SalesComponent } from './pages/sales/sales.component';
 
 
 
@@ -27,6 +29,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     CategoriasComponent,
     ClientesComponent,
     ProveedoresComponent,
+    UnitsComponent,
+    SalesComponent,
   ],
   imports: [
     CommonModule,

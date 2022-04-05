@@ -51,8 +51,13 @@ export class LayoutComponent implements OnInit {
     },
     {
       title: 'Productos',
-      icon: 'shopping-bag',
+      icon: 'shopping-bag-outline',
       link: '/dashboard/categories'
+    },
+    {
+      title: 'Ventas',
+      icon: 'shopping-cart-outline',
+      link: '/dashboard/sales'
     },
     {
       title: 'Clientes',
@@ -63,6 +68,11 @@ export class LayoutComponent implements OnInit {
       title: 'Proveedores',
       icon: 'car-outline',
       link: '/dashboard/providers'
+    },
+    {
+      title: 'Unidades',
+      icon: 'cube-outline',
+      link: '/dashboard/units'
     }
   ];
 

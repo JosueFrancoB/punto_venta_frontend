@@ -1,3 +1,4 @@
+<!-- Search bar -->
 <h3 class="group-title h4 ng-star-inserted">Proveedores</h3>
 <nb-layout-header subheader>
   <nb-actions>
@@ -47,18 +48,27 @@
                   <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
                 </nb-actions>
               </nb-card-header>
-              <nb-card-body class="slider" style="padding: 0px;"  >
-                  <div class="slide-track">
-                      <div class="slide" style="margin: auto;" *ngFor="let telefono of proveedor.telefonos">
-                        <h5>{{telefono}} | </h5>
-                      </div>
-                      <!-- <div *ngFor="let correo of proveedor.correos" style="justify-content: center; margin: auto;">
-                        <h3 >{{correo}} | </h3>
-                      </div>
-                      <div *ngFor="let direccion of proveedor.direcciones" style="justify-content: center; margin: auto;">
-                        <h3 >{{direccion}} | </h3>
-                      </div> -->
+              <nb-card-body class="slider" style="padding: 0px;">
+                <!-- <div class="wrapper">
+                  <div class="carousel">
+                    <div class="car-card" *ngFor="let telefono of proveedor.telefonos; let idx = index">
+                      <h5 [ngClass]="aux == idx  ? 'd-none' : ''">{{telefono}}</h5>
+                    </div>
+                    <a class="prev" (click)="plusSlides(-1, proveedor)">❮</a>
+                    <a class="next" (click)="plusSlides(0, proveedor)">❯</a>
                   </div>
+                </div> -->
+                <div class="swiffy-slider slider-item-helper slider-item-ratio slider-nav-caretfill slider-nav-dark slider-nav-sm" style="max-height: 2rem !important;">
+                  <ul class="slider-container" style="max-height: 2rem !important; ">
+                      <li style="max-height: 2rem !important;" *ngFor="let telefono of proveedor.telefonos">
+                        <h5>{{telefono}}</h5>
+                      </li>
+                  </ul>
+              
+                  <button type="button" class="slider-nav"></button>
+                  <button type="button" class="slider-nav slider-nav-next"></button>
+              
+                </div>
               </nb-card-body>
               <!-- <nb-card-body >
                 <nb-actions class="left size-small">
