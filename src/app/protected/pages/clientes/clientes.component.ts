@@ -38,6 +38,13 @@ export class ClientesComponent implements OnInit {
 
   uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
 
+  options = [
+    { value: 'telefonos', label: 'Telefonos' },
+    { value: 'correos', label: 'Correos' },
+    { value: 'direcciones', label: 'Direcciones' },
+  ];
+  option:any;
+
   constructor(private clientesService: ClientesService,
               private uploadsService: UploadsService,
               private dialogService: NbDialogService) { 

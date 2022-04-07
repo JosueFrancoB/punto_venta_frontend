@@ -14,7 +14,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 export class UnitsComponent implements OnInit {
 
 
-  units: Array<UnitsBody> = []
+  unidades: Array<UnitsBody> = []
   filteredOptions$!: Observable<string[]>;
   @ViewChild('autoInput') input:any;
   @ViewChild('unit') unit!: TemplateRef<any>;
@@ -60,7 +60,7 @@ export class UnitsComponent implements OnInit {
     this.unitsService.getUnidades().subscribe(res =>{
       console.log(res);
       const {unidades} = res
-      this.units = unidades
+      this.unidades = unidades
       this.viewLoading = false
     })
     }
@@ -92,13 +92,13 @@ export class UnitsComponent implements OnInit {
         let nombre = resp.unidad.nombre
         let _id = resp.unidad._id
         let index = 0
-        this.units.forEach(function(cli, i){
+        this.unidades.forEach(function(cli, i){
           if(cli._id === id){
             index = i
           }
         })
-        this.units = this.units.filter(item => item._id !== id)
-        this.units.splice(index, 0, {_id, nombre});
+        this.unidades = this.unidades.filter(item => item._id !== id)
+        this.unidades.splice(index, 0, {_id, nombre});
         ref.close()
         this.getUnits()
         this.toastMixin.fire({
@@ -136,7 +136,7 @@ export class UnitsComponent implements OnInit {
       if(result.isConfirmed){
         this.unitsService.deleteUnidad(id).subscribe(resp =>{
         if(resp.ok === true){
-          this.units = this.units.filter(item => item._id !== id)
+          this.unidades = this.unidades.filter(item => item._id !== id)
           this.getUnits()
           this.toastMixin.fire({
             title: 'Unidad eliminada'
