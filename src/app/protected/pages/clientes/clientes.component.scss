@@ -1,37 +1,48 @@
-.group-title{
-        -webkit-tap-highlight-color: transparent;
-        -webkit-text-size-adjust: 100%;
-        box-sizing: inherit;
-        font-size: 1.625rem;
-        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-        font-weight: 700;
-        line-height: 0.2rem;
-        flex: 1 1 100%;
-        color: #8994a3;
-        margin: 0.5rem 0 2rem;
-        text-align: center;
-    }
-    
-//     .component-card-wrapper{
-//         -webkit-tap-highlight-color: transparent;
-//         -webkit-text-size-adjust: 100%;
-//         --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-//         --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-//         -webkit-font-smoothing: antialiased;
-//         text-align: left;
-//         color: #222b45;
-//         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-//         font-size: .9375rem;
-//         font-weight: 400;
-//         line-height: 1.25rem;
-//         box-sizing: inherit;
-//         flex: 1 0 auto;
-//         // width: 50%;
-//         padding-left: 1rem;
-//         padding-right: 1rem;
-//     }
-    
-    
+.group-title {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  box-sizing: inherit;
+  font-size: 1.625rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 700;
+  line-height: 0.2rem;
+  flex: 1 1 100%;
+  color: #8994a3;
+  margin: 0.5rem 0 2rem;
+  text-align: center;
+}
+
+.components-list {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  font-size: .9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  box-sizing: inherit;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.component-card-wrapper {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  -webkit-font-smoothing: antialiased;
+  text-align: left;
+  color: #222b45;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: .9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  box-sizing: inherit;
+  flex: 1 0 auto;
+  // width: 50%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
 //     .component-icon{
 //         text-align: left;
 //         font-style: inherit;
@@ -48,7 +59,7 @@
 //         height: 4rem;
 //         width: 64px;
 //     }
-    
+
 //     .component-name{
 //         -webkit-tap-highlight-color: transparent;
 //         -webkit-text-size-adjust: 100%;
@@ -66,7 +77,7 @@
 //         color: #8994a3;
 //         font-weight: 500;
 //     }
-    
+
 //     .card-body-product{
 //         -webkit-tap-highlight-color: transparent;
 //         -webkit-text-size-adjust: 100%;
@@ -88,7 +99,7 @@
 //         align-items: center;
 //         justify-content: center;
 //     }
-    
+
 //     .component-navigate-link{
 //         -webkit-tap-highlight-color: transparent;
 //         -webkit-text-size-adjust: 100%;
@@ -106,7 +117,7 @@
 //         background-color: transparent;
 //         text-decoration: none;
 //     }
-    
+
 //     .card-product:hover{
 //         text-align: left;
 //         font-style: inherit;
@@ -126,7 +137,7 @@
 //         box-shadow: 0 15px 37px #dbe2eb;
 //         transform: translateY(-1rem);
 //     }
-    
+
 //     .card-product{
 //         text-align: left;
 //         font-style: inherit;

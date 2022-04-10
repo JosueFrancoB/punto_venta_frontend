@@ -3,7 +3,7 @@ import { NbDialogService } from '@nebular/theme';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { ClientesBody } from '../../interfaces/protected-interfaces';
+import { ClientesBody, NewClientesBody } from '../../interfaces/protected-interfaces';
 import { ClientesService } from '../../services/clientes.service';
 import { UploadsService } from '../../services/uploads.service';
 
@@ -28,8 +28,16 @@ export class ClientesComponent implements OnInit {
   clientSrc = ''
   changeImg = true
   searchText = ''
-  new_cliente:ClientesBody = {}
+  new_cliente:NewClientesBody = {}
+  edit_cliente:ClientesBody = {}
+  active_cliente:ClientesBody = {}
   changesEdit = true
+
+  correos:Array<string> = []
+  telefonos:Array<string> = []
+  direcciones:Array<string> = []
+  editList = false
+  list_edited = false
 
   viewLoading = false
   modalLoading = false;
@@ -37,13 +45,6 @@ export class ClientesComponent implements OnInit {
   updLoading = false;
 
   uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
-
-  options = [
-    { value: 'telefonos', label: 'Telefonos' },
-    { value: 'correos', label: 'Correos' },
-    { value: 'direcciones', label: 'Direcciones' },
-  ];
-  option:any;
 
   constructor(private clientesService: ClientesService,
               private uploadsService: UploadsService,
@@ -61,6 +62,9 @@ export class ClientesComponent implements OnInit {
                     toast.addEventListener('mouseleave', Swal.resumeTimer);
                   }
                 })
+                this.edit_cliente.correos = []
+                this.edit_cliente.telefonos = []
+                this.edit_cliente.direcciones = []
               }
 
   ngOnInit() {
@@ -112,9 +116,6 @@ export class ClientesComponent implements OnInit {
 
     this.clientesService.updateCliente(id, client).subscribe(resp =>{
       if(resp.ok === true){
-        if (this.changeImg === true){
-        this.cargarClientImg(id)
-        }
         let nombre = resp.cliente.nombre
         let _id = resp.cliente._id
         let img = resp.cliente.img
@@ -141,7 +142,7 @@ export class ClientesComponent implements OnInit {
     this.modalEdit = true;
     this.clientesService.getCliente(id).subscribe(resp => {
       if (resp.ok === true){
-        this.new_cliente = resp.cliente
+        this.active_cliente = resp.cliente
         // this.providerValue = resp.proveedor.nombre_empresa
         // this.providerID = resp.proveedor._id
         this.clientSrc = this.uploadsUrl + '/' + resp.cliente._id
@@ -215,6 +216,130 @@ export class ClientesComponent implements OnInit {
 
   isDisplay(client: string): boolean{
     return this.cardMouseOver.includes(client) ? true : false
+  }
+
+  isRevealed:boolean = false;
+  selectedItem:any;
+  info_selected = ''
+
+  reveal_card(index:number) {
+    this.selectedItem = index
+    this.isRevealed = !this.isRevealed;
+  }
+
+  content_back_card(elementSelected: string){
+    this.info_selected = elementSelected
+    console.log(this.info_selected);
+  }
+
+
+  addListElement(list: string,value: string|undefined){
+    let regex = ''
+    switch (list) {
+      case 'telefono':
+        regex = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
+        this.new_cliente.telefono = ''
+        if (value?.trim() !== '' && value !== undefined){
+          let valid = this.validaCampos(regex, value)
+          if (valid)
+            this.active_cliente.telefonos?.push(value)
+          else
+            Swal.fire('Error', 'Teléfono no válido', 'error')
+        }
+        break;
+      case 'correo':
+        regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
+        this.new_cliente.correo = ''
+        if (value?.trim() !== '' && value !== undefined){
+          let valid = this.validaCampos(regex, value)
+          if (valid)
+            this.active_cliente.correos?.push(value)
+          else
+            Swal.fire('Error', 'Correo no válido', 'error')
+        }
+        break;
+      case 'direccion':
+        this.new_cliente.direccion = ''
+        if (value?.trim() !== '' && value !== undefined)
+          this.active_cliente.direcciones?.push(value)
+        break;
+      default:
+        break;
+      }
+  }
+
+  
+  editListElement(list:string, idx_old_value:number, new_value:string|undefined){
+    let regex = ''
+    switch (list) {
+      case 'telefono':
+        regex = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
+        if (new_value?.trim() !== '' && new_value !== undefined){
+          let valid = this.validaCampos(regex, new_value)
+          if (valid)
+            this.active_cliente.telefonos![idx_old_value] = new_value
+          else
+            Swal.fire('Error', 'Teléfono no válido', 'error')
+        }
+        break;
+      case 'correo':
+        regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
+        if (new_value?.trim() !== '' && new_value !== undefined){
+          let valid = this.validaCampos(regex, new_value)
+          if (valid)
+            this.active_cliente.correos![idx_old_value] = new_value
+          else
+            Swal.fire('Error', 'Correo no válido', 'error')
+        }
+        break;
+      case 'direccion':
+        if (new_value?.trim() !== '' && new_value !== undefined)
+          this.active_cliente.direcciones![idx_old_value] = new_value
+        else
+          Swal.fire('Error', 'Direccion inválida', 'error')
+        break;
+      default:
+        break;
+      }
+    this.editList = false
+  }
+
+  cancelEdit(){
+    this.list_edited = false;
+    this.editList = false
+    this.edit_cliente.correos = []
+    this.edit_cliente.telefonos = []
+    this.edit_cliente.direcciones = []
+  }
+
+  delListElement(list:string, idx_value:number){
+    switch (list) {
+      case 'telefono':
+        this.new_cliente.telefono = ''
+        //?Splice retorna el eliminado por eso no lo guardo en una constante, solo quiero que lo elimine
+        this.active_cliente.telefonos?.splice(idx_value,1)
+        break;
+      case 'correo':
+        this.new_cliente.correo = ''
+        this.active_cliente.correos?.splice(idx_value,1)
+        console.log(this.active_cliente.correos);
+        break;
+      case 'direccion':
+        this.new_cliente.direccion = ''
+        this.active_cliente.direcciones?.splice(idx_value,1)
+        break;
+      default:
+        break;
+      }
+  }
+
+  validaCampos(expresion:string, campo:string|undefined){
+    let exp = new RegExp(expresion)
+    if(typeof campo == 'string' && !exp.test(campo)){
+        return false;
+    }else{
+        return true
+    }
   }
 
 }

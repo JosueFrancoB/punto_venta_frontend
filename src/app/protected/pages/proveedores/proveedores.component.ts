@@ -80,9 +80,6 @@ export class ProveedoresComponent implements OnInit {
     this.getProviders()
   }
 
-  pri(old_idx:number){
-    console.log(this.edit_proveedor.correos![old_idx]);
-  }
 
   getProviders(){
     this.viewLoading = true
@@ -102,7 +99,6 @@ export class ProveedoresComponent implements OnInit {
     .subscribe(resp =>{
       if(resp.ok === true){
         console.log(resp)
-        this.cargarProviderImg(resp.proveedor._id)
         this.getProviders()
         ref.close()
         this.toastMixin.fire({
@@ -112,18 +108,6 @@ export class ProveedoresComponent implements OnInit {
         Swal.fire('Error', resp, 'error')
       }
     })
-  }
-
-  cargarProviderImg(id:string) {
-    if(this.files.length > 0){
-    this.uploadsService.cargarImg(this.files, 'proveedores', id).subscribe(resp =>{
-      if(resp.ok === true){
-        console.log(resp.modelo.img)
-      }else{
-        Swal.fire('Error', resp, 'error')
-      }
-    })
-  }
   }
 
   updateProvider(provider:ProveedoresBody, ref: any){

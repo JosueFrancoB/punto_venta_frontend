@@ -59,11 +59,23 @@ export interface ClientesBody{
     _id?: string;
     nombre?: string;
     nombre_empresa?: string;
+    telefonos?: Array<string|undefined>;
+    correos?: Array<string|undefined>;
+    img?: string;
+    direcciones?: Array<string|undefined>;
+}
+
+export interface NewClientesBody{
+    _id?: string;
+    nombre?: string;
+    nombre_empresa?: string;
     telefono?: string;
     correo?: string;
+    rfc?: string;
     img?: string;
     direccion?: string;
 }
+
 export interface ProveedoresData{
     proveedores: Array<ProveedoresBody>;
     total: number;
