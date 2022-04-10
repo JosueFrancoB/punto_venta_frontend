@@ -1,0 +1,89 @@
+<!--+ Search bar -->
+<h3 class="group-title h4 ng-star-inserted">Unidades de medida</h3>
+<nb-layout-header subheader>
+  <nb-actions>
+    <nb-action icon="plus-outline" nbTooltip="Agregar Unidad"
+      (click)="openDialog(unit, false); modalEdit = false; unitValue = '';"></nb-action>
+  </nb-actions>
+  <nb-form-field style="width: 50%;">
+    <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+    <input #autoInput nbInput type="text" fullWidth fieldSize="medium" [(ngModel)]="searchText" placeholder="Buscar ..."
+      class="search" />
+  </nb-form-field>
+</nb-layout-header>
+<hr>
+<!--+ End Search bar -->
+
+
+<!-- ? Cards -->
+<div class="components-list" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
+  <div class="component-card-wrapper ng-star-inserted" *ngFor="let unidad of unidades |filter:searchText; let i = index">
+    <nb-card title="{{unidad.nombre}}" class="card-product" (mouseenter)="mouseEnter($event)"
+      (mouseleave)="mouseLeave($event)">
+      <div style="position: absolute;" *ngIf="isDisplay(unidad.nombre)">
+        <!-- <button nbbutton="" appearance="outline"
+          class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition"
+          aria-disabled="false" nbTooltip="Editar">
+          <nb-icon icon="edit-outline" pack="eva" class="icon"
+            >
+          </nb-icon>
+        </button> -->
+        <button nbbutton="" appearance="outline" style="right: 0;"
+          class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition"
+          nbTooltip="Eliminar" aria-disabled="false" (click)="deleteUnit(unidad._id)">
+          <nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon>
+        </button>
+      </div>
+      <nb-card-body style="cursor: pointer;" (click)="getUnit(unidad._id); openDialog(unit, true); unitValue = ''" class="card-body-product">
+        <label style="cursor: pointer;" class="component-name">{{unidad.nombre}}</label>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+<!-- ? End Cards -->
+
+
+<!--? Modal -->
+<ng-template #unit let-data let-ref="dialogRef">
+  <nb-card [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
+    <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': 'space-between'}">
+      <h6>Unidad</h6>
+      <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline"
+        style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
+    </nb-card-header>
+    <nb-card-body>
+      <div class="container">
+        <div>
+          <div class="row">
+            <div class="col-sm-6" style="margin-top: 5px">
+              <span style="font-size:14px;">Unidad de medida</span>
+              <input placeholder="Unidad de medida" type="text" id="input-contacto" class="form-control input-sm"
+                style="background: #fff;" name="contacto" [(ngModel)]="new_unit.nombre">
+            </div>
+            <div class="col-sm-6" style="margin-top: 5px">
+              <span style="font-size:14px;">Abreviacion:</span>
+              <input placeholder="Abreviacion" type="text" id="input-empresa" class="form-control input-sm"
+                style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="new_unit.abreviacion">
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+    </nb-card-body>
+    <nb-card-footer style="display: flex; justify-content: space-between;">
+      <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline">Cancelar</button>
+      <button [nbSpinner]="addLoading" nbSpinnerStatus="success"
+        *ngIf="new_unit.nombre != '' && new_unit.abreviacion != '' && !modalEdit" nbButton size="small"
+        appearance="outline" status="success" (click)="addUnit(ref);">
+        Agregar Unidad
+      </button>
+      <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small"
+        appearance="outline" status="info" (click)="updateUnit(new_unit, ref);">
+        Actualizar Unidad
+      </button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>
+<!--? End Modal-->

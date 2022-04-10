@@ -160,7 +160,7 @@ export class CategoriasComponent implements OnInit {
             title: 'Categoria eliminada'
           });
         }else{
-          Swal.fire('Error', resp.msg, 'error')
+          Swal.fire('Error', resp, 'error')
         }
       })
     }

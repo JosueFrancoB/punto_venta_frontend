@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NbActionsModule, NbAlertModule, NbAutocompleteModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbMenuModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbStepperModule, NbTabsetModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
+import { NbActionsModule, NbAlertModule, NbAutocompleteModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbMenuModule, NbRadioModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbStepperModule, NbTabsetModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './pages/users/users.component';
@@ -15,6 +15,8 @@ import { ClientesComponent } from './pages/clientes/clientes.component';
 import { ProveedoresComponent } from './pages/proveedores/proveedores.component';
 import {NgxDropzoneModule} from 'ngx-dropzone';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { UnitsComponent } from './pages/units/units.component';
+import { SalesComponent } from './pages/sales/sales.component';
 
 
 
@@ -27,11 +29,14 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     CategoriasComponent,
     ClientesComponent,
     ProveedoresComponent,
+    UnitsComponent,
+    SalesComponent,
   ],
   imports: [
     CommonModule,
     ProtectedRoutingModule,
     NbCardModule,
+    NbRadioModule,
     NbUserModule,
     NbActionsModule,
     NbLayoutModule,
@@ -59,7 +64,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     FormsModule,
     Ng2SearchPipeModule,
     NbTabsetModule,
-    NbStepperModule
+    NbStepperModule,
+    NbListModule
   ]
 })
 export class ProtectedModule { }

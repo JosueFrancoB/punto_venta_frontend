@@ -1,3 +1,4 @@
+<!--+ Search bar -->
 <h3 class="group-title h4 ng-star-inserted">Categorias</h3>
 <nb-layout-header subheader>
   <nb-actions>
@@ -13,6 +14,9 @@
   </nb-form-field>
 </nb-layout-header>
 <hr>
+<!--+ End Search bar -->
+
+<!--? Card  -->
 <div class="components-list" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
     <div class="component-card-wrapper ng-star-inserted" *ngFor="let categoria of categorias |filter:searchText">
       <a class="component-navigate-link" >
@@ -29,7 +33,9 @@
       </a>
     </div>
 </div>
+<!--? End Card -->
 
+<!--* Modal -->
 <ng-template #category let-ref="dialogRef">
   <div class="components-list">
     <div class="component-card-wrapper ng-star-inserted" [nbSpinner]="modalLoading" nbSpinnerStatus="danger">
@@ -67,3 +73,4 @@
     </div>
 </div>
 </ng-template>
+<!--* End Modal -->

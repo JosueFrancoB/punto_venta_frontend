@@ -1,26 +1,24 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { catchError, map, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ProductosBody, ProductosData } from '../interfaces/protected-interfaces';
-import {Observable, of} from 'rxjs'
-import { map, catchError, tap } from 'rxjs/operators';
+import { UnitsBody, UnitsData } from '../interfaces/protected-interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductsService {
+export class UnitsService {
 
   private baseUrl:string = environment.baseUrl
   constructor(private http:HttpClient) { }
-
   getToken(){
     return new HttpHeaders()
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getProducts(){
+  getUnidades(){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos`, {headers})
+    return this.http.get<UnitsData>(`${this.baseUrl}/attributes/units`, {headers})
       .pipe(
         map( resp => {
             return resp
@@ -32,25 +30,38 @@ export class ProductsService {
         })
       )
   }
-
-  getProductsByCategoria(id: string){
+  getUnidad(id:string){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos/categoria/${id}`, {headers})
-      .pipe(
-        map( resp => {
-            return resp
-        }),
-        catchError(err => {
-          console.log(`${err.error.msg}`)
-          // of(err.error.msg)
-          return of()
-        })
-      )
+    return this.http.get(`${this.baseUrl}/attributes/units/${id}`, {headers}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors[0].msg);
+      return of(err.error.errors[0].msg)
+    })
+    )
   }
-
-  getProduct(id:string){
+  addUnidad(unit: any){
     const headers = this.getToken()
-    return this.http.get<ProductosBody>(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
+    console.log(unit);
+    let body = unit
+    return this.http.post(`${this.baseUrl}/attributes/units`, body, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      return of(err.error.errors[0].msg)
+    })
+    )
+  }
+  updateUnidad(id:string, unit: UnitsBody){
+    const headers = this.getToken()
+    let body = unit
+    return this.http.patch(`${this.baseUrl}/attributes/units/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -63,48 +74,16 @@ export class ProductsService {
     })
     )
   }
-  addProduct(product_data: ProductosBody){
+  deleteUnidad(id:string){
     const headers = this.getToken()
-    console.log(product_data);
-    let body = product_data
-    return this.http.post(`${this.baseUrl}/productos`, body, {headers}).pipe(
-      map( resp => {
-        console.log(resp);
-        return resp
-    }),
-    catchError(err => {
-      return of(err.error.errors[0].msg)
-    })
-    )
-  }
-  updateProduct(id:string, product_data: ProductosBody){
-    const headers = this.getToken()
-    let body = product_data
-    return this.http.patch(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
+    return this.http.delete(`${this.baseUrl}/attributes/units/${id}`, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
     }),
     catchError(err => {
       console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
-    })
-    )
-  }
-  deleteProduct(id:string){
-    const headers = this.getToken()
-    return this.http.delete(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
-      map( resp => {
-        console.log(resp);
-        return resp
-    }),
-    catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
+      return of(err.error.msg)
     })
     )
   }
