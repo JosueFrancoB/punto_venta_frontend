@@ -1,3 +1,4 @@
+@import url('https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css');
 
 .components-list{
     -webkit-tap-highlight-color: transparent;
@@ -217,4 +218,89 @@
 .prev:hover, .next:hover {
     background-color: rgba(0,0,0,0.8);
     color: white;
+}
+
+#tsum-tabs h1 {
+    padding: 50px 0;
+    font-weight: 400;
+    text-align: center;
+  }
+  
+  #tsum-tabs p {
+    margin: 0 0 20px;
+    line-height: 1.5;
+  }
+  
+  #tsum-tabs main {
+    min-width: 320px;
+    max-width: 800px;
+    padding: 50px;
+    margin: 0 auto;
+    background: #fff;
+  }
+  
+  #tsum-tabs section {
+    display: none;
+    padding: 20px 0 0;
+    border-top: 1px solid #ddd;
+  }
+  
+  #tsum-tabs .tabs-radio {
+    display: none;
+  }
+  
+  #tsum-tabs .tabs_titles {
+    display: inline-block;
+    margin: 0 0 -1px;
+    padding: 15px 25px;
+    font-weight: 600;
+    text-align: center;
+    color: #bbb;
+    border: 1px solid transparent;
+  }
+  
+  #tsum-tabs .tabs_titles:before {
+    font-family: fontawesome;
+    font-weight: normal;
+    margin-right: 10px;
+  }
+  
+  #tsum-tabs .tabs_titles[for*='1']:before { content: '\f007'; }
+  #tsum-tabs .tabs_titles[for*='2']:before { content: '\f0e0'; }
+  #tsum-tabs .tabs_titles[for*='3']:before { content: '\f095'; }
+  #tsum-tabs .tabs_titles[for*='4']:before { content: '\f015'; }
+  
+  #tsum-tabs .tabs_titles:hover {
+    color: #888;
+    cursor: pointer;
+  }
+  
+  #tsum-tabs input:checked + .tabs_titles {
+    color: #555;
+    border: 1px solid #ddd;
+    border-top: 2px solid orange;
+    border-bottom: 1px solid #fff;
+  }
+  
+  #tsum-tabs #tab1:checked ~ #content1,
+  #tsum-tabs #tab2:checked ~ #content2,
+  #tsum-tabs #tab3:checked ~ #content3,
+  #tsum-tabs #tab4:checked ~ #content4 {
+    display: block;
+  }
+  
+  @media screen and (max-width: 650px) {
+    #tsum-tabs .tabs_titles {
+      font-size: 0;
+    }
+    #tsum-tabs .tabs_titles:before {
+      margin: 0;
+      font-size: 18px;
+    }
+  }
+  
+  @media screen and (max-width: 400px) {
+    #tsum-tabs .tabs_titles {
+      padding: 15px;
+    }
 }

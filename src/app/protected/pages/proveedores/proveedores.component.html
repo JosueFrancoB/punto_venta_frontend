@@ -155,8 +155,21 @@
 
   <!-- ? Modal Body de Editar -->
   <nb-card-body *ngIf="modalEdit">
-        <nb-tabset>
-          <nb-tab tabTitle="General">
+        <div id="tsum-tabs">
+          <input class="tabs-radio" id="tab1" type="radio" name="tabs" checked>
+          <label class="tabs_titles" for="tab1">General</label>
+
+            
+          <input class="tabs-radio" id="tab2" type="radio" name="tabs">
+          <label class="tabs_titles" for="tab2">Correos</label>
+            
+          <input class="tabs-radio" id="tab3" type="radio" name="tabs">
+          <label class="tabs_titles" for="tab3">Teléfonos</label>
+            
+          <input class="tabs-radio" id="tab4" type="radio" name="tabs">
+          <label class="tabs_titles" for="tab4">Direcciones</label>
+            
+          <section id="content1">
             <div class="row">
               <div class="col-sm-6" style="margin-top: 5px">
                       <span style="font-size:14px;">Nombre de Contacto</span>
@@ -173,9 +186,9 @@
                 <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="active_proveedor.rfc" style="background: #fff;">
               </div>
             </div>
-          </nb-tab>
-
-          <nb-tab tabTitle="Correos">
+          </section>
+            
+          <section id="content2">
             <div class="row">
               <div class="col-sm-12" style="margin-top: 5px;">
                   <div style="display: flex;">
@@ -200,9 +213,9 @@
                   </nb-card>
               </div>
             </div>
-          </nb-tab>
-
-          <nb-tab tabTitle="Direcciones">
+          </section>
+            
+          <section id="content3">
             <div class="row">
               <div class="col-sm-12" style="margin-top: 5px;">
                   <div style="display: flex;">
@@ -227,9 +240,9 @@
                   </nb-card>
               </div>
             </div>
-          </nb-tab>
-
-          <nb-tab tabTitle="Teléfonos">
+          </section>
+            
+          <section id="content4">
             <div class="row">
               <div class="col-sm-12" style="margin-top: 5px;">
                   <div style="display: flex;">
@@ -254,9 +267,10 @@
                   </nb-card>
               </div>
             </div>
-          </nb-tab>
-        </nb-tabset>
-  </nb-card-body>
+          </section>
+            
+        </div>
+      </nb-card-body>
 
   <nb-card-footer style="display: flex; justify-content: space-between;">
     <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>

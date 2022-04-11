@@ -6,6 +6,7 @@ import { NbDialogService } from '@nebular/theme';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UploadsService } from '../../services/uploads.service';
+import { get } from 'scriptjs';
 
 @Component({
   selector: 'app-proveedores',
@@ -77,6 +78,10 @@ export class ProveedoresComponent implements OnInit {
     // // this.document.getElementsByTagName('head')[0].appendChild(script);
     // let elemento = this._document.getElementsByTagName('head');
     // this._renderer2.appendChild(elemento, script);
+    get("https://cdn.jsdelivr.net/npm/swiffy-slider@1.5.2/dist/js/swiffy-slider.min.js", () => {
+        //Google Maps library has been loaded...
+        console.log('Slider loaded');
+    });
     this.getProviders()
   }
 
