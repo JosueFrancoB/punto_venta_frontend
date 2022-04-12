@@ -17,7 +17,8 @@ import {NgxDropzoneModule} from 'ngx-dropzone';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { UnitsComponent } from './pages/units/units.component';
 import { SalesComponent } from './pages/sales/sales.component';
-
+import { PerfilComponent } from './perfil/perfil.component';
+import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination';
 
 
 @NgModule({
@@ -31,9 +32,12 @@ import { SalesComponent } from './pages/sales/sales.component';
     ProveedoresComponent,
     UnitsComponent,
     SalesComponent,
+    PerfilComponent,
+    // JwPaginationComponent
   ],
   imports: [
     CommonModule,
+    JwPaginationModule,
     ProtectedRoutingModule,
     NbCardModule,
     NbRadioModule,

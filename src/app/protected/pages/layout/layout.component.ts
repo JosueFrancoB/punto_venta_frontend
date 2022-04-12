@@ -32,8 +32,8 @@ export class LayoutComponent implements OnInit {
 
     userPictureOnly: boolean = false;
     userMenu = [ 
-    { title: 'Mi Perfil', icon: 'person-outline' }, 
-    { title: 'Cerrar Sesión', icon: 'log-out-outline' } 
+    { title: 'Mi Perfil', icon: 'person-outline', link: '/dashboard/perfil' }, 
+    { title: 'Cerrar Sesión', icon: 'log-out-outline' }
     ];
 
 

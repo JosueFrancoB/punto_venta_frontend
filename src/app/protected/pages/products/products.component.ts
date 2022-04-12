@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { ProductosBody } from '../../interfaces/protected-interfaces';
+import { UnitsService } from '../../services/units.service';
 
 @Component({
   selector: 'app-products',
@@ -34,15 +35,14 @@ export class ProductsComponent implements OnInit{
   changesEdit = true
   product_selected = false
   product_edit = ''
-  products_units: Array<any> = [
-    'cm', 'm', 'gr', 'kg', 'pza'
-  ]
+  products_units: Array<any> = []
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
 
   // @ViewChild('Usuario') Usuario!: TemplateRef<any>; 
   constructor(private productsService: ProductsService,
               private categoriasService: CategoriasService,
+              private unitsService: UnitsService,
               private dialogService: NbDialogService,
               private fb: FormBuilder,
               private activatedRoute: ActivatedRoute) {
@@ -73,6 +73,8 @@ export class ProductsComponent implements OnInit{
       this.getProducts(this.params.id)
       this.getCategory(this.params.id)
     }
+    this.settings.pager.display = true;
+    this.settings.pager.perPage = 5;
   }
 
   getProducts(id: string){
@@ -129,6 +131,7 @@ export class ProductsComponent implements OnInit{
         });
         this.getProducts(this.categoria)
         ref.close()
+        this.resetProduct()
       }else{
         Swal.fire('Error', resp, 'error')
       }
@@ -209,9 +212,14 @@ export class ProductsComponent implements OnInit{
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     this.dialogService.open(dialog, { closeOnBackdropClick });
     // this.dialogRef = this.dialogService.open(dialog, { closeOnBackdropClick });
+    this.unitsService.getUnidades().subscribe(res =>{
+      console.log(res);
+      const {unidades} = res
+      this.products_units = unidades
+    })
   }
 
-  cancelDialog(){
+  resetProduct(){
     let tmp_categoria = this.new_producto['categoria']
     this.new_producto = {};
     this.new_producto.categoria = tmp_categoria
@@ -269,7 +277,10 @@ export class ProductsComponent implements OnInit{
         filter: false,
       },
     },
-    
+    pager: {
+      display: true,
+      perPage: 5,
+    }
   };
 
 

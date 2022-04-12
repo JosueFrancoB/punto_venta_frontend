@@ -47,6 +47,7 @@ export class ProveedoresComponent implements OnInit {
   tele = false;
 
   uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
+  pageOfItems!: Array<any>;
 
   constructor(private proveedoresService: ProveedoresService,
               private uploadsService: UploadsService,
@@ -295,6 +296,10 @@ export class ProveedoresComponent implements OnInit {
       }
   }
 
+  onChangePage(pageOfItems: Array<any>) {
+    // update current page of items
+    this.pageOfItems = pageOfItems;
+  }
 
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {

@@ -32,7 +32,9 @@ export class UnitsComponent implements OnInit {
   addLoading = false;
   updLoading = false;
 
-  uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
+  uploadsUrl:string = environment.baseUrl + '/uploads/unidades'
+
+  pageOfItems!:Array<any>
 
   constructor(private unitsService: UnitsService,
               private dialogService: NbDialogService) { 
@@ -147,6 +149,11 @@ export class UnitsComponent implements OnInit {
       })
     }
   })
+  }
+
+  onChangePage(pageOfItems: Array<any>) {
+    // update current page of items
+    this.pageOfItems = pageOfItems;
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {

@@ -47,9 +47,6 @@
 </div>
 
 
-
-
-
 <!--? Modal  -->
 
 <ng-template #Producto let-data let-ref="dialogRef">
@@ -58,7 +55,7 @@
       <button *ngIf="modalEdit" nbButton size="small" appearance="outline" status="danger" (click)="deleteProduct('', ref);" [nbSpinner]="delLoading" nbSpinnerStatus="danger">
           Eliminar Producto
       </button>
-      <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
+      <nb-icon (click)="ref.close(); resetProduct();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
   </nb-card-header>
   <nb-card-body>
   <div class="container">
@@ -89,13 +86,13 @@
       <div class="col-sm-5" style="margin-top: 5px">
             <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span>
             <select class="form-control input-sm ">
-              <option *ngFor="let unit of products_units" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_compra" value="{{unit}}">{{unit}}</option>
+              <option *ngFor="let unit of products_units" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_compra" value="{{unit.abreviacion}}">{{unit.abreviacion}}</option>
             </select>
       </div>
       <div class="col-sm-5" style="margin-top: 5px;">
               <span class="input-group-addon" style="font-size:14px;">Unidad de Venta:</span>
               <select style="background: #fff;" class="form-control input-sm ">
-              <option *ngFor="let unit of products_units" [value]="unit" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_venta">{{unit}}</option></select>
+              <option *ngFor="let unit of products_units" [value]="unit.abreviacion" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_venta">{{unit.abreviacion}}</option></select>
       </div>
       <div class="col-sm-2" style="margin-top: 5px;">
             <span class="input-group-addon" style="font-size:14px;">Factor:</span>
@@ -118,7 +115,7 @@
   </div>
   </nb-card-body>
   <nb-card-footer style="display: flex; justify-content: space-between;">
-    <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
+    <button nbButton (click)="resetProduct(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
     <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_producto.nombre != '' && new_producto.descripcion != '' && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addProduct(ref);">
         Agregar Producto
     </button>
