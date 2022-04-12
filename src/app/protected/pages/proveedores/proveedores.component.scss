@@ -1,5 +1,7 @@
 @import url('https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css');
 
+// @import '~@fortawesome/fontawesome-free/css/fontawesome.css';
+
 .components-list{
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
@@ -267,8 +269,8 @@
   
   #tsum-tabs .tabs_titles[for*='1']:before { content: '\f007'; }
   #tsum-tabs .tabs_titles[for*='2']:before { content: '\f0e0'; }
-  #tsum-tabs .tabs_titles[for*='3']:before { content: '\f095'; }
-  #tsum-tabs .tabs_titles[for*='4']:before { content: '\f015'; }
+  #tsum-tabs .tabs_titles[for*='3']:before { content: '\f015'; }
+  #tsum-tabs .tabs_titles[for*='4']:before { content: '\f095'; }
   
   #tsum-tabs .tabs_titles:hover {
     color: #888;
@@ -278,7 +280,7 @@
   #tsum-tabs input:checked + .tabs_titles {
     color: #555;
     border: 1px solid #ddd;
-    border-top: 2px solid orange;
+    border-top: 2px solid cornflowerblue;
     border-bottom: 1px solid #fff;
   }
   
