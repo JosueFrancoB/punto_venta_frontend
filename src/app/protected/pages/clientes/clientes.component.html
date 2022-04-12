@@ -12,8 +12,10 @@
 </nb-layout-header>
 <hr>
 
-<div style="display: flex; flex-direction: column;">
-  <div class="components-list" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
+
+<div style="display: flex; flex-direction: column; position: relative; min-width: 100px; min-height: 100px;">
+  <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
+  <div class="components-list">
     <div class="component-card-wrapper ng-star-inserted"
       *ngFor="let cliente of clientes |filter:searchText; let i= index">
       <nb-reveal-card [showToggleButton]="false" [ngClass]="isRevealed && i == selectedItem  ? 'revealed' : ''">
@@ -54,7 +56,7 @@
             </nb-card-body>
           </nb-card>
         </nb-card-front>
-        <nb-card-back style="min-height: 156px;">
+        <nb-card-back style="min-height: 9.75rem;">
           <nb-card title="{{cliente.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
             <div style="position: absolute; right: 0; bottom: 0;" *ngIf="isDisplay(cliente.nombre_empresa)">
               <button nbbutton="" appearance="outline"

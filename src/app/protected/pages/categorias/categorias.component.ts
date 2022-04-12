@@ -33,6 +33,7 @@ export class CategoriasComponent implements OnInit {
   updLoading = false;
 
   uploadsUrl:string = environment.baseUrl + '/uploads/categorias'
+  pageOfItems!: Array<any>;
 
   constructor(private categoriasService: CategoriasService,
               private uploadsService: UploadsService,
@@ -60,11 +61,12 @@ export class CategoriasComponent implements OnInit {
     this.viewLoading = true
     this.categoriasService.getCategories().subscribe(res =>{
       const {categorias} = res
-      categorias.forEach(categoria => {
-        if (!this.categorias.some(cat => cat.nombre == categoria.nombre)){
-          this.categorias.push(categoria)
-        }
-      });
+      this.categorias = categorias
+      // categorias.forEach(categoria => {
+      //   if (!this.categorias.some(cat => cat.nombre == categoria.nombre)){
+      //     this.categorias.push(categoria)
+      //   }
+      // });
       this.viewLoading = false
     })
     }
@@ -165,6 +167,11 @@ export class CategoriasComponent implements OnInit {
       })
     }
   })
+  }
+
+  onChangePage(pageOfItems: Array<any>) {
+    // update current page of items
+    this.pageOfItems = pageOfItems;
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
