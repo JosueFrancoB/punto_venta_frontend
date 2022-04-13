@@ -35,7 +35,7 @@
         </a>
       </div>
   </div>
-  <div style="display: flex; justify-content: flex-end;">
+  <div [hidden]="categorias.length <= 10" style="display: flex; justify-content: flex-end;">
     <jw-pagination [items]="categorias" (changePage)="onChangePage($event)"></jw-pagination>
   </div>
 </div>

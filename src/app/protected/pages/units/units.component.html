@@ -42,7 +42,7 @@
       </nb-card>
     </div>
   </div>
-  <div style="display: flex; justify-content: flex-end;">
+  <div [hidden]="unidades.length <= 10" style="display: flex; justify-content: flex-end;">
     <jw-pagination [items]="unidades" (changePage)="onChangePage($event)"></jw-pagination>
   </div>
 </div>

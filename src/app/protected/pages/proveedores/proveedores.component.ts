@@ -1,17 +1,16 @@
 import Swal from 'sweetalert2';
 import { ProveedoresService } from '../../services/proveedores.service';
 import { ProveedoresBody, NewProveedoresBody } from '../../interfaces/protected-interfaces';
-import { Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UploadsService } from '../../services/uploads.service';
-import { get } from 'scriptjs';
 
 @Component({
   selector: 'app-proveedores',
   templateUrl: './proveedores.component.html',
-  styleUrls: ['./proveedores.component.scss']
+  styleUrls: ['proveedores.component.scss']
 })
 export class ProveedoresComponent implements OnInit {
 
@@ -52,7 +51,6 @@ export class ProveedoresComponent implements OnInit {
   constructor(private proveedoresService: ProveedoresService,
               private uploadsService: UploadsService,
               private dialogService: NbDialogService) { 
-                
                 this.toastMixin = Swal.mixin({
                   toast: true,
                   icon: 'success',
@@ -72,17 +70,6 @@ export class ProveedoresComponent implements OnInit {
               }
 
   ngOnInit() {
-    // let body =  document.body;
-    // let script = this._renderer2.createElement('script');
-    // script.type = 'application/javascript';
-    // script.src = 'https://cdn.jsdelivr.net/npm/swiffy-slider@1.5.2/dist/js/swiffy-slider.min.js';
-    // // this.document.getElementsByTagName('head')[0].appendChild(script);
-    // let elemento = this._document.getElementsByTagName('head');
-    // this._renderer2.appendChild(elemento, script);
-    get("https://cdn.jsdelivr.net/npm/swiffy-slider@1.5.2/dist/js/swiffy-slider.min.js", () => {
-        //Google Maps library has been loaded...
-        console.log('Slider loaded');
-    });
     this.getProviders()
   }
 

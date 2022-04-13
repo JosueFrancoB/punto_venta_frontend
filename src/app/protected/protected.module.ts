@@ -20,7 +20,6 @@ import { SalesComponent } from './pages/sales/sales.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination';
 
-
 @NgModule({
   declarations: [
     DashboardComponent,
@@ -32,8 +31,7 @@ import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination
     ProveedoresComponent,
     UnitsComponent,
     SalesComponent,
-    PerfilComponent,
-    // JwPaginationComponent
+    PerfilComponent
   ],
   imports: [
     CommonModule,

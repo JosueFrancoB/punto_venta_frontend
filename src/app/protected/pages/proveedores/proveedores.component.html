@@ -16,8 +16,9 @@
 <hr>
 
 <!-- Card -->
-<div style="display: flex; flex-direction: column;">
-  <div class="components-list" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
+<div style="display: flex; flex-direction: column; position: relative; min-width: 100px; min-height: 100px;">
+  <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
+  <div class="components-list">
       <div class="component-card-wrapper ng-star-inserted" *ngFor="let proveedor of pageOfItems |filter:searchText; let i = index">
         <nb-flip-card [showToggleButton]="false" [ngClass]="isFlipped && i == selectedItem  ? 'flipped' : ''">
           <nb-card-front>
@@ -44,32 +45,31 @@
                   <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getProvider(proveedor._id); openDialog(provider, false); changeImg = false; providerValue = ''"></nb-icon></button>
                   <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProvider(proveedor._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
                 </div>
-                <nb-card-header>
-                  <nb-actions class="left size-small">
-                    <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
-                  </nb-actions>
-                </nb-card-header>
-                <nb-card-body class="slider" style="padding: 0px;">
-                  <!-- <div class="wrapper">
-                    <div class="carousel">
-                      <div class="car-card" *ngFor="let telefono of proveedor.telefonos; let idx = index">
-                        <h5 [ngClass]="aux == idx  ? 'd-none' : ''">{{telefono}}</h5>
-                      </div>
-                      <a class="prev" (click)="plusSlides(-1, proveedor)">❮</a>
-                      <a class="next" (click)="plusSlides(0, proveedor)">❯</a>
-                    </div>
-                  </div> -->
-                  <div class="swiffy-slider slider-item-helper slider-item-ratio slider-nav-caretfill slider-nav-dark slider-nav-sm" style="max-height: 2rem !important;">
-                    <ul class="slider-container" style="max-height: 2rem !important; ">
-                        <li style="max-height: 2rem !important;" *ngFor="let telefono of proveedor.telefonos">
-                          <h5>{{telefono}}</h5>
-                        </li>
-                    </ul>
-                
-                    <button type="button" class="slider-nav"></button>
-                    <button type="button" class="slider-nav slider-nav-next"></button>
-                
-                  </div>
+                <!-- <nb-card-header> -->
+                  
+                <!-- </nb-card-header> -->
+                <nb-card-body style="padding: 0px; min-height: 6.25rem; max-height: 6.25rem; max-width: 20.625rem;">
+                  <!-- <div style="display:flex; justify-content: space-between;">
+                    <nb-list small *ngIf="info_selected == 'telefonos'" style="max-height: 7.6875rem;">
+                      <nb-list-item style="padding: 0.625rem;" *ngFor="let telefono of proveedor.telefonos">
+                        <span>{{telefono}}</span>
+                      </nb-list-item>
+                    </nb-list>
+                    <nb-list *ngIf="info_selected == 'correos'" style="max-height: 7.6875rem;">
+                      <nb-list-item style="padding: 0.625rem;" *ngFor="let correo of proveedor.correos">
+                        <span>{{correo}}</span>
+                      </nb-list-item>
+                    </nb-list>
+                    <nb-list *ngIf="info_selected == 'direcciones'" style="max-height: 7.6875rem;">
+                      <nb-list-item style="padding: 0.625rem;" *ngFor="let direccion of proveedor.direcciones">
+                        <span>{{direccion}}</span>
+                      </nb-list-item>
+                    </nb-list>
+                    </div> -->
+                    <nb-actions class="left size-small">
+                      <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
+                    </nb-actions>
+
                 </nb-card-body>
                 <!-- <nb-card-body >
                   <nb-actions class="left size-small">
@@ -102,11 +102,10 @@
         </nb-flip-card>
       </div>
   </div>
-  <div style="display: flex; justify-content: flex-end;">
+  <div [hidden]="proveedores.length <= 10" style="display: flex; justify-content: flex-end;">
     <jw-pagination [items]="proveedores" (changePage)="onChangePage($event)"></jw-pagination>
   </div>
 </div>
-
 
 
 
