@@ -63,9 +63,10 @@ export class ProductsService {
     })
     )
   }
-  addProduct(product_data: ProductosBody){
+  addProduct(product_data: ProductosBody, categoria: string){
     const headers = this.getToken()
     console.log(product_data);
+    product_data.categoria = categoria
     let body = product_data
     return this.http.post(`${this.baseUrl}/productos`, body, {headers}).pipe(
       map( resp => {
@@ -73,12 +74,13 @@ export class ProductsService {
         return resp
     }),
     catchError(err => {
-      return of(err.error.errors[0].msg)
+      return of(err.error.msg)
     })
     )
   }
-  updateProduct(id:string, product_data: ProductosBody){
+  updateProduct(id:string, product_data: ProductosBody, categoria: string){
     const headers = this.getToken()
+    product_data.categoria = categoria
     let body = product_data
     return this.http.patch(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
       map( resp => {
@@ -88,8 +90,7 @@ export class ProductsService {
     catchError(err => {
       console.log(err);
       console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
+      return of(err.error.msg)
     })
     )
   }

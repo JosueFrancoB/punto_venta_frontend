@@ -49,54 +49,28 @@
                   
                 <!-- </nb-card-header> -->
                 <nb-card-body style="padding: 0px; min-height: 6.25rem; max-height: 6.25rem; max-width: 20.625rem;">
-                  <!-- <div style="display:flex; justify-content: space-between;">
-                    <nb-list small *ngIf="info_selected == 'telefonos'" style="max-height: 7.6875rem;">
-                      <nb-list-item style="padding: 0.625rem;" *ngFor="let telefono of proveedor.telefonos">
-                        <span>{{telefono}}</span>
-                      </nb-list-item>
-                    </nb-list>
-                    <nb-list *ngIf="info_selected == 'correos'" style="max-height: 7.6875rem;">
-                      <nb-list-item style="padding: 0.625rem;" *ngFor="let correo of proveedor.correos">
-                        <span>{{correo}}</span>
-                      </nb-list-item>
-                    </nb-list>
-                    <nb-list *ngIf="info_selected == 'direcciones'" style="max-height: 7.6875rem;">
-                      <nb-list-item style="padding: 0.625rem;" *ngFor="let direccion of proveedor.direcciones">
-                        <span>{{direccion}}</span>
-                      </nb-list-item>
-                    </nb-list>
-                    </div> -->
                     <nb-actions class="left size-small">
                       <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
                     </nb-actions>
+                    <div style="display:flex; align-items: center; justify-content: center;">
+                      <swiper *ngIf="info_selected == 'telefonos'" direction="horizontal" [navigation]="true" [loop]="true" style="text-align: center; min-height: 50px; max-width: 12.25rem; display:flex; align-items: center;">
+                        <ng-container *ngFor="let telefono of proveedor.telefonos; let i = index">
+                          <ng-template style="text-align: center;" swiperSlide>  <span style="font-size: 0.8em; font-weight: 800;">{{telefono}}</span></ng-template>
+                        </ng-container>
+                      </swiper>
+                      <swiper *ngIf="info_selected == 'correos'" direction="horizontal" [navigation]="true" [loop]="true" style="text-align: center; min-height: 50px; max-width: 12.25rem; display:flex; align-items: center;">
+                        <ng-container *ngFor="let correo of proveedor.correos; let i = index">
+                          <ng-template style="text-align: center;" swiperSlide>  <span style="font-size: 0.8em; font-weight: 800;">{{correo}}</span></ng-template>
+                        </ng-container>
+                      </swiper>
+                      <swiper *ngIf="info_selected == 'direcciones'" direction="horizontal" [navigation]="true" [loop]="true" style="text-align: center; min-height: 50px; max-width: 12.25rem; display:flex; align-items: center;">
+                        <ng-container *ngFor="let direccion of proveedor.direcciones; let i = index">
+                          <ng-template style="text-align: center;" swiperSlide>  <span style="font-size: 0.8em; font-weight: 800;">{{direccion}}</span></ng-template>
+                        </ng-container>
+                      </swiper>
+                    </div>
 
                 </nb-card-body>
-                <!-- <nb-card-body >
-                  <nb-actions class="left size-small">
-                    <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
-                  </nb-actions>
-                  <nb-card size="small" style="max-height: 130px;" *ngIf="info_selected == 'telefonos'">
-                    <nb-list *ngFor="let telefono of proveedor.telefonos">
-                      <nb-list-item>
-                          <label class="component-name">{{telefono}}</label>
-                      </nb-list-item>
-                    </nb-list>
-                  </nb-card>
-                  <nb-card size="small" style="max-height: 130px;" *ngIf="info_selected == 'correos'">
-                    <nb-list *ngFor="let correo of proveedor.correos">
-                      <nb-list-item>
-                          <label class="component-name">{{correo}}</label>
-                      </nb-list-item>
-                    </nb-list>
-                  </nb-card>
-                  <nb-card size="small" style="max-height: 130px;" *ngIf="info_selected == 'direcciones'">
-                    <nb-list *ngFor="let direccion of proveedor.direcciones">
-                      <nb-list-item>
-                          <label class="component-name">{{direccion}}</label>
-                      </nb-list-item>
-                    </nb-list>
-                  </nb-card>
-                </nb-card-body> -->
             </nb-card>
           </nb-card-back>
         </nb-flip-card>

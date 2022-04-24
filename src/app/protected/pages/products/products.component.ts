@@ -5,7 +5,7 @@ import { ProductsService } from '../../services/products.service';
 import { CategoriasService } from '../../services/categorias.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbTagComponent, NbTagInputAddEvent } from '@nebular/theme';
 import { ProductosBody } from '../../interfaces/protected-interfaces';
 import { UnitsService } from '../../services/units.service';
 
@@ -36,6 +36,7 @@ export class ProductsComponent implements OnInit{
   product_selected = false
   product_edit = ''
   products_units: Array<any> = []
+  section_general:boolean = true
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
 
@@ -105,7 +106,7 @@ export class ProductsComponent implements OnInit{
   }
 
   addProduct(ref: any){
-    this.productsService.addProduct(this.new_producto)
+    this.productsService.addProduct(this.new_producto, this.categoria)
       .subscribe(resp =>{
         if (resp.ok === true){
           this.getProducts(this.categoria)
@@ -123,7 +124,7 @@ export class ProductsComponent implements OnInit{
   updateProduct(id: string, ref: any){
     this.product = this.new_producto
     this.updLoading = true
-    this.productsService.updateProduct(id, this.product).subscribe(resp => {
+    this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
       if(resp.ok === true){
         console.log(resp);
         this.toastMixin.fire({
@@ -217,6 +218,7 @@ export class ProductsComponent implements OnInit{
       const {unidades} = res
       this.products_units = unidades
     })
+    this.section_general = true
   }
 
   resetProduct(){
@@ -238,7 +240,17 @@ export class ProductsComponent implements OnInit{
   onRemoveDrag(event:any) {
     this.files.splice(this.files.indexOf(event), 1);
   }
+  trees:Array<any> = []
+  onTagRemove(tagToRemove: NbTagComponent): void {
+    this.trees = this.trees.filter(t => t !== tagToRemove.text);
+  }
 
+  onTagAdd({ value, input }: NbTagInputAddEvent): void {
+    if (value) {
+      this.trees.push(value)
+    }
+    input.nativeElement.value = '';
+  }
 
   settings = {
     actions: {
@@ -261,8 +273,8 @@ export class ProductsComponent implements OnInit{
         type: 'string',
         filter: false,
       },
-      descripcion:{
-        title: 'Descripción',
+      nombre:{
+        title: 'Nombre',
         type: 'boolean',
         filter: false,
       },
@@ -295,7 +307,7 @@ export class ProductsComponent implements OnInit{
         search: query
       },
       {
-        field: 'descripcion',
+        field: 'nombre',
         search: query
       },
     ], false); 

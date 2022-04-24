@@ -6,7 +6,34 @@ import { NbDialogService } from '@nebular/theme';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UploadsService } from '../../services/uploads.service';
+import 'swiper/scss';
+import 'swiper/scss/navigation';
+import 'swiper/scss/pagination';
+import { SwiperComponent } from "swiper/angular";
+import SwiperCore , {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Virtual,
+  Zoom,
+  Autoplay,
+  Thumbs,
+  Controller,
+  SwiperOptions,
+} from 'swiper';
 
+SwiperCore.use([
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Virtual,
+  Zoom,
+  Autoplay,
+  Thumbs,
+  Controller
+]);
 @Component({
   selector: 'app-proveedores',
   templateUrl: './proveedores.component.html',
@@ -14,6 +41,7 @@ import { UploadsService } from '../../services/uploads.service';
 })
 export class ProveedoresComponent implements OnInit {
 
+  
   proveedores: Array<ProveedoresBody> = []
   files: File[] = [];
   filteredOptions$!: Observable<string[]>;
@@ -72,6 +100,19 @@ export class ProveedoresComponent implements OnInit {
   ngOnInit() {
     this.getProviders()
   }
+  config: SwiperOptions = {
+    slidesPerView: 3,
+    spaceBetween: 50,
+    navigation: true,
+    pagination: { clickable: true },
+    scrollbar: { draggable: true },
+  };
+  onSwiper([swiper]:any) {
+    console.log(swiper);
+  }
+  onSlideChange() {
+    console.log('slide change');
+  }
 
 
   getProviders(){
@@ -88,6 +129,7 @@ export class ProveedoresComponent implements OnInit {
 
   addProvider(ref: any){
     console.log(this.new_proveedor);
+    this.new_proveedor
     this.proveedoresService.addProveedor(this.new_proveedor)
     .subscribe(resp =>{
       if(resp.ok === true){
@@ -98,7 +140,7 @@ export class ProveedoresComponent implements OnInit {
           title: 'Proveedor agregado'
         });
       }else{
-        Swal.fire('Error', resp, 'error')
+        Swal.fire('Error', resp.msg, 'error')
       }
     })
   }
@@ -163,7 +205,7 @@ export class ProveedoresComponent implements OnInit {
             title: 'Proveedor eliminado'
           });
         }else{
-          Swal.fire('Error', resp, 'error')
+          Swal.fire('Error', resp.msg, 'error')
         }
       })
     }

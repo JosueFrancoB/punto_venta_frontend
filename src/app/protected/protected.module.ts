@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NbActionsModule, NbAlertModule, NbAutocompleteModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbMenuModule, NbRadioModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbStepperModule, NbTabsetModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
+import { NbActionsModule, NbAlertModule, NbAutocompleteModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbMenuModule, NbRadioModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbStepperModule, NbTabsetModule, NbTagModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './pages/users/users.component';
@@ -19,6 +19,7 @@ import { UnitsComponent } from './pages/units/units.component';
 import { SalesComponent } from './pages/sales/sales.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination';
+import { SwiperModule } from 'swiper/angular';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,8 @@ import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination
     CommonModule,
     JwPaginationModule,
     ProtectedRoutingModule,
+    NbTagModule,
+    SwiperModule,
     NbCardModule,
     NbRadioModule,
     NbUserModule,

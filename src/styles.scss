@@ -2,7 +2,9 @@
 
 @import '~@nebular/theme/styles/globals';
 @import '~@nebular/bootstrap/styles/globals';
-
+@import '~swiper/scss';
+@import '~swiper/scss/navigation';
+@import '~swiper/scss/pagination';
 
 @include nb-install() {
   @include nb-theme-global();
