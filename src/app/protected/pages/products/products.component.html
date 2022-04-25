@@ -1,6 +1,6 @@
   <h3 class="group-title h4 ng-star-inserted">{{title}}</h3>
 <div style="display: flex; flex-direction: row;">
-  <nb-card [nbSpinner]="viewLoading" nbSpinnerStatus="danger" style="width: 70%;">
+  <nb-card *ngIf="!product_selected" class="animate__animated animate__fadeIn animate__faster" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" style="width: 100%;">
       <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
           <nb-form-field>
               <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
@@ -14,24 +14,32 @@
           </ng2-smart-table>
       </nb-card-body>
   </nb-card>
-  <nb-card accent="info" style="width: 30%;">
-    <nb-card-header>
-      <h6>Articulo seleccionado</h6>
-      <div *ngIf="product_selected">
-        <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar" (click)="getClickedProduct(product._id); changeImg = false; openDialog(Producto, false);"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
-        <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProduct(product._id);"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
+  <nb-card *ngIf="product_selected" accent="info" style="width: 100%;">
+    <nb-card-header class="animate__animated animate__pulse animate__faster">
+      <div style="display: flex; justify-content: space-around; align-items: center;">
+        <button nbButton class="oggle-settings appearance-outline size-small shape-rectangle icon-start icon-end nb-transition" appearance="outline" nbTooltip="Regresar">
+          <nb-icon class="icon" icon="arrow-back-outline" (click)="product_selected = false"></nb-icon>
+        </button>
+        <div style="text-align: center; justify-content: center;">
+          <h3 style="color: royalblue;">{{product.nombre}}</h3>
+        </div>
+        <div>
+          <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar" (click)="getClickedProduct(product._id); changeImg = false; openDialog(Producto, false);"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
+          <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProduct(product._id);"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
+        </div>
       </div>
     </nb-card-header>
-    <nb-card-body>
-      <img class="component-icon" [src]="productSrc" alt="Product">
-    <div class="row">
-      <h3 style="color: royalblue;">{{product.nombre}}</h3>
-    </div>
-    <div class="row">
-      {{product.descripcion}}
+    <nb-card-body class="animate__animated animate__pulse animate__faster">
+    <div style="display:flex; justify-content: space-between; flex-wrap: wrap;">
+      <div>
+        {{product.descripcion}}
+      </div>
+      <div>
+        <img class="product-img" [src]="productSrc" alt="Product">
+      </div>
     </div>
     </nb-card-body>
-    <nb-card-footer>
+    <nb-card-footer class="animate__animated animate__pulse animate__faster">
       <b>Cantidad disponible: {{product.existencias}}</b>
     </nb-card-footer>
   </nb-card>
