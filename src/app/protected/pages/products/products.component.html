@@ -6,7 +6,7 @@
               <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
               <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
           </nb-form-field>
-          <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="openDialog(Producto, false)" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
+          <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="openDialog(Producto, false); modalEdit = false;" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
       </nb-card-header>
   
       <nb-card-body>        
@@ -18,26 +18,17 @@
     <nb-card-header>
       <h6>Articulo seleccionado</h6>
       <div *ngIf="product_selected">
-        <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar" (click)="getClickedProduct(product._id); openDialog(Producto, false);"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
-        <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
+        <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar" (click)="getClickedProduct(product._id); changeImg = false; openDialog(Producto, false);"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
+        <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProduct(product._id);"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
       </div>
     </nb-card-header>
     <nb-card-body>
-      <div class="custom-dropzone" ngx-dropzone [multiple]='false'  [accept]="'image/*'" (change)="onSelectDrag($event)">
-        <ngx-dropzone-label>
-          <div>
-            <nb-icon icon="image-outline" style="font-size: 5rem;"></nb-icon>
-            <h5>Agrega una imagen</h5>
-          </div>
-        </ngx-dropzone-label>
-        <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f" [removable]="true" (removed)="onRemoveDrag(f)">
-        </ngx-dropzone-image-preview>
-      </div>
+      <img class="component-icon" [src]="productSrc" alt="Product">
     <div class="row">
       <h3 style="color: royalblue;">{{product.nombre}}</h3>
     </div>
     <div class="row">
-      {{product.nombre}}
+      {{product.descripcion}}
     </div>
     </nb-card-body>
     <nb-card-footer>
@@ -52,11 +43,11 @@
 <ng-template #Producto let-data let-ref="dialogRef">
   <nb-card [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
     <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit ? 'space-between' : 'flex-end' }">
-      <div [ngClass]="{'border-section': section_general}" (click)="section_general = true" style="display: flex; align-items: center; cursor: pointer;">
+      <div [ngClass]="{'border-section': section_general}" (click)="section_general = true; changeImg = false;" style="display: flex; align-items: center; cursor: pointer;">
         <nb-icon [ngClass]="{'status-success': section_general}" icon="globe-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
         <span >Generales</span>
       </div>
-      <div [ngClass]="{'border-section': !section_general}" (click)="section_general = false" style="display: flex; align-items: center; cursor: pointer;">
+      <div [ngClass]="{'border-section': !section_general}" (click)="section_general = false;" style="display: flex; align-items: center; cursor: pointer;">
         <nb-icon [ngClass]="{'status-success': !section_general}"  icon="color-palette-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
         <span >Extras</span>
       </div>
@@ -78,12 +69,12 @@
     
     <div class="row">
       <div class="col-sm-6" style="margin-top: 5px;">
-          <span class="input-group-addon" style="font-size:14px;">Descripción o Nombre del Producto:</span>
-          <input placeholder="Descripción o Nombre" type="text" id="input-desc" class="form-control input-sm" name="nombre" ngDefaultControl [(ngModel)]="new_producto.nombre" style="background: #fff;">
+          <span class="input-group-addon" style="font-size:14px;">Nombre del Producto:</span>
+          <input placeholder="Nombre" type="text" id="input-nom" class="form-control input-sm" name="nombre" ngDefaultControl [(ngModel)]="new_producto.nombre" style="background: #fff;">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
           <span class="input-group-addon" style="font-size:14px;">Categoría:</span>
-          <input type="text" id="input-desc" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{new_producto.categoria}}" disabled style="background: #fff;">
+          <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{new_producto.categoria}}" disabled style="background: #fff;">
       </div>
     </div>
 
@@ -118,13 +109,17 @@
     </div>
 
     <div *ngIf="!section_general">
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="custom-dropzone" ngx-dropzone [multiple]='false'  [accept]="'image/*'" (change)="onSelectDrag($event)">
+      <div class="row" style="justify-content: center;">
+        <div class="col-sm-5">
+          <div *ngIf="modalEdit && !changeImg" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <img class="component-icon" [src]="productSrc" alt="Product">
+            <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" (click)="changeImg = true"><nb-icon icon="flip-2-outline" pack="eva" class="icon"></nb-icon>Cambiar imagen</button>
+          </div>
+          <div *ngIf="!modalEdit || changeImg" class="custom-dropzone" ngx-dropzone [multiple]='false'  [accept]="'image/*'" (change)="onSelectDrag($event)">
             <ngx-dropzone-label>
               <div>
-                <nb-icon icon="image-outline" style="font-size: 5rem;"></nb-icon>
-                <h5>Agrega una imagen</h5>
+                <nb-icon icon="image-outline" style="font-size: 3rem;"></nb-icon>
+                <h6>Agrega una imagen</h6>
               </div>
             </ngx-dropzone-label>
             <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of files" [file]="f" [removable]="true" (removed)="onRemoveDrag(f)">
@@ -134,15 +129,17 @@
       </div>
       <hr>
       <div class="row" style="display: flex; justify-content: flex-start;">
-        <nb-select-label for="desc">Descripción o características del producto</nb-select-label>
-        <textarea id="desc" nbInput fullWidth placeholder="Descripción o características del producto"></textarea>
+        <nb-select-label for="desc" style="padding: 0px;">Descripción o características del producto</nb-select-label>
+        <textarea id="desc" nbInput fullWidth placeholder="Escribe algunas características" [(ngModel)]="new_producto.descripcion"></textarea>
       </div>
       <hr>
       <div class="row" style="display: flex; justify-content: flex-start;">
-        <nb-select-label for="desc">Etiquetas de búsqueda</nb-select-label>
-        <nb-tag-list (tagRemove)="onTagRemove($event)">
-          <input type="text" nbTooltip="Presiona Enter" nbTagInput (tagAdd)="onTagAdd($event)">
-          <nb-tag *ngFor="let tree of trees" [text]="tree" [removable]="trees.length > 1" style="max-width: 150px;"></nb-tag>
+        <nb-select-label for="desc" style="padding: 0px;">Etiquetas de búsqueda</nb-select-label>
+        <input type="text" nbInput nbTooltip="Presiona Enter" (keydown.enter)="onTagAdd($event)">
+      </div>
+      <div class="row" style="max-width: 400px; max-height: 300px; overflow-y: auto;">
+        <nb-tag-list (tagRemove)="onTagRemove($event)" style="max-width: 400px; max-height: 300px;">
+          <nb-tag *ngFor="let tree of trees" [text]="tree" [removable]="trees.length > 0" ></nb-tag>
         </nb-tag-list>
       </div>
     </div>

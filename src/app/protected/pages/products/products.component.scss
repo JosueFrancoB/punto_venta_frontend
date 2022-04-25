@@ -42,3 +42,52 @@
 .border-section{
   border-bottom: 2px solid rgba(86, 241, 86, 0.5);
 }
+
+.tag {
+  display: inline-block;
+  border-radius: 3px;
+  padding: .2em .5em .3em;
+  border-radius: 2px;
+  // background: var(#717790);
+  color: var(#b2becd);
+  font-weight: 600;
+  margin: .25em .1em
+}
+
+h1.tag {
+  margin-left: 0;
+  margin-right: 0
+}
+
+.tag-sm {
+  font-size: .7em;
+  display: inline-block;
+  letter-spacing: .15ch;
+  font-weight: 400
+}
+
+.tag-lg {
+  font-size: 1.2em;
+  border-radius: 4px
+}
+
+.tag-bg {
+  background: var(#717790)
+}
+
+.component-icon{
+  text-align: left;
+  font-style: inherit;
+  color: #222b45;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: .9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  vertical-align: middle;
+  box-sizing: inherit;
+  border-style: none;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  height: 4rem;
+  width: 64px;
+}

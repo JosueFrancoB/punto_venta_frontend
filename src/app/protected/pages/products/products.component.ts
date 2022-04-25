@@ -6,8 +6,10 @@ import { CategoriasService } from '../../services/categorias.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NbDialogService, NbTagComponent, NbTagInputAddEvent } from '@nebular/theme';
+import { UploadsService } from '../../services/uploads.service';
 import { ProductosBody } from '../../interfaces/protected-interfaces';
 import { UnitsService } from '../../services/units.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-products',
@@ -32,11 +34,14 @@ export class ProductsComponent implements OnInit{
   selectedCategory:string =  ''
   product: ProductosBody = {}
   new_producto: ProductosBody = {}
+  productSrc = ''
   changesEdit = true
+  changeImg = true
   product_selected = false
   product_edit = ''
   products_units: Array<any> = []
   section_general:boolean = true
+  uploadsUrl:string = environment.baseUrl + '/uploads/productos'
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
 
@@ -45,6 +50,7 @@ export class ProductsComponent implements OnInit{
               private categoriasService: CategoriasService,
               private unitsService: UnitsService,
               private dialogService: NbDialogService,
+              private uploadsService: UploadsService,
               private fb: FormBuilder,
               private activatedRoute: ActivatedRoute) {
     this.source = new LocalDataSource(this.productos);
@@ -96,6 +102,7 @@ export class ProductsComponent implements OnInit{
       this.productsService.getProduct(id).subscribe(resp =>{
         if (resp.ok === true){
           console.log(resp);
+          this.productSrc = this.uploadsUrl + '/' + resp.producto._id
           this.modalEdit = true
           this.new_producto = resp.producto
           if (this.new_producto.categoria)
@@ -111,6 +118,7 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           this.getProducts(this.categoria)
           ref.close()
+          this.cargarProductImg(resp.producto._id)
           this.toastMixin.fire({
             title: 'Producto agregado'
           });
@@ -122,11 +130,15 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
+    console.log(this.new_producto.descripcion);
     this.product = this.new_producto
     this.updLoading = true
     this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
       if(resp.ok === true){
         console.log(resp);
+        if (this.changeImg === true){
+          this.cargarProductImg(id)
+        }
         this.toastMixin.fire({
           title: 'Producto actualizado'
         });
@@ -140,7 +152,7 @@ export class ProductsComponent implements OnInit{
     })
   }
 
-  deleteProduct(id: string, ref: any){
+  deleteProduct(id: string|undefined){
     Swal.fire({
       title: '¿Estás seguro de eliminarlo?',
       icon: 'warning',
@@ -152,20 +164,19 @@ export class ProductsComponent implements OnInit{
     }).then((result) => {
       this.delLoading = true
       if (result.isConfirmed) {
-        this.productsService.deleteProduct(id).subscribe(resp => {
-            if (resp.ok === true){
-              this.getProducts(this.categoria)
-              ref.close()
-              this.toastMixin.fire({
-                title: 'Producto eliminado'
-              });
-            }else{
-              Swal.fire('Error', resp, 'error')
-              console.log(resp)
-            }
-            this.delLoading = false
-          },
-          )
+        if (id !== undefined)
+          this.productsService.deleteProduct(id).subscribe(resp => {
+              if (resp.ok === true){
+                this.getProducts(this.categoria)
+                this.toastMixin.fire({
+                  title: 'Producto eliminado'
+                });
+              }else{
+                Swal.fire('Error', resp, 'error')
+                console.log(resp)
+              }
+              this.delLoading = false
+            })
         }else{
 
           this.delLoading = false
@@ -184,10 +195,25 @@ export class ProductsComponent implements OnInit{
     })
   }
 
+  cargarProductImg(id:string) {
+    if(this.files.length > 0){
+    this.uploadsService.cargarImg(this.files, 'productos', id).subscribe(resp =>{
+      if(resp.ok === true){
+        console.log(resp.modelo.img)
+      }else{
+        Swal.fire('Error', resp, 'error')
+      }
+    })
+  }
+  }
+
   onUserRowSelect(event:any): void {
     console.log(event);
     this.product_selected = true
     this.product = event.data
+    console.log(this.product.img);
+    if(this.product.img)
+      this.productSrc = this.uploadsUrl + '/' + this.product._id
     // this.modalEdit = true;
     // this.changesEdit = false;
     // let {rol} = event.data
@@ -245,11 +271,12 @@ export class ProductsComponent implements OnInit{
     this.trees = this.trees.filter(t => t !== tagToRemove.text);
   }
 
-  onTagAdd({ value, input }: NbTagInputAddEvent): void {
-    if (value) {
-      this.trees.push(value)
+  onTagAdd(event:any): void {
+    if (event) {
+      if(event.target.value.trim() != '')
+        this.trees.push(event.target.value)
     }
-    input.nativeElement.value = '';
+    // input.nativeElement.value = '';
   }
 
   settings = {
