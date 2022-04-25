@@ -38,11 +38,13 @@ export class UsersComponent implements OnInit {
   modalEdit:boolean = false;
   source: LocalDataSource;
   @ViewChild('Usuario') Usuario!: TemplateRef<any>;
+  pageSize:number = 0
 
   constructor(private usersService:UsersService,
               private dialogService: NbDialogService,
               private fb: FormBuilder) {
                 this.source = new LocalDataSource(this.usuarios);
+                this.pageSize = 2;
                 this.toastMixin = Swal.mixin({
                   toast: true,
                   icon: 'success',
@@ -62,6 +64,8 @@ export class UsersComponent implements OnInit {
   
   ngOnInit() {
     this.getUsers()
+    this.settings.pager.display = true;
+    this.settings.pager.perPage = 5;
   }
 
   correoPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"
@@ -276,7 +280,10 @@ export class UsersComponent implements OnInit {
         filter: false,
       }
     },
-    
+    pager: {
+      display: true,
+      perPage: 5,
+    }
   };
 
   

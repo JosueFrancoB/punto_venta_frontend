@@ -44,7 +44,10 @@ export class ClientesComponent implements OnInit {
   addLoading = false;
   updLoading = false;
 
-  uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
+  uploadsUrl:string = environment.baseUrl + '/uploads/clientes'
+
+  items:Array<ClientesBody> = [];
+  pageOfItems!: Array<any>;
 
   constructor(private clientesService: ClientesService,
               private uploadsService: UploadsService,
@@ -177,6 +180,11 @@ export class ClientesComponent implements OnInit {
       })
     }
   })
+  }
+
+  onChangePage(pageOfItems: Array<any>) {
+    // update current page of items
+    this.pageOfItems = pageOfItems;
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {

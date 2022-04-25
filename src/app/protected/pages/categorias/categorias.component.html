@@ -17,21 +17,27 @@
 <!--+ End Search bar -->
 
 <!--? Card  -->
-<div class="components-list" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
-    <div class="component-card-wrapper ng-star-inserted" *ngFor="let categoria of categorias |filter:searchText">
-      <a class="component-navigate-link" >
-            <nb-card title="{{categoria.nombre}}" class="card-product" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
-              <div style="position: absolute;" *ngIf="isDisplay(categoria.nombre)">
-                <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getCategory(categoria._id); openDialog(category, true); changeImg = false; categoryValue = ''"></nb-icon></button>
-                <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteCategory(categoria._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
-              </div>
-          <nb-card-body style="cursor: pointer;"class="card-body-product" [routerLink]="['/dashboard/products/category', categoria._id]">
-            <img class="component-icon" src="{{(categoria._id) ? uploadsUrl + '/' + categoria._id : 'assets/images/components/layout.svg'}}" alt="Layout">
-            <label class="component-name">{{categoria.nombre}}</label>
-        </nb-card-body>
-        </nb-card>
-      </a>
-    </div>
+<div style="display: flex; flex-direction: column; position: relative; min-width: 100px; min-height: 100px;">
+  <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
+  <div class="components-list">
+      <div class="component-card-wrapper ng-star-inserted" *ngFor="let categoria of pageOfItems |filter:searchText">
+        <a class="component-navigate-link" >
+              <nb-card title="{{categoria.nombre}}" class="card-product" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
+                <div style="position: absolute;" *ngIf="isDisplay(categoria.nombre)">
+                  <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getCategory(categoria._id); openDialog(category, true); changeImg = false; categoryValue = ''"></nb-icon></button>
+                  <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteCategory(categoria._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
+                </div>
+            <nb-card-body style="cursor: pointer;"class="card-body-product" [routerLink]="['/dashboard/products/category', categoria._id]">
+              <img class="component-icon" src="{{(categoria._id) ? uploadsUrl + '/' + categoria._id : 'assets/images/components/layout.svg'}}" alt="Layout">
+              <label class="component-name">{{categoria.nombre}}</label>
+          </nb-card-body>
+          </nb-card>
+        </a>
+      </div>
+  </div>
+  <div [hidden]="categorias.length <= 10" style="display: flex; justify-content: flex-end;">
+    <jw-pagination [items]="categorias" (changePage)="onChangePage($event)"></jw-pagination>
+  </div>
 </div>
 <!--? End Card -->
 

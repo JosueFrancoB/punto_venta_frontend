@@ -32,8 +32,8 @@ export class LayoutComponent implements OnInit {
 
     userPictureOnly: boolean = false;
     userMenu = [ 
-    { title: 'Mi Perfil', icon: 'person-outline' }, 
-    { title: 'Cerrar Sesión', icon: 'log-out-outline' } 
+    { title: 'Mi Perfil', icon: 'person-outline', link: '/dashboard/perfil' }, 
+    { title: 'Cerrar Sesión', icon: 'log-out-outline' }
     ];
 
 
@@ -51,8 +51,13 @@ export class LayoutComponent implements OnInit {
     },
     {
       title: 'Productos',
-      icon: 'shopping-bag-outline',
+      icon: 'gift-outline',
       link: '/dashboard/categories'
+    },
+    {
+      title: 'Compras',
+      icon: 'shopping-bag-outline',
+      link: '/dashboard/purchases'
     },
     {
       title: 'Ventas',

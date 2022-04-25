@@ -1,19 +1,47 @@
 import Swal from 'sweetalert2';
 import { ProveedoresService } from '../../services/proveedores.service';
 import { ProveedoresBody, NewProveedoresBody } from '../../interfaces/protected-interfaces';
-import { Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UploadsService } from '../../services/uploads.service';
+import 'swiper/scss';
+import 'swiper/scss/navigation';
+import 'swiper/scss/pagination';
+import { SwiperComponent } from "swiper/angular";
+import SwiperCore , {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Virtual,
+  Zoom,
+  Autoplay,
+  Thumbs,
+  Controller,
+  SwiperOptions,
+} from 'swiper';
 
+SwiperCore.use([
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Virtual,
+  Zoom,
+  Autoplay,
+  Thumbs,
+  Controller
+]);
 @Component({
   selector: 'app-proveedores',
   templateUrl: './proveedores.component.html',
-  styleUrls: ['./proveedores.component.scss']
+  styleUrls: ['proveedores.component.scss']
 })
 export class ProveedoresComponent implements OnInit {
 
+  
   proveedores: Array<ProveedoresBody> = []
   files: File[] = [];
   filteredOptions$!: Observable<string[]>;
@@ -46,11 +74,11 @@ export class ProveedoresComponent implements OnInit {
   tele = false;
 
   uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
+  pageOfItems!: Array<any>;
 
   constructor(private proveedoresService: ProveedoresService,
               private uploadsService: UploadsService,
               private dialogService: NbDialogService) { 
-                
                 this.toastMixin = Swal.mixin({
                   toast: true,
                   icon: 'success',
@@ -70,14 +98,20 @@ export class ProveedoresComponent implements OnInit {
               }
 
   ngOnInit() {
-    // let body =  document.body;
-    // let script = this._renderer2.createElement('script');
-    // script.type = 'application/javascript';
-    // script.src = 'https://cdn.jsdelivr.net/npm/swiffy-slider@1.5.2/dist/js/swiffy-slider.min.js';
-    // // this.document.getElementsByTagName('head')[0].appendChild(script);
-    // let elemento = this._document.getElementsByTagName('head');
-    // this._renderer2.appendChild(elemento, script);
     this.getProviders()
+  }
+  config: SwiperOptions = {
+    slidesPerView: 3,
+    spaceBetween: 50,
+    navigation: true,
+    pagination: { clickable: true },
+    scrollbar: { draggable: true },
+  };
+  onSwiper([swiper]:any) {
+    console.log(swiper);
+  }
+  onSlideChange() {
+    console.log('slide change');
   }
 
 
@@ -95,6 +129,7 @@ export class ProveedoresComponent implements OnInit {
 
   addProvider(ref: any){
     console.log(this.new_proveedor);
+    this.new_proveedor
     this.proveedoresService.addProveedor(this.new_proveedor)
     .subscribe(resp =>{
       if(resp.ok === true){
@@ -105,7 +140,7 @@ export class ProveedoresComponent implements OnInit {
           title: 'Proveedor agregado'
         });
       }else{
-        Swal.fire('Error', resp, 'error')
+        Swal.fire('Error', resp.msg, 'error')
       }
     })
   }
@@ -170,7 +205,7 @@ export class ProveedoresComponent implements OnInit {
             title: 'Proveedor eliminado'
           });
         }else{
-          Swal.fire('Error', resp, 'error')
+          Swal.fire('Error', resp.msg, 'error')
         }
       })
     }
@@ -290,6 +325,10 @@ export class ProveedoresComponent implements OnInit {
       }
   }
 
+  onChangePage(pageOfItems: Array<any>) {
+    // update current page of items
+    this.pageOfItems = pageOfItems;
+  }
 
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {

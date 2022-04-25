@@ -9,6 +9,8 @@ import { ProveedoresComponent } from './pages/proveedores/proveedores.component'
 import { UsersComponent } from './pages/users/users.component';
 import { SalesComponent } from './pages/sales/sales.component';
 import { UnitsComponent } from './pages/units/units.component';
+import { PerfilComponent } from './perfil/perfil.component';
+import { PurchasesComponent } from './pages/purchases/purchases.component';
 
 const routes: Routes = [
   {
@@ -19,10 +21,12 @@ const routes: Routes = [
       {path: 'users', component: UsersComponent},
       {path: 'categories', component: CategoriasComponent},
       {path: 'products/category/:id', component: ProductsComponent},
+      {path: 'purchases', component: PurchasesComponent},
       {path: 'sales', component: SalesComponent},
       {path: 'clients', component: ClientesComponent},
       {path: 'providers', component: ProveedoresComponent},
       {path: 'units', component: UnitsComponent},
+      {path: 'perfil', component: PerfilComponent},
       {path: '**', redirectTo: ''},
     ]
   }

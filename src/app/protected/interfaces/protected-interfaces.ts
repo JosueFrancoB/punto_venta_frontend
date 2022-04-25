@@ -37,14 +37,14 @@ export interface ProductosBody{
     unidad_venta?: string;
     unidad_compra?: string;
     factor?: number;
-    categoria?: Object;
+    categoria?: string;
     descripcion?: string;
     disponible?: boolean;
     img?: string;
     granel?: boolean;
     inventario_max?: number;
     inventario_min?: number;
-    proveedor?:Object;
+    proveedor?:string;
     existencias?:number;
 
 }

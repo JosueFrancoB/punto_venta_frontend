@@ -16,90 +16,69 @@
 <hr>
 
 <!-- Card -->
-<div class="components-list" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
-    <div class="component-card-wrapper ng-star-inserted" *ngFor="let proveedor of proveedores |filter:searchText; let i = index">
-      <nb-flip-card [showToggleButton]="false" [ngClass]="isFlipped && i == selectedItem  ? 'flipped' : ''">
-        <nb-card-front>
-            <nb-card title="{{proveedor.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
-              <div style="position: absolute; right: 0;" *ngIf="isDisplay(proveedor.nombre_empresa)">
-                <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getProvider(proveedor._id); openDialog(provider, false); changeImg = false; providerValue = ''"></nb-icon></button>
-                <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProvider(proveedor._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
-              </div>
-              <nb-card-body class="card-body-product">
-                <label class="component-name">{{proveedor.nombre_empresa}}</label>
-              </nb-card-body>
-              <nb-card-footer>
-                <nb-actions class="full-width size-small">
-                  <nb-action style="padding: 2px;" icon="phone-outline" nbTooltip="Teléfonos" (click)="flip_card(i); content_back_card('telefonos');"></nb-action>
-                  <nb-action style="padding: 2px;" icon="email-outline" nbTooltip="Correos" (click)="flip_card(i); content_back_card('correos');"></nb-action>
-                  <nb-action style="padding: 2px;" icon="pin-outline" nbTooltip="Direcciones"(click)="flip_card(i); content_back_card('direcciones');"></nb-action>
-                </nb-actions>
-              </nb-card-footer>
-            </nb-card>
-          </nb-card-front>
-          <nb-card-back>
-            <nb-card title="{{proveedor.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
-              <div style="position: absolute; right: 0;" *ngIf="isDisplay(proveedor.nombre_empresa)">
-                <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getProvider(proveedor._id); openDialog(provider, false); changeImg = false; providerValue = ''"></nb-icon></button>
-                <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProvider(proveedor._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
-              </div>
-              <nb-card-header>
-                <nb-actions class="left size-small">
-                  <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
-                </nb-actions>
-              </nb-card-header>
-              <nb-card-body class="slider" style="padding: 0px;">
-                <!-- <div class="wrapper">
-                  <div class="carousel">
-                    <div class="car-card" *ngFor="let telefono of proveedor.telefonos; let idx = index">
-                      <h5 [ngClass]="aux == idx  ? 'd-none' : ''">{{telefono}}</h5>
-                    </div>
-                    <a class="prev" (click)="plusSlides(-1, proveedor)">❮</a>
-                    <a class="next" (click)="plusSlides(0, proveedor)">❯</a>
-                  </div>
-                </div> -->
-                <div class="swiffy-slider slider-item-helper slider-item-ratio slider-nav-caretfill slider-nav-dark slider-nav-sm" style="max-height: 2rem !important;">
-                  <ul class="slider-container" style="max-height: 2rem !important; ">
-                      <li style="max-height: 2rem !important;" *ngFor="let telefono of proveedor.telefonos">
-                        <h5>{{telefono}}</h5>
-                      </li>
-                  </ul>
-              
-                  <button type="button" class="slider-nav"></button>
-                  <button type="button" class="slider-nav slider-nav-next"></button>
-              
+<div style="display: flex; flex-direction: column; position: relative; min-width: 100px; min-height: 100px;">
+  <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
+  <div class="components-list">
+      <div class="component-card-wrapper ng-star-inserted" *ngFor="let proveedor of pageOfItems |filter:searchText; let i = index">
+        <nb-flip-card [showToggleButton]="false" [ngClass]="isFlipped && i == selectedItem  ? 'flipped' : ''">
+          <nb-card-front>
+              <nb-card title="{{proveedor.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
+                <div style="position: absolute; right: 0;" *ngIf="isDisplay(proveedor.nombre_empresa)">
+                  <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getProvider(proveedor._id); openDialog(provider, false); changeImg = false; providerValue = ''"></nb-icon></button>
+                  <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProvider(proveedor._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
                 </div>
-              </nb-card-body>
-              <!-- <nb-card-body >
-                <nb-actions class="left size-small">
-                  <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
-                </nb-actions>
-                <nb-card size="small" style="max-height: 130px;" *ngIf="info_selected == 'telefonos'">
-                  <nb-list *ngFor="let telefono of proveedor.telefonos">
-                    <nb-list-item>
-                        <label class="component-name">{{telefono}}</label>
-                    </nb-list-item>
-                  </nb-list>
-                </nb-card>
-                <nb-card size="small" style="max-height: 130px;" *ngIf="info_selected == 'correos'">
-                  <nb-list *ngFor="let correo of proveedor.correos">
-                    <nb-list-item>
-                        <label class="component-name">{{correo}}</label>
-                    </nb-list-item>
-                  </nb-list>
-                </nb-card>
-                <nb-card size="small" style="max-height: 130px;" *ngIf="info_selected == 'direcciones'">
-                  <nb-list *ngFor="let direccion of proveedor.direcciones">
-                    <nb-list-item>
-                        <label class="component-name">{{direccion}}</label>
-                    </nb-list-item>
-                  </nb-list>
-                </nb-card>
-              </nb-card-body> -->
-          </nb-card>
-        </nb-card-back>
-      </nb-flip-card>
-    </div>
+                <nb-card-body class="card-body-product">
+                  <label class="component-name">{{proveedor.nombre_empresa}}</label>
+                </nb-card-body>
+                <nb-card-footer>
+                  <nb-actions class="full-width size-small">
+                    <nb-action style="padding: 2px;" icon="phone-outline" nbTooltip="Teléfonos" (click)="flip_card(i); content_back_card('telefonos');"></nb-action>
+                    <nb-action style="padding: 2px;" icon="email-outline" nbTooltip="Correos" (click)="flip_card(i); content_back_card('correos');"></nb-action>
+                    <nb-action style="padding: 2px;" icon="pin-outline" nbTooltip="Direcciones"(click)="flip_card(i); content_back_card('direcciones');"></nb-action>
+                  </nb-actions>
+                </nb-card-footer>
+              </nb-card>
+            </nb-card-front>
+            <nb-card-back>
+              <nb-card title="{{proveedor.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
+                <div style="position: absolute; right: 0;" *ngIf="isDisplay(proveedor.nombre_empresa)">
+                  <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar"><nb-icon icon="edit-outline" pack="eva" class="icon" (click)="getProvider(proveedor._id); openDialog(provider, false); changeImg = false; providerValue = ''"></nb-icon></button>
+                  <button nbbutton="" appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProvider(proveedor._id)"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
+                </div>
+                <!-- <nb-card-header> -->
+                  
+                <!-- </nb-card-header> -->
+                <nb-card-body style="padding: 0px; min-height: 6.25rem; max-height: 6.25rem; max-width: 20.625rem;">
+                    <nb-actions class="left size-small">
+                      <nb-action icon="arrow-back-outline" nbTooltip="Regresar" (click)="flip_card(i)"></nb-action>
+                    </nb-actions>
+                    <div style="display:flex; align-items: center; justify-content: center;">
+                      <swiper *ngIf="info_selected == 'telefonos'" direction="horizontal" [navigation]="true" [loop]="true" style="text-align: center; min-height: 50px; max-width: 12.25rem; display:flex; align-items: center;">
+                        <ng-container *ngFor="let telefono of proveedor.telefonos; let i = index">
+                          <ng-template style="text-align: center;" swiperSlide>  <span style="font-size: 0.8em; font-weight: 800;">{{telefono}}</span></ng-template>
+                        </ng-container>
+                      </swiper>
+                      <swiper *ngIf="info_selected == 'correos'" direction="horizontal" [navigation]="true" [loop]="true" style="text-align: center; min-height: 50px; max-width: 12.25rem; display:flex; align-items: center;">
+                        <ng-container *ngFor="let correo of proveedor.correos; let i = index">
+                          <ng-template style="text-align: center;" swiperSlide>  <span style="font-size: 0.8em; font-weight: 800;">{{correo}}</span></ng-template>
+                        </ng-container>
+                      </swiper>
+                      <swiper *ngIf="info_selected == 'direcciones'" direction="horizontal" [navigation]="true" [loop]="true" style="text-align: center; min-height: 50px; max-width: 12.25rem; display:flex; align-items: center;">
+                        <ng-container *ngFor="let direccion of proveedor.direcciones; let i = index">
+                          <ng-template style="text-align: center;" swiperSlide>  <span style="font-size: 0.8em; font-weight: 800;">{{direccion}}</span></ng-template>
+                        </ng-container>
+                      </swiper>
+                    </div>
+
+                </nb-card-body>
+            </nb-card>
+          </nb-card-back>
+        </nb-flip-card>
+      </div>
+  </div>
+  <div [hidden]="proveedores.length <= 10" style="display: flex; justify-content: flex-end;">
+    <jw-pagination [items]="proveedores" (changePage)="onChangePage($event)"></jw-pagination>
+  </div>
 </div>
 
 
@@ -155,8 +134,21 @@
 
   <!-- ? Modal Body de Editar -->
   <nb-card-body *ngIf="modalEdit">
-        <nb-tabset>
-          <nb-tab tabTitle="General">
+        <div id="tsum-tabs">
+          <input class="tabs-radio" id="tab1" type="radio" name="tabs" checked>
+          <label class="tabs_titles" for="tab1">General</label>
+
+            
+          <input class="tabs-radio" id="tab2" type="radio" name="tabs">
+          <label class="tabs_titles" for="tab2">Correos</label>
+            
+          <input class="tabs-radio" id="tab3" type="radio" name="tabs">
+          <label class="tabs_titles" for="tab3">Direcciones</label>
+            
+          <input class="tabs-radio" id="tab4" type="radio" name="tabs">
+          <label class="tabs_titles" for="tab4">Teléfonos</label>
+            
+          <section id="content1">
             <div class="row">
               <div class="col-sm-6" style="margin-top: 5px">
                       <span style="font-size:14px;">Nombre de Contacto</span>
@@ -173,9 +165,9 @@
                 <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="active_proveedor.rfc" style="background: #fff;">
               </div>
             </div>
-          </nb-tab>
-
-          <nb-tab tabTitle="Correos">
+          </section>
+            
+          <section id="content2">
             <div class="row">
               <div class="col-sm-12" style="margin-top: 5px;">
                   <div style="display: flex;">
@@ -200,9 +192,9 @@
                   </nb-card>
               </div>
             </div>
-          </nb-tab>
-
-          <nb-tab tabTitle="Direcciones">
+          </section>
+            
+          <section id="content3">
             <div class="row">
               <div class="col-sm-12" style="margin-top: 5px;">
                   <div style="display: flex;">
@@ -227,9 +219,9 @@
                   </nb-card>
               </div>
             </div>
-          </nb-tab>
-
-          <nb-tab tabTitle="Teléfonos">
+          </section>
+            
+          <section id="content4">
             <div class="row">
               <div class="col-sm-12" style="margin-top: 5px;">
                   <div style="display: flex;">
@@ -254,9 +246,10 @@
                   </nb-card>
               </div>
             </div>
-          </nb-tab>
-        </nb-tabset>
-  </nb-card-body>
+          </section>
+            
+        </div>
+      </nb-card-body>
 
   <nb-card-footer style="display: flex; justify-content: space-between;">
     <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>

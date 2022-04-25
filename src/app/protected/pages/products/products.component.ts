@@ -5,8 +5,11 @@ import { ProductsService } from '../../services/products.service';
 import { CategoriasService } from '../../services/categorias.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbTagComponent, NbTagInputAddEvent } from '@nebular/theme';
+import { UploadsService } from '../../services/uploads.service';
 import { ProductosBody } from '../../interfaces/protected-interfaces';
+import { UnitsService } from '../../services/units.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-products',
@@ -31,19 +34,23 @@ export class ProductsComponent implements OnInit{
   selectedCategory:string =  ''
   product: ProductosBody = {}
   new_producto: ProductosBody = {}
+  productSrc = ''
   changesEdit = true
+  changeImg = true
   product_selected = false
   product_edit = ''
-  products_units: Array<any> = [
-    'cm', 'm', 'gr', 'kg', 'pza'
-  ]
+  products_units: Array<any> = []
+  section_general:boolean = true
+  uploadsUrl:string = environment.baseUrl + '/uploads/productos'
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
 
   // @ViewChild('Usuario') Usuario!: TemplateRef<any>; 
   constructor(private productsService: ProductsService,
               private categoriasService: CategoriasService,
+              private unitsService: UnitsService,
               private dialogService: NbDialogService,
+              private uploadsService: UploadsService,
               private fb: FormBuilder,
               private activatedRoute: ActivatedRoute) {
     this.source = new LocalDataSource(this.productos);
@@ -73,6 +80,8 @@ export class ProductsComponent implements OnInit{
       this.getProducts(this.params.id)
       this.getCategory(this.params.id)
     }
+    this.settings.pager.display = true;
+    this.settings.pager.perPage = 5;
   }
 
   getProducts(id: string){
@@ -93,6 +102,7 @@ export class ProductsComponent implements OnInit{
       this.productsService.getProduct(id).subscribe(resp =>{
         if (resp.ok === true){
           console.log(resp);
+          this.productSrc = this.uploadsUrl + '/' + resp.producto._id
           this.modalEdit = true
           this.new_producto = resp.producto
           if (this.new_producto.categoria)
@@ -103,11 +113,12 @@ export class ProductsComponent implements OnInit{
   }
 
   addProduct(ref: any){
-    this.productsService.addProduct(this.new_producto)
+    this.productsService.addProduct(this.new_producto, this.categoria)
       .subscribe(resp =>{
         if (resp.ok === true){
           this.getProducts(this.categoria)
           ref.close()
+          this.cargarProductImg(resp.producto._id)
           this.toastMixin.fire({
             title: 'Producto agregado'
           });
@@ -119,16 +130,21 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
+    console.log(this.new_producto.descripcion);
     this.product = this.new_producto
     this.updLoading = true
-    this.productsService.updateProduct(id, this.product).subscribe(resp => {
+    this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
       if(resp.ok === true){
         console.log(resp);
+        if (this.changeImg === true){
+          this.cargarProductImg(id)
+        }
         this.toastMixin.fire({
           title: 'Producto actualizado'
         });
         this.getProducts(this.categoria)
         ref.close()
+        this.resetProduct()
       }else{
         Swal.fire('Error', resp, 'error')
       }
@@ -136,7 +152,7 @@ export class ProductsComponent implements OnInit{
     })
   }
 
-  deleteProduct(id: string, ref: any){
+  deleteProduct(id: string|undefined){
     Swal.fire({
       title: '¿Estás seguro de eliminarlo?',
       icon: 'warning',
@@ -148,20 +164,19 @@ export class ProductsComponent implements OnInit{
     }).then((result) => {
       this.delLoading = true
       if (result.isConfirmed) {
-        this.productsService.deleteProduct(id).subscribe(resp => {
-            if (resp.ok === true){
-              this.getProducts(this.categoria)
-              ref.close()
-              this.toastMixin.fire({
-                title: 'Producto eliminado'
-              });
-            }else{
-              Swal.fire('Error', resp, 'error')
-              console.log(resp)
-            }
-            this.delLoading = false
-          },
-          )
+        if (id !== undefined)
+          this.productsService.deleteProduct(id).subscribe(resp => {
+              if (resp.ok === true){
+                this.getProducts(this.categoria)
+                this.toastMixin.fire({
+                  title: 'Producto eliminado'
+                });
+              }else{
+                Swal.fire('Error', resp, 'error')
+                console.log(resp)
+              }
+              this.delLoading = false
+            })
         }else{
 
           this.delLoading = false
@@ -180,10 +195,25 @@ export class ProductsComponent implements OnInit{
     })
   }
 
+  cargarProductImg(id:string) {
+    if(this.files.length > 0){
+    this.uploadsService.cargarImg(this.files, 'productos', id).subscribe(resp =>{
+      if(resp.ok === true){
+        console.log(resp.modelo.img)
+      }else{
+        Swal.fire('Error', resp, 'error')
+      }
+    })
+  }
+  }
+
   onUserRowSelect(event:any): void {
     console.log(event);
     this.product_selected = true
     this.product = event.data
+    console.log(this.product.img);
+    if(this.product.img)
+      this.productSrc = this.uploadsUrl + '/' + this.product._id
     // this.modalEdit = true;
     // this.changesEdit = false;
     // let {rol} = event.data
@@ -209,9 +239,15 @@ export class ProductsComponent implements OnInit{
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     this.dialogService.open(dialog, { closeOnBackdropClick });
     // this.dialogRef = this.dialogService.open(dialog, { closeOnBackdropClick });
+    this.unitsService.getUnidades().subscribe(res =>{
+      console.log(res);
+      const {unidades} = res
+      this.products_units = unidades
+    })
+    this.section_general = true
   }
 
-  cancelDialog(){
+  resetProduct(){
     let tmp_categoria = this.new_producto['categoria']
     this.new_producto = {};
     this.new_producto.categoria = tmp_categoria
@@ -230,7 +266,18 @@ export class ProductsComponent implements OnInit{
   onRemoveDrag(event:any) {
     this.files.splice(this.files.indexOf(event), 1);
   }
+  trees:Array<any> = []
+  onTagRemove(tagToRemove: NbTagComponent): void {
+    this.trees = this.trees.filter(t => t !== tagToRemove.text);
+  }
 
+  onTagAdd(event:any): void {
+    if (event) {
+      if(event.target.value.trim() != '')
+        this.trees.push(event.target.value)
+    }
+    // input.nativeElement.value = '';
+  }
 
   settings = {
     actions: {
@@ -253,8 +300,8 @@ export class ProductsComponent implements OnInit{
         type: 'string',
         filter: false,
       },
-      descripcion:{
-        title: 'Descripción',
+      nombre:{
+        title: 'Nombre',
         type: 'boolean',
         filter: false,
       },
@@ -269,7 +316,10 @@ export class ProductsComponent implements OnInit{
         filter: false,
       },
     },
-    
+    pager: {
+      display: true,
+      perPage: 5,
+    }
   };
 
 
@@ -284,7 +334,7 @@ export class ProductsComponent implements OnInit{
         search: query
       },
       {
-        field: 'descripcion',
+        field: 'nombre',
         search: query
       },
     ], false); 
