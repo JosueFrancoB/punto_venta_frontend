@@ -21,7 +21,8 @@
           <nb-icon class="icon" icon="arrow-back-outline" (click)="product_selected = false"></nb-icon>
         </button>
         <div style="text-align: center; justify-content: center;">
-          <h3 style="color: royalblue;">{{product.nombre}}</h3>
+          <h3 style="color: royalblue;" class="border-section">{{product.nombre}}</h3>
+          <span style="color: #457823;">{{product.clave}}</span>
         </div>
         <div>
           <button nbbutton="" appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar" (click)="getClickedProduct(product._id); changeImg = false; openDialog(Producto, false);"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
@@ -31,8 +32,21 @@
     </nb-card-header>
     <nb-card-body class="animate__animated animate__pulse animate__faster">
     <div style="display:flex; justify-content: space-between; flex-wrap: wrap;">
-      <div>
-        {{product.descripcion}}
+      <div style="display: flex; flex-direction: column;">
+        <nb-card style="margin: 0; background-color: #E9E9E9;">
+          <nb-card-body>{{product.descripcion}}</nb-card-body>
+        </nb-card>
+        <nb-card style="margin: 0; background-color: #E9E9E9;">
+          <nb-card-body>{{product.factor}} {{product.unidad_compra}} equivale a {{product.factor}} {{product.unidad_venta}}</nb-card-body>
+        </nb-card>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <nb-card style="margin: 0; background-color: #E9E9E9;">
+          <nb-card-body>{{product.descripcion}}</nb-card-body>
+        </nb-card>
+        <nb-card style="margin: 0; background-color: #E9E9E9;">
+          <nb-card-body>{{product.descripcion}}</nb-card-body>
+        </nb-card>
       </div>
       <div>
         <img class="product-img" [src]="productSrc" alt="Product">
@@ -40,6 +54,8 @@
     </div>
     </nb-card-body>
     <nb-card-footer class="animate__animated animate__pulse animate__faster">
+      <span class="badge-stock status-instock">INSTOCK</span>
+      <nb-badge text="badgeText"></nb-badge>
       <b>Cantidad disponible: {{product.existencias}}</b>
     </nb-card-footer>
   </nb-card>
@@ -50,7 +66,7 @@
 
 <ng-template #Producto let-data let-ref="dialogRef">
   <nb-card [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
-    <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit ? 'space-between' : 'flex-end' }">
+    <nb-card-header style="display:flex; justify-content: space-between">
       <div [ngClass]="{'border-section': section_general}" (click)="section_general = true; changeImg = false;" style="display: flex; align-items: center; cursor: pointer;">
         <nb-icon [ngClass]="{'status-success': section_general}" icon="globe-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
         <span >Generales</span>
@@ -89,14 +105,14 @@
     <div class="row">
       <div class="col-sm-5" style="margin-top: 5px">
             <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span>
-            <select class="form-control input-sm ">
-              <option *ngFor="let unit of products_units" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_compra" value="{{unit.abreviacion}}">{{unit.abreviacion}}</option>
+            <select class="form-control input-sm " [(ngModel)]="new_producto.unidad_compra">
+              <option *ngFor="let unit of products_units" name="fieldName" ngDefaultControl  [value]="modalEdit ? new_producto.unidad_compra : unit.abreviacion">{{modalEdit ? new_producto.unidad_compra : unit.abreviacion}}</option>
             </select>
       </div>
       <div class="col-sm-5" style="margin-top: 5px;">
               <span class="input-group-addon" style="font-size:14px;">Unidad de Venta:</span>
-              <select style="background: #fff;" class="form-control input-sm ">
-              <option *ngFor="let unit of products_units" [value]="unit.abreviacion" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.unidad_venta">{{unit.abreviacion}}</option></select>
+              <select style="background: #fff;" class="form-control input-sm " [(ngModel)]="new_producto.unidad_venta">
+              <option *ngFor="let unit of products_units" [value]="modalEdit ? new_producto.unidad_venta : unit.abreviacion" name="fieldName" ngDefaultControl >{{ modalEdit ? new_producto.unidad_venta : unit.abreviacion}}</option></select>
       </div>
       <div class="col-sm-2" style="margin-top: 5px;">
             <span class="input-group-addon" style="font-size:14px;">Factor:</span>

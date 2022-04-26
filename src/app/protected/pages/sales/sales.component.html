@@ -1,1 +1,12 @@
 <p>sales works!</p>
+
+<nb-card [size]="'medium'">
+    <nb-card-header>List inside nb-card-body</nb-card-header>
+    <nb-card-body>
+      <nb-list>
+        <nb-list-item *ngFor="let fruit of fruits">
+            {{ fruit }}
+        </nb-list-item>
+      </nb-list>
+    </nb-card-body>
+  </nb-card>

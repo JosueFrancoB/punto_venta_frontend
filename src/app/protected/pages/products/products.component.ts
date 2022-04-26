@@ -113,6 +113,7 @@ export class ProductsComponent implements OnInit{
   }
 
   addProduct(ref: any){
+    console.log(this.new_producto);
     this.productsService.addProduct(this.new_producto, this.categoria)
       .subscribe(resp =>{
         if (resp.ok === true){
@@ -130,7 +131,7 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
-    console.log(this.new_producto.descripcion);
+    console.log(this.new_producto);
     this.product = this.new_producto
     this.updLoading = true
     this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
@@ -314,6 +315,12 @@ export class ProductsComponent implements OnInit{
         title: 'Precio Venta',
         type: 'number',
         filter: false,
+      },
+      disponible: {
+        title: 'Estado',
+        filter: false,
+        type: 'html',
+        valuePrepareFunction: ((data:any, row:any) => { if (data === true) { return `<span class="badge-stock status-instock">HAY EN STOCK</span>`; } else {return `<span class="badge-stock status-outstock">NO HAY STOCK</span>`;}}),
       },
     },
     pager: {

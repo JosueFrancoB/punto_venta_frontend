@@ -113,6 +113,50 @@ h1.tag {
 }
 
 
+:host ::ng-deep .badge-stock{
+  font-family: BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  cursor: move;
+  box-sizing: border-box;
+  border-radius: 2px;
+  padding: .25em .5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+}
+
+:host ::ng-deep .status-instock{
+  background: #C8E6C9;
+  color: #256029;
+}
+
+:host ::ng-deep  .status-lowstock{
+  background: #FEEDAF;
+  color: #8a5340;
+}
+
+:host ::ng-deep .status-outstock{
+  background: #FFCDD2;
+  color: #c63737;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @media screen and (max-width:1620px) {
   body {
       font-size: 14px;
