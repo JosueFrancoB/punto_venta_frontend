@@ -7,9 +7,11 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NbDialogService, NbTagComponent, NbTagInputAddEvent } from '@nebular/theme';
 import { UploadsService } from '../../services/uploads.service';
-import { ProductosBody } from '../../interfaces/protected-interfaces';
+import { ProductosBody, ProveedoresBody, UnitsBody } from '../../interfaces/protected-interfaces';
 import { UnitsService } from '../../services/units.service';
 import { environment } from 'src/environments/environment';
+import { map, Observable, of } from 'rxjs';
+import { ProveedoresService } from '../../services/proveedores.service';
 
 @Component({
   selector: 'app-products',
@@ -40,15 +42,32 @@ export class ProductsComponent implements OnInit{
   product_selected = false
   product_edit = ''
   products_units: Array<any> = []
+  products_providers: Array<any> = []
   section_general:boolean = true
+  section_adicional:boolean = false
+  section_personalizar:boolean = false
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
+  new_unit:UnitsBody = {}
+  addUnit:boolean = false
+  unit_exists:string = '' 
+  new_provider: ProveedoresBody = {}
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
+  @ViewChild('AddUnit') AddUnit!: TemplateRef<any>;
 
-  // @ViewChild('Usuario') Usuario!: TemplateRef<any>; 
+  options_units: string[] = [];
+  options_providers: string[] = [];
+  filteredCompraOptions$!: Observable<string[]>;
+  filteredVentaOptions$!: Observable<string[]>;
+  filteredProviderOptions$!: Observable<string[]>;
+  @ViewChild('unitCompraInput') unitCompraInput: any;
+  @ViewChild('unitVentaInput') unitVentaInput: any;
+  @ViewChild('providerInput') providerInput: any;
+
   constructor(private productsService: ProductsService,
               private categoriasService: CategoriasService,
               private unitsService: UnitsService,
+              private providerService: ProveedoresService,
               private dialogService: NbDialogService,
               private uploadsService: UploadsService,
               private fb: FormBuilder,
@@ -68,7 +87,7 @@ export class ProductsComponent implements OnInit{
       }
     })
   }
-
+  
   addProductForm: FormGroup = this.fb.group({
     nombre: ['', [Validators.required] ],
     categoria: ['', [Validators.required] ]
@@ -82,6 +101,7 @@ export class ProductsComponent implements OnInit{
     }
     this.settings.pager.display = true;
     this.settings.pager.perPage = 5;
+    
   }
 
   getProducts(id: string){
@@ -92,6 +112,7 @@ export class ProductsComponent implements OnInit{
       this.productos = productos
       this.source.load(productos)
       this.viewLoading = false
+      this.getProdUnitId()
     })
   }
 
@@ -101,12 +122,13 @@ export class ProductsComponent implements OnInit{
     if (id !== undefined)
       this.productsService.getProduct(id).subscribe(resp =>{
         if (resp.ok === true){
-          console.log(resp);
           this.productSrc = this.uploadsUrl + '/' + resp.producto._id
           this.modalEdit = true
           this.new_producto = resp.producto
-          if (this.new_producto.categoria)
+          if (this.new_producto.categoria){
             this.new_producto.categoria = resp.producto.categoria.nombre
+          }
+          this.getUnitID()
         }
         this.viewLoading = false
       })
@@ -114,43 +136,47 @@ export class ProductsComponent implements OnInit{
 
   addProduct(ref: any){
     console.log(this.new_producto);
-    this.productsService.addProduct(this.new_producto, this.categoria)
-      .subscribe(resp =>{
-        if (resp.ok === true){
-          this.getProducts(this.categoria)
-          ref.close()
-          this.cargarProductImg(resp.producto._id)
-          this.toastMixin.fire({
-            title: 'Producto agregado'
-          });
-        }else{
-          Swal.fire('Error', resp, 'error')
-        }
-        this.addLoading = false
-      })
+    if(this.validUnit()===true){
+      this.productsService.addProduct(this.new_producto, this.categoria)
+        .subscribe(resp =>{
+          if (resp.ok === true){
+            this.getProducts(this.categoria)
+            ref.close()
+            this.cargarProductImg(resp.producto._id)
+            this.toastMixin.fire({
+              title: 'Producto agregado'
+            });
+          }else{
+            Swal.fire('Error', resp, 'error')
+          }
+          this.addLoading = false
+        })
+      }
 }
 
   updateProduct(id: string, ref: any){
     console.log(this.new_producto);
-    this.product = this.new_producto
-    this.updLoading = true
-    this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
-      if(resp.ok === true){
-        console.log(resp);
-        if (this.changeImg === true){
-          this.cargarProductImg(id)
+    if(this.validUnit()===true){
+      this.product = this.new_producto
+      this.updLoading = true
+      this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
+        if(resp.ok === true){
+          console.log(resp);
+          if (this.changeImg === true){
+            this.cargarProductImg(id)
+          }
+          this.toastMixin.fire({
+            title: 'Producto actualizado'
+          });
+          this.getProducts(this.categoria)
+          ref.close()
+          this.resetProduct()
+        }else{
+          Swal.fire('Error', resp, 'error')
         }
-        this.toastMixin.fire({
-          title: 'Producto actualizado'
-        });
-        this.getProducts(this.categoria)
-        ref.close()
-        this.resetProduct()
-      }else{
-        Swal.fire('Error', resp, 'error')
-      }
-      this.updLoading = false
-    })
+        this.updLoading = false
+      })
+    }
   }
 
   deleteProduct(id: string|undefined){
@@ -208,29 +234,14 @@ export class ProductsComponent implements OnInit{
   }
   }
 
-  onUserRowSelect(event:any): void {
-    console.log(event);
+  onProductRowSelect(event:any): void {
     this.product_selected = true
     this.product = event.data
-    console.log(this.product.img);
-    if(this.product.img)
+    if(this.product.img){
       this.productSrc = this.uploadsUrl + '/' + this.product._id
-    // this.modalEdit = true;
-    // this.changesEdit = false;
-    // let {rol} = event.data
-    // delete event.data.password
-    // this.user_rol = rol
-    // this.selectedRol = rol
-    // this.user_id = event.data.uid
-    // this.modalLoading = true
-    // this.usersService.getUser(this.user_id).subscribe(resp => {
-    //   if (resp.ok === true){
-    //     this.user = resp.usuario
-    //     this.checkedEstado = this.user.estado
-    //   }
-    //   this.modalLoading = false
-    // })
-    
+    }
+    this.getProdUnitId()
+    this.getProviderId()
   }
 
   get addProductFormControls(): any {
@@ -239,15 +250,59 @@ export class ProductsComponent implements OnInit{
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     this.dialogService.open(dialog, { closeOnBackdropClick });
-    // this.dialogRef = this.dialogService.open(dialog, { closeOnBackdropClick });
-    this.unitsService.getUnidades().subscribe(res =>{
-      console.log(res);
-      const {unidades} = res
-      this.products_units = unidades
-    })
+    this.getUnits()
     this.section_general = true
   }
 
+  changeDialogSection(event:string){
+    switch (event) {
+      case 'general':
+        this.section_general = true; this.section_personalizar = false; this.section_adicional = false; this.changeImg = false;
+        break;
+      case 'adicional':
+        this.section_general = false; this.section_personalizar = false; this.section_adicional = true; this.changeImg = false;
+        break;
+      case 'personalizar':
+        this.section_general = false; this.section_personalizar = true; this.section_adicional = false;
+        break;
+    
+      default:
+        break;
+    }
+    this.getProviders()
+  }
+
+  getUnits(){
+    this.unitsService.getUnidades().subscribe(res =>{
+      const {unidades} = res
+      this.products_units = unidades
+      this.products_units.forEach(unit => {
+        if (!this.options_units.includes(unit.nombre.toLowerCase())){
+          this.options_units.push(unit.nombre.toLowerCase());
+        }
+      });
+      this.filteredCompraOptions$ = of(this.options_units);
+      this.filteredVentaOptions$ = of(this.options_units);
+    })
+  }
+
+  getProviders(){
+    this.providerService.getProveedores().subscribe(res =>{
+      const {proveedores} = res
+      this.products_providers = proveedores
+      this.products_providers.forEach(prov => {
+        if (!this.options_providers.includes(prov.nombre_empresa.toLowerCase())){
+          this.options_providers.push(prov.nombre_empresa.toLowerCase());
+        }
+      });
+      this.filteredCompraOptions$ = of(this.options_units);
+      this.filteredVentaOptions$ = of(this.options_units);
+    })
+  }
+
+  openDialogInfo(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
+    this.dialogService.open(dialog, { closeOnBackdropClick });
+  }
   resetProduct(){
     let tmp_categoria = this.new_producto['categoria']
     this.new_producto = {};
@@ -348,4 +403,144 @@ export class ProductsComponent implements OnInit{
   }
   }
 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+  // ? Functions units and providers
+  
+  private filter(value: string): string[] {
+    if (value){
+      let filterValue = value.toLowerCase();
+      return this.options_units.filter(optionValue => optionValue.toLowerCase().includes(filterValue));
+    }
+    return []
+  }
+
+  getFilteredOptions(value: string): Observable<string[]> {
+    return of(value).pipe(
+      map(filterString => this.filter(filterString)),
+    );
+  }
+
+  onChangeCompra() {
+    this.filteredCompraOptions$ = this.getFilteredOptions(this.unitCompraInput.nativeElement.value);
+  }
+
+  onChangeVenta() {
+    this.filteredVentaOptions$ = this.getFilteredOptions(this.unitVentaInput.nativeElement.value);
+  }
+
+  onCompraSelectionChange($event:any) {
+    this.filteredCompraOptions$ = this.getFilteredOptions($event);
+    this.new_producto.unidad_compra = $event
+  }
+  onVentaSelectionChange($event:any) {
+    this.filteredVentaOptions$ = this.getFilteredOptions($event);
+    this.new_producto.unidad_venta = $event
+  }
+
+  validUnit(){
+    if (this.new_producto.unidad_compra){
+      let unit_compra = this.products_units.filter(unit => unit.nombre.toLowerCase() === this.new_producto.unidad_compra!.toLowerCase())
+      if(unit_compra.length <= 0){
+        this.openDialogInfo(this.AddUnit,false);
+        this.unit_exists = this.new_producto.unidad_compra
+        return false
+      }else{
+        this.new_producto.unidad_compra = unit_compra[0]._id
+      }
+    }
+    if(this.new_producto.unidad_venta){
+      let unit_venta = this.products_units.filter(unit => unit.nombre.toLowerCase() === this.new_producto.unidad_venta!.toLowerCase())
+      if(unit_venta.length <= 0){
+        this.openDialogInfo(this.AddUnit,false);
+        this.unit_exists = this.new_producto.unidad_venta
+        return false
+      }else{
+        this.new_producto.unidad_venta = unit_venta[0]._id
+      }
+    }
+    return true
+  }
+
+  getUnitID(){
+    if (this.new_producto.unidad_compra){
+      this.unitsService.getUnidad(this.new_producto.unidad_compra)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.new_producto.unidad_compra = resp.unidad.nombre.toLowerCase()
+        }
+      })
+    }
+    if (this.new_producto.unidad_venta){
+      this.unitsService.getUnidad(this.new_producto.unidad_venta)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.new_producto.unidad_venta = resp.unidad.nombre.toLowerCase()
+        }
+      })
+    }
+  }
+
+  getProdUnitId(){
+    if (this.product.unidad_compra){
+      this.unitsService.getUnidad(this.product.unidad_compra)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.product.unidad_compra = resp.unidad.nombre.toLowerCase()
+        }
+      })
+    }
+    if (this.product.unidad_venta){
+      this.unitsService.getUnidad(this.product.unidad_venta)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
+        }
+      })
+    }
+  }
+
+  addUnitFnc(ref:any){
+    this.unitsService.addUnidad(this.new_unit)
+    .subscribe(resp =>{
+      if(resp.ok === true){
+        this.new_unit = {}
+        ref.close()
+        this.addUnit = false
+        this.getUnits()
+      }else{
+        Swal.fire('Error', resp.msg, 'error')
+        // this.addUnit = false
+      }
+    })
+  }
+
+  validProvider(){
+    if (this.new_producto.proveedor){
+      let proveedores = this.products_providers.filter(prov => prov.nombre_empresa.toLowerCase() === this.new_producto.proveedor!.toLowerCase())
+      if(proveedores.length <= 0){
+        this.openDialogInfo(this.AddUnit,false);
+        this.unit_exists = this.new_producto.proveedor
+        return false
+      }else{
+        this.new_producto.proveedor = proveedores[0]._id
+      }
+    }
+    return true
+  }
+
+  getProviderId(){
+    if (this.new_producto.proveedor){
+      this.providerService.getProveedor(this.new_producto.proveedor)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.new_producto.proveedor = resp.proveedor.nombre_empresa.toLowerCase()
+        }
+      })
+    }
+  }
+
 }
+
+
+
