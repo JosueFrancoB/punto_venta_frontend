@@ -12,4 +12,5 @@ export class SalesComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  fruits = ['manzana', 'naranja', 'uvas']
 }
