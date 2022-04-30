@@ -50,7 +50,11 @@ export class ProductsComponent implements OnInit{
   new_unit:UnitsBody = {}
   addUnit:boolean = false
   unit_exists:string = '' 
+  unit_compra_id:Array<any> = []
+  unit_venta_id:Array<any> = []
+  unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''} 
   new_provider: ProveedoresBody = {}
+  current_category:string = ''
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
   @ViewChild('AddUnit') AddUnit!: TemplateRef<any>;
@@ -126,7 +130,7 @@ export class ProductsComponent implements OnInit{
           this.modalEdit = true
           this.new_producto = resp.producto
           if (this.new_producto.categoria){
-            this.new_producto.categoria = resp.producto.categoria.nombre
+            this.current_category = resp.producto.categoria.nombre
           }
           this.getUnitID()
         }
@@ -135,8 +139,8 @@ export class ProductsComponent implements OnInit{
   }
 
   addProduct(ref: any){
-    console.log(this.new_producto);
     if(this.validUnit()===true){
+      this.asignUnitId()
       this.productsService.addProduct(this.new_producto, this.categoria)
         .subscribe(resp =>{
           if (resp.ok === true){
@@ -146,6 +150,7 @@ export class ProductsComponent implements OnInit{
             this.toastMixin.fire({
               title: 'Producto agregado'
             });
+            this.resetProduct()
           }else{
             Swal.fire('Error', resp, 'error')
           }
@@ -155,8 +160,8 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
-    console.log(this.new_producto);
     if(this.validUnit()===true){
+      this.asignUnitId()
       this.product = this.new_producto
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
@@ -195,6 +200,7 @@ export class ProductsComponent implements OnInit{
           this.productsService.deleteProduct(id).subscribe(resp => {
               if (resp.ok === true){
                 this.getProducts(this.categoria)
+                this.addUnit=false
                 this.toastMixin.fire({
                   title: 'Producto eliminado'
                 });
@@ -217,7 +223,7 @@ export class ProductsComponent implements OnInit{
       console.log(resp);
       if(resp.ok === true){
         this.title = resp.categoria.nombre
-        this.new_producto.categoria = resp.categoria.nombre
+        this.current_category = resp.categoria.nombre
       }
     })
   }
@@ -304,9 +310,11 @@ export class ProductsComponent implements OnInit{
     this.dialogService.open(dialog, { closeOnBackdropClick });
   }
   resetProduct(){
-    let tmp_categoria = this.new_producto['categoria']
+    let tmp_categoria = this.current_category
     this.new_producto = {};
-    this.new_producto.categoria = tmp_categoria
+    this.current_category = tmp_categoria
+    this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''} 
+    this.changeDialogSection('general');
   }
 
   files: File[] = [];
@@ -412,7 +420,7 @@ export class ProductsComponent implements OnInit{
       let filterValue = value.toLowerCase();
       return this.options_units.filter(optionValue => optionValue.toLowerCase().includes(filterValue));
     }
-    return []
+    return this.options_units
   }
 
   getFilteredOptions(value: string): Observable<string[]> {
@@ -431,32 +439,45 @@ export class ProductsComponent implements OnInit{
 
   onCompraSelectionChange($event:any) {
     this.filteredCompraOptions$ = this.getFilteredOptions($event);
-    this.new_producto.unidad_compra = $event
+    this.unit_value.compra = $event
+    let unit = this.filterUnitNameCompra()
+    if(unit.length > 0 && unit[0].abreviacion)
+      this.unit_value.compra_abv = unit[0].abreviacion
   }
   onVentaSelectionChange($event:any) {
     this.filteredVentaOptions$ = this.getFilteredOptions($event);
-    this.new_producto.unidad_venta = $event
+    this.unit_value.venta = $event
+    let unit = this.filterUnitVenta()
+    if(unit.length > 0 && unit[0].abreviacion)
+      this.unit_value.venta_abv = unit[0].abreviacion
+  }
+
+  filterUnitNameCompra(){
+    return this.products_units.filter(unit => unit.nombre.toLowerCase() === this.unit_value.compra.toLowerCase())
+  }
+  filterUnitVenta(){
+    return this.products_units.filter(unit => unit.nombre.toLowerCase() === this.unit_value.venta.toLowerCase())
   }
 
   validUnit(){
-    if (this.new_producto.unidad_compra){
-      let unit_compra = this.products_units.filter(unit => unit.nombre.toLowerCase() === this.new_producto.unidad_compra!.toLowerCase())
-      if(unit_compra.length <= 0){
+    if (this.unit_value.compra){
+      this.unit_compra_id = this.filterUnitNameCompra()
+      if(this.unit_compra_id.length <= 0){
         this.openDialogInfo(this.AddUnit,false);
-        this.unit_exists = this.new_producto.unidad_compra
+        this.unit_exists = this.unit_value.compra
         return false
       }else{
-        this.new_producto.unidad_compra = unit_compra[0]._id
+        this.new_producto.unidad_compra = this.unit_compra_id[0]._id
       }
     }
-    if(this.new_producto.unidad_venta){
-      let unit_venta = this.products_units.filter(unit => unit.nombre.toLowerCase() === this.new_producto.unidad_venta!.toLowerCase())
-      if(unit_venta.length <= 0){
+    if(this.unit_value.venta){
+      this.unit_venta_id = this.filterUnitVenta()
+      if(this.unit_venta_id.length <= 0){
         this.openDialogInfo(this.AddUnit,false);
-        this.unit_exists = this.new_producto.unidad_venta
+        this.unit_exists = this.unit_value.venta
         return false
       }else{
-        this.new_producto.unidad_venta = unit_venta[0]._id
+        this.new_producto.unidad_venta = this.unit_venta_id[0]._id
       }
     }
     return true
@@ -467,7 +488,8 @@ export class ProductsComponent implements OnInit{
       this.unitsService.getUnidad(this.new_producto.unidad_compra)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.new_producto.unidad_compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra_abv = resp.unidad.abreviacion.toLowerCase()
         }
       })
     }
@@ -475,10 +497,16 @@ export class ProductsComponent implements OnInit{
       this.unitsService.getUnidad(this.new_producto.unidad_venta)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.new_producto.unidad_venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
         }
       })
     }
+  }
+
+  asignUnitId(){
+    this.new_producto.unidad_compra = this.unit_compra_id[0]._id
+    this.new_producto.unidad_venta = this.unit_venta_id[0]._id
   }
 
   getProdUnitId(){
@@ -486,7 +514,8 @@ export class ProductsComponent implements OnInit{
       this.unitsService.getUnidad(this.product.unidad_compra)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.product.unidad_compra = resp.unidad.nombre.toLowerCase()
+          // this.product.unidad_compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra = resp.unidad.nombre.toLowerCase()
         }
       })
     }
@@ -494,7 +523,8 @@ export class ProductsComponent implements OnInit{
       this.unitsService.getUnidad(this.product.unidad_venta)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
+          // this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta = resp.unidad.nombre.toLowerCase()
         }
       })
     }
@@ -539,6 +569,7 @@ export class ProductsComponent implements OnInit{
       })
     }
   }
+
 
 }
 

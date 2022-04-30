@@ -42,6 +42,7 @@ export interface ProductosBody{
     disponible?: boolean;
     img?: string;
     granel?: boolean;
+    almacen?: string;
     inventario_max?: number;
     inventario_min?: number;
     proveedor?:string;
