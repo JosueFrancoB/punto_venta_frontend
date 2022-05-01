@@ -140,9 +140,9 @@ h1.tag {
   color: #c63737;
 }
 
-.scrollable { 
-  overflow: auto; display: flex; flex-direction: column;
-}
+// .scrollable { 
+//   overflow: auto; display: flex; flex-direction: column;
+// }
 
 .data-product{
   -webkit-text-size-adjust: 100%;
@@ -293,6 +293,12 @@ h1.tag {
   font-weight: bolder;
   margin: 0 0.2em;
   font-size: 1.2em;
+}
+
+#modal-template{
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 

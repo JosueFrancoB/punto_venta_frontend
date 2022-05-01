@@ -59,6 +59,8 @@ export class ProductsComponent implements OnInit{
   warehouse_value = ''
   new_provider: ProveedoresBody = {}
   current_category:string = ''
+  current_unit:string = this.unit_value.venta_abv
+  current_existencias:number = 0
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
   @ViewChild('AddUnit') AddUnit!: TemplateRef<any>;
@@ -112,7 +114,7 @@ export class ProductsComponent implements OnInit{
       this.getCategory(this.params.id)
     }
     this.settings.pager.display = true;
-    this.settings.pager.perPage = 5;
+    this.settings.pager.perPage = 15;
     
   }
 
@@ -143,6 +145,7 @@ export class ProductsComponent implements OnInit{
           this.getUnitEditById()
           this.getEditProvById()
           this.getEditWarehouseById()
+          this.current_existencias = this.product.existencias ?  this.product.existencias : 0
         }
         this.viewLoading = false
       })
@@ -150,6 +153,8 @@ export class ProductsComponent implements OnInit{
 
   addProduct(ref: any){
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
+      this.new_producto = this.getQuantityByFactor(this.new_producto)
+      console.log(this.new_producto);
       this.productsService.addProduct(this.new_producto, this.categoria)
         .subscribe(resp =>{
           if (resp.ok === true){
@@ -170,7 +175,8 @@ export class ProductsComponent implements OnInit{
 
   updateProduct(id: string, ref: any){
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
-      this.product = this.new_producto
+      this.product = this.getQuantityByFactor(this.new_producto)
+      console.log(this.product);
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
         if(resp.ok === true){
@@ -255,6 +261,7 @@ export class ProductsComponent implements OnInit{
     this.getProdByUnitId()
     this.getProviderById()
     this.getWarehouseById()
+    this.current_existencias = this.product.existencias ?  this.product.existencias : 0
   }
 
   get addProductFormControls(): any {
@@ -267,6 +274,12 @@ export class ProductsComponent implements OnInit{
     this.getProviders()
     this.getWarehouses()
     this.section_general = true
+    if(this.modalEdit===false){
+      this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''}
+      this.provider_value = ''
+      this.warehouse_value = ''
+      this.current_existencias = 0
+    }
   }
 
   changeDialogSection(event:string){
@@ -294,9 +307,6 @@ export class ProductsComponent implements OnInit{
     let tmp_categoria = this.current_category
     this.new_producto = {};
     this.current_category = tmp_categoria
-    this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''}
-    this.provider_value = ''
-    this.warehouse_value = ''
     this.changeDialogSection('general');
   }
 
@@ -371,7 +381,7 @@ export class ProductsComponent implements OnInit{
     },
     pager: {
       display: true,
-      perPage: 5,
+      perPage: 15,
     }
   };
 
@@ -392,6 +402,16 @@ export class ProductsComponent implements OnInit{
       }
     ], false); 
   }
+  }
+
+  getQuantityByFactor(producto:ProductosBody){
+    if(this.unit_value.compra_abv === this.current_unit){
+      if(!producto.factor) producto.factor = 1
+      producto.existencias = producto.factor * this.current_existencias
+    }else{
+      producto.existencias = this.current_existencias
+    }
+    return producto
   }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -479,13 +499,16 @@ export class ProductsComponent implements OnInit{
     let unit = this.filterUnitNameCompra()
     if(unit.length > 0 && unit[0].abreviacion)
       this.unit_value.compra_abv = unit[0].abreviacion
+     
   }
   onVentaSelectionChange($event:any) {
     this.filteredVentaOptions$ = this.getFilteredOptions($event, this.options_units);
     this.unit_value.venta = $event
     let unit = this.filterUnitVenta()
-    if(unit.length > 0 && unit[0].abreviacion)
+    if(unit.length > 0 && unit[0].abreviacion){
       this.unit_value.venta_abv = unit[0].abreviacion
+      this.current_unit = this.unit_value.venta_abv
+    }
   }
   
   onProvSelectionChange($event:any) {
@@ -529,6 +552,15 @@ export class ProductsComponent implements OnInit{
     return true
   }
 
+  changeUnit(){
+    if(this.current_unit === this.unit_value.venta_abv){
+      this.current_unit = this.unit_value.compra_abv
+    }else{
+      this.current_unit = this.unit_value.venta_abv
+    }
+  }
+
+
   getUnitEditById(){
     if (this.new_producto.unidad_compra){
       this.unitsService.getUnidad(this.new_producto.unidad_compra)
@@ -545,6 +577,7 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           this.unit_value.venta = resp.unidad.nombre.toLowerCase()
           this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
+          this.current_unit = this.unit_value.venta_abv
         }
       })
     }
@@ -557,6 +590,7 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           // this.product.unidad_compra = resp.unidad.nombre.toLowerCase()
           this.unit_value.compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra_abv = resp.unidad.abreviacion.toLowerCase()
         }
       })
     }
@@ -566,6 +600,8 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           // this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
           this.unit_value.venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
+          this.current_unit = this.unit_value.venta_abv
         }
       })
     }
@@ -643,7 +679,7 @@ export class ProductsComponent implements OnInit{
       return true
     let providers = this.products_providers.filter(prov => prov.nombre_empresa.toLowerCase() === this.provider_value.toLowerCase())
     if(providers.length <= 0){
-      Swal.fire(`El proveedor ${this.provider_value} no existe`, 'Agregalo primero en la seccion de proveedores', 'error')
+      Swal.fire(`El proveedor ${this.provider_value} no existe`, 'Por favor, agreguelo primero en la sección de proveedores', 'error')
       return false
     }else{
       this.new_producto.proveedor = providers[0]._id
@@ -656,13 +692,14 @@ export class ProductsComponent implements OnInit{
       return true
     let warehouses = this.products_warehouses.filter(almacen => almacen.nombre.toLowerCase() === this.warehouse_value.toLowerCase())
     if(warehouses.length <= 0){
-      Swal.fire(`El almacen ${this.warehouse_value} no existe`, 'Agregalo primero en la seccion de almacenes', 'error')
+      Swal.fire(`El almacen ${this.warehouse_value} no existe`, 'Por favor, agregalo primero en la sección de almacenes', 'error')
       return false
     }else{
       this.new_producto.almacen = warehouses[0]._id
       return true
     }
   }
+  
 }
 
 
