@@ -12,6 +12,7 @@ import { UnitsService } from '../../services/units.service';
 import { environment } from 'src/environments/environment';
 import { map, Observable, of } from 'rxjs';
 import { ProveedoresService } from '../../services/proveedores.service';
+import { WarehouseService } from '../../services/warehouse.service';
 
 @Component({
   selector: 'app-products',
@@ -43,6 +44,7 @@ export class ProductsComponent implements OnInit{
   product_edit = ''
   products_units: Array<any> = []
   products_providers: Array<any> = []
+  products_warehouses: Array<any> = []
   section_general:boolean = true
   section_adicional:boolean = false
   section_personalizar:boolean = false
@@ -50,24 +52,34 @@ export class ProductsComponent implements OnInit{
   new_unit:UnitsBody = {}
   addUnit:boolean = false
   unit_exists:string = '' 
+  unit_compra_id:Array<any> = []
+  unit_venta_id:Array<any> = []
+  unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''} 
+  provider_value = ''
+  warehouse_value = ''
   new_provider: ProveedoresBody = {}
+  current_category:string = ''
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
   @ViewChild('AddUnit') AddUnit!: TemplateRef<any>;
 
   options_units: string[] = [];
   options_providers: string[] = [];
+  options_warehouses: string[] = [];
   filteredCompraOptions$!: Observable<string[]>;
   filteredVentaOptions$!: Observable<string[]>;
   filteredProviderOptions$!: Observable<string[]>;
+  filteredWarehouseOptions$!: Observable<string[]>;
   @ViewChild('unitCompraInput') unitCompraInput: any;
   @ViewChild('unitVentaInput') unitVentaInput: any;
   @ViewChild('providerInput') providerInput: any;
+  @ViewChild('warehouseInput') warehouseInput: any;
 
   constructor(private productsService: ProductsService,
               private categoriasService: CategoriasService,
               private unitsService: UnitsService,
               private providerService: ProveedoresService,
+              private warehouseService: WarehouseService,
               private dialogService: NbDialogService,
               private uploadsService: UploadsService,
               private fb: FormBuilder,
@@ -112,7 +124,6 @@ export class ProductsComponent implements OnInit{
       this.productos = productos
       this.source.load(productos)
       this.viewLoading = false
-      this.getProdUnitId()
     })
   }
 
@@ -126,17 +137,19 @@ export class ProductsComponent implements OnInit{
           this.modalEdit = true
           this.new_producto = resp.producto
           if (this.new_producto.categoria){
-            this.new_producto.categoria = resp.producto.categoria.nombre
+            this.current_category = resp.producto.categoria.nombre
           }
-          this.getUnitID()
+          console.log(this.new_producto);
+          this.getUnitEditById()
+          this.getEditProvById()
+          this.getEditWarehouseById()
         }
         this.viewLoading = false
       })
   }
 
   addProduct(ref: any){
-    console.log(this.new_producto);
-    if(this.validUnit()===true){
+    if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
       this.productsService.addProduct(this.new_producto, this.categoria)
         .subscribe(resp =>{
           if (resp.ok === true){
@@ -146,6 +159,7 @@ export class ProductsComponent implements OnInit{
             this.toastMixin.fire({
               title: 'Producto agregado'
             });
+            this.resetProduct()
           }else{
             Swal.fire('Error', resp, 'error')
           }
@@ -155,13 +169,11 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
-    console.log(this.new_producto);
-    if(this.validUnit()===true){
+    if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
       this.product = this.new_producto
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
         if(resp.ok === true){
-          console.log(resp);
           if (this.changeImg === true){
             this.cargarProductImg(id)
           }
@@ -195,6 +207,7 @@ export class ProductsComponent implements OnInit{
           this.productsService.deleteProduct(id).subscribe(resp => {
               if (resp.ok === true){
                 this.getProducts(this.categoria)
+                this.addUnit=false
                 this.toastMixin.fire({
                   title: 'Producto eliminado'
                 });
@@ -214,10 +227,9 @@ export class ProductsComponent implements OnInit{
 
   getCategory(id: string){
     this.categoriasService.getCategory(id).subscribe(resp =>{
-      console.log(resp);
       if(resp.ok === true){
         this.title = resp.categoria.nombre
-        this.new_producto.categoria = resp.categoria.nombre
+        this.current_category = resp.categoria.nombre
       }
     })
   }
@@ -240,8 +252,9 @@ export class ProductsComponent implements OnInit{
     if(this.product.img){
       this.productSrc = this.uploadsUrl + '/' + this.product._id
     }
-    this.getProdUnitId()
-    this.getProviderId()
+    this.getProdByUnitId()
+    this.getProviderById()
+    this.getWarehouseById()
   }
 
   get addProductFormControls(): any {
@@ -251,6 +264,8 @@ export class ProductsComponent implements OnInit{
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     this.dialogService.open(dialog, { closeOnBackdropClick });
     this.getUnits()
+    this.getProviders()
+    this.getWarehouses()
     this.section_general = true
   }
 
@@ -272,41 +287,17 @@ export class ProductsComponent implements OnInit{
     this.getProviders()
   }
 
-  getUnits(){
-    this.unitsService.getUnidades().subscribe(res =>{
-      const {unidades} = res
-      this.products_units = unidades
-      this.products_units.forEach(unit => {
-        if (!this.options_units.includes(unit.nombre.toLowerCase())){
-          this.options_units.push(unit.nombre.toLowerCase());
-        }
-      });
-      this.filteredCompraOptions$ = of(this.options_units);
-      this.filteredVentaOptions$ = of(this.options_units);
-    })
-  }
-
-  getProviders(){
-    this.providerService.getProveedores().subscribe(res =>{
-      const {proveedores} = res
-      this.products_providers = proveedores
-      this.products_providers.forEach(prov => {
-        if (!this.options_providers.includes(prov.nombre_empresa.toLowerCase())){
-          this.options_providers.push(prov.nombre_empresa.toLowerCase());
-        }
-      });
-      this.filteredCompraOptions$ = of(this.options_units);
-      this.filteredVentaOptions$ = of(this.options_units);
-    })
-  }
-
   openDialogInfo(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     this.dialogService.open(dialog, { closeOnBackdropClick });
   }
   resetProduct(){
-    let tmp_categoria = this.new_producto['categoria']
+    let tmp_categoria = this.current_category
     this.new_producto = {};
-    this.new_producto.categoria = tmp_categoria
+    this.current_category = tmp_categoria
+    this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''}
+    this.provider_value = ''
+    this.warehouse_value = ''
+    this.changeDialogSection('general');
   }
 
   files: File[] = [];
@@ -398,76 +389,153 @@ export class ProductsComponent implements OnInit{
       {
         field: 'nombre',
         search: query
-      },
+      }
     ], false); 
   }
   }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-  // ? Functions units and providers
-  
-  private filter(value: string): string[] {
-    if (value){
-      let filterValue = value.toLowerCase();
-      return this.options_units.filter(optionValue => optionValue.toLowerCase().includes(filterValue));
-    }
-    return []
+  // ? Functions units and providers and warehouses
+
+  getUnits(){
+    this.unitsService.getUnidades().subscribe(res =>{
+      const {unidades} = res
+      this.products_units = unidades
+      this.products_units.forEach(unit => {
+        if (!this.options_units.includes(unit.nombre.toLowerCase())){
+          this.options_units.push(unit.nombre.toLowerCase());
+        }
+      });
+      this.filteredCompraOptions$ = of(this.options_units);
+      this.filteredVentaOptions$ = of(this.options_units);
+    })
   }
 
-  getFilteredOptions(value: string): Observable<string[]> {
+  getProviders(){
+    this.providerService.getProveedores().subscribe(res =>{
+      const {proveedores} = res
+      this.products_providers = proveedores
+      this.products_providers.forEach(prov => {
+        if (!this.options_providers.includes(prov.nombre_empresa.toLowerCase())){
+          this.options_providers.push(prov.nombre_empresa.toLowerCase());
+        }
+      });
+      this.filteredProviderOptions$ = of(this.options_providers);
+    })
+  }
+
+  getWarehouses(){
+    this.warehouseService.getAlmacenes().subscribe(res =>{
+      const {almacenes} = res
+      this.products_warehouses = almacenes
+      this.products_warehouses.forEach(warehouse => {
+        if (!this.options_warehouses.includes(warehouse.nombre.toLowerCase())){
+          this.options_warehouses.push(warehouse.nombre.toLowerCase());
+        }
+      });
+      this.filteredWarehouseOptions$ = of(this.options_warehouses);
+    })
+  }
+  
+  private filter(value: string, array_values:Array<any>): string[] {
+    if (value){
+      let filterValue = value.toLowerCase();
+      return array_values.filter(optionValue => optionValue.toLowerCase().includes(filterValue));
+    }
+    return array_values
+  }
+
+  getFilteredOptions(value: string, array_values:Array<any>): Observable<string[]> {
     return of(value).pipe(
-      map(filterString => this.filter(filterString)),
+      map(filterString => this.filter(filterString, array_values)),
     );
   }
 
-  onChangeCompra() {
-    this.filteredCompraOptions$ = this.getFilteredOptions(this.unitCompraInput.nativeElement.value);
-  }
-
-  onChangeVenta() {
-    this.filteredVentaOptions$ = this.getFilteredOptions(this.unitVentaInput.nativeElement.value);
+  onChange(field:string) {
+    switch (field) {
+      case 'compra':
+        this.filteredCompraOptions$ = this.getFilteredOptions(this.unitCompraInput.nativeElement.value, this.options_units);
+        break;
+      case 'venta':
+        this.filteredVentaOptions$ = this.getFilteredOptions(this.unitVentaInput.nativeElement.value, this.options_units);
+        break;
+      case 'prov':
+        this.filteredProviderOptions$ = this.getFilteredOptions(this.providerInput.nativeElement.value, this.options_providers);
+        break;
+      case 'almacen':
+        this.filteredWarehouseOptions$ = this.getFilteredOptions(this.warehouseInput.nativeElement.value, this.options_warehouses);
+        break;
+    
+      default:
+        break;
+    }
+    
   }
 
   onCompraSelectionChange($event:any) {
-    this.filteredCompraOptions$ = this.getFilteredOptions($event);
-    this.new_producto.unidad_compra = $event
+    this.filteredCompraOptions$ = this.getFilteredOptions($event, this.options_units);
+    this.unit_value.compra = $event
+    let unit = this.filterUnitNameCompra()
+    if(unit.length > 0 && unit[0].abreviacion)
+      this.unit_value.compra_abv = unit[0].abreviacion
   }
   onVentaSelectionChange($event:any) {
-    this.filteredVentaOptions$ = this.getFilteredOptions($event);
-    this.new_producto.unidad_venta = $event
+    this.filteredVentaOptions$ = this.getFilteredOptions($event, this.options_units);
+    this.unit_value.venta = $event
+    let unit = this.filterUnitVenta()
+    if(unit.length > 0 && unit[0].abreviacion)
+      this.unit_value.venta_abv = unit[0].abreviacion
+  }
+  
+  onProvSelectionChange($event:any) {
+    this.filteredProviderOptions$ = this.getFilteredOptions($event, this.options_providers);
+    this.provider_value = $event
+  }
+
+  onAlmacenSelectionChange($event:any) {
+    this.filteredWarehouseOptions$ = this.getFilteredOptions($event, this.options_warehouses);
+    this.warehouse_value = $event
+  }
+
+  filterUnitNameCompra(){
+    return this.products_units.filter(unit => unit.nombre.toLowerCase() === this.unit_value.compra.toLowerCase())
+  }
+  filterUnitVenta(){
+    return this.products_units.filter(unit => unit.nombre.toLowerCase() === this.unit_value.venta.toLowerCase())
   }
 
   validUnit(){
-    if (this.new_producto.unidad_compra){
-      let unit_compra = this.products_units.filter(unit => unit.nombre.toLowerCase() === this.new_producto.unidad_compra!.toLowerCase())
-      if(unit_compra.length <= 0){
+    if (this.unit_value.compra){
+      this.unit_compra_id = this.filterUnitNameCompra()
+      if(this.unit_compra_id.length <= 0){
         this.openDialogInfo(this.AddUnit,false);
-        this.unit_exists = this.new_producto.unidad_compra
+        this.unit_exists = this.unit_value.compra
         return false
       }else{
-        this.new_producto.unidad_compra = unit_compra[0]._id
+        this.new_producto.unidad_compra = this.unit_compra_id[0]._id
       }
     }
-    if(this.new_producto.unidad_venta){
-      let unit_venta = this.products_units.filter(unit => unit.nombre.toLowerCase() === this.new_producto.unidad_venta!.toLowerCase())
-      if(unit_venta.length <= 0){
+    if(this.unit_value.venta){
+      this.unit_venta_id = this.filterUnitVenta()
+      if(this.unit_venta_id.length <= 0){
         this.openDialogInfo(this.AddUnit,false);
-        this.unit_exists = this.new_producto.unidad_venta
+        this.unit_exists = this.unit_value.venta
         return false
       }else{
-        this.new_producto.unidad_venta = unit_venta[0]._id
+        this.new_producto.unidad_venta = this.unit_venta_id[0]._id
       }
     }
     return true
   }
 
-  getUnitID(){
+  getUnitEditById(){
     if (this.new_producto.unidad_compra){
       this.unitsService.getUnidad(this.new_producto.unidad_compra)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.new_producto.unidad_compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra_abv = resp.unidad.abreviacion.toLowerCase()
         }
       })
     }
@@ -475,18 +543,20 @@ export class ProductsComponent implements OnInit{
       this.unitsService.getUnidad(this.new_producto.unidad_venta)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.new_producto.unidad_venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
         }
       })
     }
   }
 
-  getProdUnitId(){
+  getProdByUnitId(){
     if (this.product.unidad_compra){
       this.unitsService.getUnidad(this.product.unidad_compra)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.product.unidad_compra = resp.unidad.nombre.toLowerCase()
+          // this.product.unidad_compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra = resp.unidad.nombre.toLowerCase()
         }
       })
     }
@@ -494,7 +564,8 @@ export class ProductsComponent implements OnInit{
       this.unitsService.getUnidad(this.product.unidad_venta)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
+          // this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta = resp.unidad.nombre.toLowerCase()
         }
       })
     }
@@ -515,31 +586,83 @@ export class ProductsComponent implements OnInit{
     })
   }
 
-  validProvider(){
-    if (this.new_producto.proveedor){
-      let proveedores = this.products_providers.filter(prov => prov.nombre_empresa.toLowerCase() === this.new_producto.proveedor!.toLowerCase())
-      if(proveedores.length <= 0){
-        this.openDialogInfo(this.AddUnit,false);
-        this.unit_exists = this.new_producto.proveedor
-        return false
-      }else{
-        this.new_producto.proveedor = proveedores[0]._id
-      }
+  getProviderById(){
+    if (this.product.proveedor){
+      this.providerService.getProveedor(this.product.proveedor)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.provider_value = resp.proveedor.nombre_empresa.toLowerCase()
+        }
+      })
+    }else{
+      this.provider_value = ''
     }
-    return true
   }
 
-  getProviderId(){
+  getEditProvById(){
     if (this.new_producto.proveedor){
       this.providerService.getProveedor(this.new_producto.proveedor)
       .subscribe(resp=>{
         if (resp.ok === true){
-          this.new_producto.proveedor = resp.proveedor.nombre_empresa.toLowerCase()
+          this.provider_value = resp.proveedor.nombre_empresa.toLowerCase()
         }
       })
+    }else{
+      this.provider_value = ''
     }
   }
 
+  getWarehouseById(){
+    if (this.product.almacen){
+      this.warehouseService.getAlmacen(this.product.almacen)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.warehouse_value = resp.almacen.nombre.toLowerCase()
+        }
+      })
+    }else{
+      this.warehouse_value = ''
+    }
+  }
+
+  getEditWarehouseById(){
+    if (this.new_producto.almacen){
+      this.warehouseService.getAlmacen(this.new_producto.almacen)
+      .subscribe(resp=>{
+        if (resp.ok === true){
+          this.warehouse_value = resp.almacen.nombre.toLowerCase()
+        }
+      })
+    }else{
+      this.warehouse_value = ''
+    }
+  }
+
+  validProvider(){
+    if(!this.provider_value) 
+      return true
+    let providers = this.products_providers.filter(prov => prov.nombre_empresa.toLowerCase() === this.provider_value.toLowerCase())
+    if(providers.length <= 0){
+      Swal.fire(`El proveedor ${this.provider_value} no existe`, 'Agregalo primero en la seccion de proveedores', 'error')
+      return false
+    }else{
+      this.new_producto.proveedor = providers[0]._id
+      return true
+    }
+  }
+
+  validWarehouse(){
+    if(!this.warehouse_value) 
+      return true
+    let warehouses = this.products_warehouses.filter(almacen => almacen.nombre.toLowerCase() === this.warehouse_value.toLowerCase())
+    if(warehouses.length <= 0){
+      Swal.fire(`El almacen ${this.warehouse_value} no existe`, 'Agregalo primero en la seccion de almacenes', 'error')
+      return false
+    }else{
+      this.new_producto.almacen = warehouses[0]._id
+      return true
+    }
+  }
 }
 
 

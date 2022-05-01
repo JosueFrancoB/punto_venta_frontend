@@ -1,30 +1,29 @@
 import Swal from 'sweetalert2';
 import { Observable } from 'rxjs';
 import { NbDialogService } from '@nebular/theme';
-import { UnitsService } from '../../services/units.service';
-import { UnitsBody } from '../../interfaces/protected-interfaces';
+import { WarehouseService } from '../../services/warehouse.service';
+import { WarehouseBody } from '../../interfaces/protected-interfaces';
 import { environment } from 'src/environments/environment';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'app-units',
-  templateUrl: './units.component.html',
-  styleUrls: ['./units.component.scss']
+  selector: 'app-warehouses',
+  templateUrl: './warehouses.component.html',
+  styleUrls: ['./warehouses.component.scss']
 })
-export class UnitsComponent implements OnInit {
+export class WarehousesComponent implements OnInit {
 
-
-  unidades: Array<UnitsBody> = []
+  almacenes: Array<WarehouseBody> = []
   filteredOptions$!: Observable<string[]>;
   @ViewChild('autoInput') input:any;
-  @ViewChild('unit') unit!: TemplateRef<any>;
+  @ViewChild('warehouse') warehouse!: TemplateRef<any>;
   toastMixin: any
   cardMouseOver: Array<any> = []
   modalEdit = false
-  unitValue = ''
-  unit_edit = ''
+  warehouseValue = ''
+  warehouse_edit = ''
   searchText = ''
-  new_unit:UnitsBody = {}
+  new_warehouse:WarehouseBody = {}
   changesEdit = true
 
   viewLoading = false
@@ -33,11 +32,11 @@ export class UnitsComponent implements OnInit {
   updLoading = false;
   no_data = false
 
-  uploadsUrl:string = environment.baseUrl + '/uploads/unidades'
+  uploadsUrl:string = environment.baseUrl + '/uploads/warehouses'
 
   pageOfItems!:Array<any>
 
-  constructor(private unitsService: UnitsService,
+  constructor(private warehouseService: WarehouseService,
               private dialogService: NbDialogService) { 
                 this.toastMixin = Swal.mixin({
                   toast: true,
@@ -55,16 +54,16 @@ export class UnitsComponent implements OnInit {
               }
 
   ngOnInit() {
-    this.getUnits()
+    this.getWarehouses()
   }
 
-  getUnits(){
+  getWarehouses(){
     this.viewLoading = true
-    this.unitsService.getUnidades().subscribe(res =>{
+    this.warehouseService.getAlmacenes().subscribe(res =>{
       console.log(res);
-      const {unidades} = res
-      this.unidades = unidades
-      if(this.unidades.length<=0){
+      const {almacenes} = res
+      this.almacenes = almacenes
+      if(this.almacenes.length<=0){
         this.no_data = true
       }else{
         this.no_data = false
@@ -73,18 +72,18 @@ export class UnitsComponent implements OnInit {
     })
     }
 
-  addUnit(ref: any){
-    console.log(this.new_unit);
-    this.unitsService.addUnidad(this.new_unit)
+  addWarehouse(ref: any){
+    console.log(this.new_warehouse);
+    this.warehouseService.addAlmacen(this.new_warehouse)
     .subscribe(resp =>{
       if(resp.ok === true){
         console.log(resp)
-        this.getUnits()
+        this.getWarehouses()
         ref.close()
         this.toastMixin.fire({
-          title: 'Unidad agregada'
+          title: 'Almacen agregado'
         });
-        this.resetUnit()
+        this.resetWarehouse()
       }else{
         Swal.fire('Error', resp, 'error')
       }
@@ -92,38 +91,38 @@ export class UnitsComponent implements OnInit {
   }
 
 
-  updateUnit(unit:UnitsBody, ref: any){
-    let id = unit._id ? unit._id : ''
+  updateWarehouse(warehouse:WarehouseBody, ref: any){
+    let id = warehouse._id ? warehouse._id : ''
 
-    this.unitsService.updateUnidad(id, unit).subscribe(resp =>{
+    this.warehouseService.updateAlmacen(id, warehouse).subscribe(resp =>{
       if(resp.ok === true){
-        let nombre = resp.unidad.nombre
-        let _id = resp.unidad._id
+        let nombre = resp.almacen.nombre
+        let _id = resp.almacen._id
         let index = 0
-        this.unidades.forEach(function(cli, i){
+        this.almacenes.forEach(function(cli, i){
           if(cli._id === id){
             index = i
           }
         })
-        this.unidades = this.unidades.filter(item => item._id !== id)
-        this.unidades.splice(index, 0, {_id, nombre});
+        this.almacenes = this.almacenes.filter(item => item._id !== id)
+        this.almacenes.splice(index, 0, {_id, nombre});
         ref.close()
-        this.getUnits()
+        this.getWarehouses()
         this.toastMixin.fire({
-          title: 'Unidad actualizada'
+          title: 'Almacen actualizado'
         });
-        this.resetUnit()
+        this.resetWarehouse()
       }else{
         Swal.fire('Error', resp.msg, 'error')
       }
     })
   }
 
-  getUnit(id:string){
+  getWarehouse(id:string){
     this.modalEdit = true;
-    this.unitsService.getUnidad(id).subscribe(resp => {
+    this.warehouseService.getAlmacen(id).subscribe(resp => {
       if (resp.ok === true){
-        this.new_unit = resp.unidad
+        this.new_warehouse = resp.almacen
       }else{
       console.log('error', resp)
       Swal.fire('Error', resp, 'error')
@@ -131,9 +130,9 @@ export class UnitsComponent implements OnInit {
     })
   }
 
-  deleteUnit(id:string){
+  deleteWarehouse(id:string){
     Swal.fire({
-      title: '¿Estás seguro de eliminarla?',
+      title: '¿Estás seguro de eliminarlo?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -142,12 +141,12 @@ export class UnitsComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if(result.isConfirmed){
-        this.unitsService.deleteUnidad(id).subscribe(resp =>{
+        this.warehouseService.deleteAlmacen(id).subscribe(resp =>{
         if(resp.ok === true){
-          this.unidades = this.unidades.filter(item => item._id !== id)
-          this.getUnits()
+          this.almacenes = this.almacenes.filter(item => item._id !== id)
+          this.getWarehouses()
           this.toastMixin.fire({
-            title: 'Unidad eliminada'
+            title: 'Almacen eliminado'
           });
         }else{
           Swal.fire('Error', resp, 'error')
@@ -166,12 +165,12 @@ export class UnitsComponent implements OnInit {
     this.dialogService.open(dialog, { closeOnBackdropClick });
   }
 
-  resetUnit(){
-    this.new_unit = {}
+  resetWarehouse(){
+    this.new_warehouse = {}
   }
 
   cancelDialog(){
-    this.resetUnit()
+    this.resetWarehouse()
   }
 
   mouseEnter(data: any) {
@@ -183,7 +182,7 @@ export class UnitsComponent implements OnInit {
     this.cardMouseOver = this.cardMouseOver.filter(item => item !== value)
   }
 
-  isDisplay(unit: string): boolean{
-    return this.cardMouseOver.includes(unit) ? true : false
+  isDisplay(warehouse: string): boolean{
+    return this.cardMouseOver.includes(warehouse) ? true : false
   }
 }

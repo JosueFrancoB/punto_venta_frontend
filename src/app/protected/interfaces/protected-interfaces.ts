@@ -42,6 +42,7 @@ export interface ProductosBody{
     disponible?: boolean;
     img?: string;
     granel?: boolean;
+    almacen?: string;
     inventario_max?: number;
     inventario_min?: number;
     proveedor?:string;
@@ -110,5 +111,17 @@ export interface UnitsBody{
 
 export interface UnitsData{
     unidades: Array<UnitsBody>;
+    total: number;
+}
+
+export interface WarehouseBody{
+    _id?: string;
+    nombre?:string;
+    alias?:string;
+    deshabilitado?:boolean;
+}
+
+export interface WarehouseData{
+    almacenes: Array<WarehouseBody>;
     total: number;
 }

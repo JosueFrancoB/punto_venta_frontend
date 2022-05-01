@@ -18,7 +18,7 @@
   <nb-card *ngIf="product_selected" style="width: 100%;">
     <nb-card-header style="padding: 1rem 1.25rem;" class="animate__animated animate__pulse animate__faster">
       <div style="display: flex; justify-content: space-around; align-items: center;">
-        <button nbButton shape="semi-round" size="small" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end nb-transition" nbTooltip="Regresar">
+        <button nbButton size="small" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end nb-transition" nbTooltip="Regresar">
           <nb-icon class="icon" icon="arrow-back-outline" (click)="product_selected = false"></nb-icon>
         </button>
         <div style="text-align: center; display: flex; justify-content: center; flex-direction: column;">
@@ -47,7 +47,7 @@
         
           <div class="block-data-product">
             <span class="title-data-product">Factor</span>
-            <p class="text-data-product">{{product.factor}} {{product.unidad_venta}} equivale a {{product.unidad_compra}}</p>
+            <p class="text-data-product">{{product.factor}} {{unit_value.compra}} equivale a {{unit_value.venta}}</p>
           </div>
         
           <div class="block-data-product">
@@ -56,8 +56,9 @@
           </div>
         
           <div class="block-data-product">
-            <span class="title-data-product">Finish</span>
-            <p class="text-data-product">Hand sanded and finished with natural oil</p>
+            <span class="title-data-product">Proveedor</span>
+            <p class="text-data-product">{{provider_value|uppercase}}</p>
+            <button *ngIf="provider_value !=''" nbButton status="info" size="tiny">Ver proveedor</button>
           </div>
         
           <div class="block-data-product">
@@ -76,9 +77,13 @@
       </div>
     </nb-card-body>
     <nb-card-footer class="animate__animated animate__pulse animate__faster">
-      <span class="badge-stock status-instock">INSTOCK</span>
-      
-      <b>Cantidad disponible: {{product.existencias}}</b>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center;">
+          <nb-icon icon="compass-outline" style="font-size: 2rem;"></nb-icon>
+          <span style="color: #8994a3; border-bottom: #8994a3; padding: 0.3125rem; font-weight: bold; font-size: 1.1em;">{{warehouse_value|uppercase}}</span>
+        </div>
+        <span style="font-size:1.2em; font-weight: bold;">Cantidad disponible: {{product.existencias}}</span>
+      </div>
     </nb-card-footer>
   </nb-card>
 </div>
@@ -164,15 +169,15 @@
     <nb-card-header style="display:flex; justify-content: space-between;overflow-y: auto;">
       <div [ngClass]="{'border-section': section_general}" (click)="changeDialogSection('general')" style="display: flex; align-items: center; cursor: pointer;">
         <nb-icon [ngClass]="{'status-success': section_general}" icon="globe-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
-        <span >Generales</span>
+        <span class="modal-header-text">Generales</span>
       </div>
       <div [ngClass]="{'border-section': section_adicional}" (click)="changeDialogSection('adicional')" style="display: flex; align-items: center; cursor: pointer;">
-        <nb-icon [ngClass]="{'status-success': section_adicional}"  icon="color-palette-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
-        <span >Adicionales</span>
+        <nb-icon [ngClass]="{'status-success': section_adicional}"  icon="layers-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
+        <span class="modal-header-text">Adicionales</span>
       </div>
       <div [ngClass]="{'border-section': section_personalizar}" (click)="changeDialogSection('personalizar')" style="display: flex; align-items: center; cursor: pointer;">
         <nb-icon [ngClass]="{'status-success': section_personalizar}"  icon="color-palette-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
-        <span >Personalizar</span>
+        <span class="modal-header-text">Personalizar</span>
       </div>
       <nb-icon (click)="ref.close(); resetProduct();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
   </nb-card-header>
@@ -182,7 +187,7 @@
 
     <!--+ Seccion General  -->
     <div *ngIf="section_general">
-    <div class="row">
+    <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-6" style="margin-top: 5px">
               <span style="font-size:14px;">Clave:</span>
               <input placeholder="Clave principal" type="text" id="input-clave" class="form-control input-sm" style="background: #fff;" name="clave" ngDefaultControl [(ngModel)]="new_producto.clave">
@@ -193,27 +198,27 @@
       </div>
     </div>
     
-    <div class="row">
+    <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-6" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Nombre del Producto:</span>
           <input placeholder="Nombre" type="text" id="input-nom" class="form-control input-sm" name="nombre" ngDefaultControl [(ngModel)]="new_producto.nombre" style="background: #fff;">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
           <span class="input-group-addon" style="font-size:14px;">Categoría:</span>
-          <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{new_producto.categoria}}" disabled style="background: #fff;">
+          <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{current_category}}" disabled style="background: #fff;">
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-4" style="margin-top: 5px">
+    <div class="row" style="justify-content: center; max-width:36.25rem;">
+      <div class="col-sm-5" style="margin-top: 5px">
             <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span>
             <div class="input-group">
               <input class="form-control input-sm" #unitCompraInput
                 type="text"
-                (input)="onChangeCompra()"
+                (input)="onChange('compra')"
                 placeholder="Unidad compra"
                 [nbAutocomplete]="autoUnitCompra"
-                [(ngModel)]="new_producto.unidad_compra" />
+                [(ngModel)]="unit_value.compra" />
               
               <nb-autocomplete #autoUnitCompra (selectedChange)="onCompraSelectionChange($event)">
               
@@ -227,15 +232,15 @@
               </div>
             </div>
       </div>
-      <div class="col-sm-4" style="margin-top: 5px;">
+      <div class="col-sm-5" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Unidad de Venta:</span>
           <div class="input-group">
             <input class="form-control input-sm" #unitVentaInput
               type="text"
-              (input)="onChangeVenta()"
+              (input)="onChange('venta')"
               placeholder="Unidad venta"
               [nbAutocomplete]="autoUnitVenta"
-              [(ngModel)]="new_producto.unidad_venta" />
+              [(ngModel)]="unit_value.venta" />
             
             <nb-autocomplete #autoUnitVenta (selectedChange)="onVentaSelectionChange($event)">
             
@@ -249,46 +254,99 @@
             </div>
           </div>
       </div>
-      <div class="col-sm-3" style="margin-top: 5px;">
+      <div class="col-sm-2" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Factor:</span>
           <nb-badge text="?" status="info" style="cursor: pointer;" (click)="openDialogInfo(InfoFactor, false)"></nb-badge>
           <input placeholder="1" [(ngModel)]="new_producto.factor" type="text" id="input-desc" class="form-control input-sm" ngModel="1" style="background: #fff;">
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-5" style="margin-top: 5px;">
+    <div class="row" style="justify-content: center; max-width:34.375rem;">
+      <div class="col-sm-4" style="margin-top: 0.3125rem;">
           <span class="input-group-addon" style="font-size:14px;">Precio de Compra</span>
-          <input type="text" class="form-control input-sm" style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_compra">
+          <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
+            <input type="number" class="form-control input-sm" style="background: #fff;" [placeholder]="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_compra">
+            <div class="input-group-btn">
+              <button class="btn btn-secondary btn-sm" disabled>x {{unit_value.compra_abv|uppercase}}</button>
+            </div>
+          </div>
       </div>
-      <div class="col-sm-5" style="margin-top: 5px;">
+      <div class="col-sm-4" style="margin-top: 0.3125rem;">
           <span class="input-group-addon" style="font-size:14px;">Precio de Venta</span>
-          <input type="text" class="form-control input-sm " style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_venta">
+          <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
+            <input type="number" class="form-control input-sm " style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_venta">
+            <div class="input-group-btn">
+              <button class="btn btn-secondary btn-sm" disabled>x {{unit_value.venta_abv|uppercase}}</button>
+            </div>
+          </div>
+      </div>
+      <div class="col-sm-4" style="margin-top: 0.3125rem;">
+        <span class="input-group-addon" style="font-size:14px;">Cantidad Actual</span>
+        <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
+        <input style="background: #fff;" id="in-cant-actual" class="form-control input-sm" type="number" min="0" placeholder="0" ngDefaultControl [(ngModel)]="new_producto.existencias">
+        <div class="input-group-btn">
+          <button class="btn btn-secondary btn-sm" disabled>x {{unit_value.compra_abv|uppercase}}</button>
+        </div>
+        </div>
+      </div>
     </div>
     </div>
-    </div>
+    <!--* Fin Sección General  -->
 
     <!--+ Seccion Adicional  -->
     <div *ngIf="section_adicional">
-      <div class="row" style="justify-content: center;">
-        <div class="col-sm-5">
-          <label for="in-minimo">Inventario Minimo</label>
-          <input id="in-minimo" nbInput type="text" placeholder="Minimo">
-          <label for="in-maximo">Inventario Maximo</label>
-          <input id="in-maximo" nbInput type="text" placeholder="Maximo">
-          <label for="in-local">Localización o nombre de almacen</label>
-          <input id="in-local" nbInput type="text" placeholder="Estante 1">
+      <div class="row" style="justify-content: center; max-width: 36.25rem;">
+        <div class="col-sm-4" style="margin-top: 0.3125rem;">
+          <label for="in-minimo">Inventario Mínimo</label>
+          <input id="in-minimo" class="form-control input-sm " type="number" min="0" placeholder="0" [(ngModel)]="new_producto.inventario_min">
+        </div>
+        <div class="col-sm-4" style="margin-top: 0.3125rem;">
+          <label for="in-maximo">Inventario Máximo</label>
+          <input id="in-maximo" class="form-control input-sm " type="number" min="0" placeholder="0" [(ngModel)]="new_producto.inventario_max">
+        </div>
+        <div class="col-sm-4" style="display: flex; justify-content: center; align-items: center; margin-top: 0.3125rem;">
+          <nb-checkbox class="input-group-addon" id="check-granel" status="info" [(ngModel)]="new_producto.granel">Granel</nb-checkbox>
         </div>
       </div>
       <hr>
+      <div class="row" style="max-width: 36.25rem; justify-content: center;">
+        <label for="in-local">Selecciona un Almacen</label>
+        <input class="form-control input-sm" #warehouseInput
+              type="text"
+              (input)="onChange('almacen')"
+              placeholder="Almacen"
+              [nbAutocomplete]="autoWarehouse"
+              [(ngModel)]="warehouse_value" />
+            
+            <nb-autocomplete #autoWarehouse (selectedChange)="onAlmacenSelectionChange($event)">
+            
+              <nb-option *ngFor="let almacen_option of filteredWarehouseOptions$ | async" [value]="almacen_option">
+                {{ almacen_option }}
+              </nb-option>
+            
+            </nb-autocomplete>
+      </div>
+      <hr>
       <div class="row" style="display: flex; justify-content: flex-start;">
-        <nb-select-label for="in-prov" style="padding: 0px;">Proveedor</nb-select-label>
-        <input id="in-prov" type="text" nbInput nbTooltip="Selecciona un proveedor">
-        <nb-checkbox id="check-granel" status="info">Granel</nb-checkbox>
-        <label for="check-granel"></label>
+        <label for="in-prov">Selecciona un Proveedor</label>
+        <input class="form-control input-sm" #providerInput
+                type="text"
+                (input)="onChange('prov')"
+                placeholder="Proveedor"
+                [nbAutocomplete]="autoProvider"
+                [(ngModel)]="provider_value" />
+              
+              <nb-autocomplete #autoProvider (selectedChange)="onProvSelectionChange($event)">
+              
+                <nb-option *ngFor="let proveedor_option of filteredProviderOptions$ | async" [value]="proveedor_option">
+                  {{ proveedor_option }}
+                </nb-option>
+              
+              </nb-autocomplete>
+        
       </div>
     </div>
-    <!--+ Fin Seccion Adicional  -->
+    <!--* Fin Seccion Adicional  -->
 
     <!--+ Seccion Personalizar  -->
     <div *ngIf="section_personalizar">
@@ -316,13 +374,12 @@
         <textarea id="desc" nbInput fullWidth placeholder="Escribe algunas características" [(ngModel)]="new_producto.descripcion" style="resize: none;"></textarea>
       </div>
     </div>
-    <!--+ Fin Seccion Personalizar  -->
-
+    <!--* Fin Seccion Personalizar  -->
   </div>
   </nb-card-body>
   
   <nb-card-footer style="display: flex; justify-content: space-between;">
-    <button nbButton (click)="resetProduct(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
+    <button nbButton (click)="ref.close(); resetProduct();" size="small" appearance="outline" >Cancelar</button>
     <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_producto.nombre != '' && new_producto.nombre != '' && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addProduct(ref);">
         Agregar Producto
     </button>

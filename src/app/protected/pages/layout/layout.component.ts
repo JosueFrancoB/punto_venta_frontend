@@ -75,6 +75,11 @@ export class LayoutComponent implements OnInit {
       link: '/dashboard/providers'
     },
     {
+      title: 'Almacenes',
+      icon: 'archive-outline',
+      link: '/dashboard/warehouses'
+    },
+    {
       title: 'Unidades',
       icon: 'cube-outline',
       link: '/dashboard/units'
