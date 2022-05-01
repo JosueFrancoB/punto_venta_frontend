@@ -113,3 +113,15 @@ export interface UnitsData{
     unidades: Array<UnitsBody>;
     total: number;
 }
+
+export interface WarehouseBody{
+    _id?: string;
+    nombre?:string;
+    alias?:string;
+    deshabilitado?:boolean;
+}
+
+export interface WarehouseData{
+    almacenes: Array<WarehouseBody>;
+    total: number;
+}

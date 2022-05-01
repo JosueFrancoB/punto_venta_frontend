@@ -11,6 +11,7 @@ import { SalesComponent } from './pages/sales/sales.component';
 import { UnitsComponent } from './pages/units/units.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { PurchasesComponent } from './pages/purchases/purchases.component';
+import { WarehousesComponent } from './pages/warehouses/warehouses.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
       {path: 'clients', component: ClientesComponent},
       {path: 'providers', component: ProveedoresComponent},
       {path: 'units', component: UnitsComponent},
+      {path: 'warehouses', component: WarehousesComponent},
       {path: 'perfil', component: PerfilComponent},
       {path: '**', redirectTo: ''},
     ]

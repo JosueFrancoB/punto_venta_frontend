@@ -21,6 +21,7 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination';
 import { SwiperModule } from 'swiper/angular';
 import { PurchasesComponent } from './pages/purchases/purchases.component';
+import { WarehousesComponent } from './pages/warehouses/warehouses.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { PurchasesComponent } from './pages/purchases/purchases.component';
     UnitsComponent,
     SalesComponent,
     PerfilComponent,
-    PurchasesComponent
+    PurchasesComponent,
+    WarehousesComponent
   ],
   imports: [
     CommonModule,
