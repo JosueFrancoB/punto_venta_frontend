@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { map, Observable, of } from 'rxjs';
 import { ProveedoresService } from '../../services/proveedores.service';
 import { WarehouseService } from '../../services/warehouse.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-products',
@@ -59,8 +60,12 @@ export class ProductsComponent implements OnInit{
   warehouse_value = ''
   new_provider: ProveedoresBody = {}
   current_category:string = ''
-  current_unit:string = this.unit_value.venta_abv
+  current_unit_gen:string = this.unit_value.venta_abv
+  current_unit_inv:string = this.unit_value.venta_abv
+
+  current_inv = {min:0,max:0}
   current_existencias:number = 0
+  user_rol:any = {}
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
   @ViewChild('AddUnit') AddUnit!: TemplateRef<any>;
@@ -82,6 +87,7 @@ export class ProductsComponent implements OnInit{
               private unitsService: UnitsService,
               private providerService: ProveedoresService,
               private warehouseService: WarehouseService,
+              private usersService: UsersService,
               private dialogService: NbDialogService,
               private uploadsService: UploadsService,
               private fb: FormBuilder,
@@ -129,7 +135,7 @@ export class ProductsComponent implements OnInit{
     })
   }
 
-  getClickedProduct(id: string|undefined){
+  editClickedProduct(id: string|undefined){
     
     this.viewLoading = true
     if (id !== undefined)
@@ -142,10 +148,13 @@ export class ProductsComponent implements OnInit{
             this.current_category = resp.producto.categoria.nombre
           }
           console.log(this.new_producto);
+          this.getUserRol()
           this.getUnitEditById()
           this.getEditProvById()
           this.getEditWarehouseById()
-          this.current_existencias = this.product.existencias ?  this.product.existencias : 0
+          this.current_existencias = this.new_producto.existencias || 0
+          this.current_inv.min = this.new_producto.inventario_min || 0
+          this.current_inv.max = this.new_producto.inventario_max || 0
         }
         this.viewLoading = false
       })
@@ -154,6 +163,7 @@ export class ProductsComponent implements OnInit{
   addProduct(ref: any){
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
       this.new_producto = this.getQuantityByFactor(this.new_producto)
+      this.new_producto = this.setInventoryMinMax(this.new_producto)
       console.log(this.new_producto);
       this.productsService.addProduct(this.new_producto, this.categoria)
         .subscribe(resp =>{
@@ -176,6 +186,7 @@ export class ProductsComponent implements OnInit{
   updateProduct(id: string, ref: any){
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
       this.product = this.getQuantityByFactor(this.new_producto)
+      this.product = this.setInventoryMinMax(this.product)
       console.log(this.product);
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
@@ -261,7 +272,9 @@ export class ProductsComponent implements OnInit{
     this.getProdByUnitId()
     this.getProviderById()
     this.getWarehouseById()
-    this.current_existencias = this.product.existencias ?  this.product.existencias : 0
+    this.current_existencias = this.product.existencias || 0
+    this.current_inv.min = this.product.inventario_min || 0
+    this.current_inv.max = this.product.inventario_max || 0
   }
 
   get addProductFormControls(): any {
@@ -275,11 +288,19 @@ export class ProductsComponent implements OnInit{
     this.getWarehouses()
     this.section_general = true
     if(this.modalEdit===false){
-      this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''}
-      this.provider_value = ''
-      this.warehouse_value = ''
-      this.current_existencias = 0
+      this.prepareNewProduct()
     }
+  }
+
+  prepareNewProduct(){
+    this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''}
+    this.provider_value = ''
+    this.warehouse_value = ''
+    this.current_existencias = 0
+    this.new_producto.factor = 1
+    this.current_unit_gen = this.unit_value.venta_abv
+    this.current_unit_inv = this.unit_value.venta_abv
+    this.current_inv = {min:0,max:0}
   }
 
   changeDialogSection(event:string){
@@ -336,6 +357,22 @@ export class ProductsComponent implements OnInit{
     // input.nativeElement.value = '';
   }
 
+  tagsStock(row:any){
+    if (row.inventario_min < row.existencias) { 
+      if(row.inventario_max === row.existencias){
+        return `<span class="badge-stock status-fullstock">STOCK LLENO</span>`;
+      }
+      return `<span class="badge-stock status-instock">HAY EN STOCK</span>`; 
+    }
+    else if(row.existencias <= 0) {return `<span class="badge-stock status-outstock">NO HAY STOCK</span>`;
+    }else if(row.inventario_min >= row.existencias){
+      return `<span class="badge-stock status-lowstock">STOCK BAJO</span>`;
+    }
+    else{
+      return `<span>No data</span>`
+    }
+  }
+
   settings = {
     actions: {
       add: false,
@@ -372,12 +409,12 @@ export class ProductsComponent implements OnInit{
         type: 'number',
         filter: false,
       },
-      disponible: {
+      estado: {
         title: 'Estado',
         filter: false,
         type: 'html',
-        valuePrepareFunction: ((data:any, row:any) => { if (data === true) { return `<span class="badge-stock status-instock">HAY EN STOCK</span>`; } else {return `<span class="badge-stock status-outstock">NO HAY STOCK</span>`;}}),
-      },
+        valuePrepareFunction: ((data:any, row:any) => {return this.tagsStock(row)}),
+      }
     },
     pager: {
       display: true,
@@ -405,13 +442,33 @@ export class ProductsComponent implements OnInit{
   }
 
   getQuantityByFactor(producto:ProductosBody){
-    if(this.unit_value.compra_abv === this.current_unit){
+    if(this.unit_value.compra_abv === this.current_unit_gen){
       if(!producto.factor) producto.factor = 1
       producto.existencias = producto.factor * this.current_existencias
     }else{
       producto.existencias = this.current_existencias
     }
     return producto
+  }
+
+  setInventoryMinMax(producto:ProductosBody){
+    if(this.current_unit_inv === this.unit_value.compra_abv){
+      if(!producto.factor) producto.factor = 1
+      producto.inventario_min = producto.factor * this.current_inv.min
+      producto.inventario_max = producto.factor * this.current_inv.max
+    }else{
+      producto.inventario_min = this.current_inv.min
+      producto.inventario_max = this.current_inv.max
+    }
+    return producto
+  }
+
+  getUserRol(){
+    this.usersService.validateJWT().subscribe(res=>{
+      if(res.ok && res.ok ===true){
+        this.user_rol = res.usuario.rol
+      }
+    })
   }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -507,7 +564,8 @@ export class ProductsComponent implements OnInit{
     let unit = this.filterUnitVenta()
     if(unit.length > 0 && unit[0].abreviacion){
       this.unit_value.venta_abv = unit[0].abreviacion
-      this.current_unit = this.unit_value.venta_abv
+      this.current_unit_gen = this.unit_value.venta_abv
+      this.current_unit_inv = this.unit_value.venta_abv
     }
   }
   
@@ -553,10 +611,18 @@ export class ProductsComponent implements OnInit{
   }
 
   changeUnit(){
-    if(this.current_unit === this.unit_value.venta_abv){
-      this.current_unit = this.unit_value.compra_abv
+    if(this.current_unit_gen === this.unit_value.venta_abv){
+      this.current_unit_gen = this.unit_value.compra_abv
     }else{
-      this.current_unit = this.unit_value.venta_abv
+      this.current_unit_gen = this.unit_value.venta_abv
+    }
+  }
+
+  changeInvUnit(){
+    if(this.current_unit_inv === this.unit_value.venta_abv){
+      this.current_unit_inv = this.unit_value.compra_abv
+    }else{
+      this.current_unit_inv = this.unit_value.venta_abv
     }
   }
 
@@ -577,7 +643,8 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           this.unit_value.venta = resp.unidad.nombre.toLowerCase()
           this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
-          this.current_unit = this.unit_value.venta_abv
+          this.current_unit_gen = this.unit_value.venta_abv
+          this.current_unit_inv = this.unit_value.venta_abv
         }
       })
     }
@@ -601,7 +668,8 @@ export class ProductsComponent implements OnInit{
           // this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
           this.unit_value.venta = resp.unidad.nombre.toLowerCase()
           this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
-          this.current_unit = this.unit_value.venta_abv
+          this.current_unit_gen = this.unit_value.venta_abv
+          this.current_unit_inv = this.unit_value.venta_abv
         }
       })
     }

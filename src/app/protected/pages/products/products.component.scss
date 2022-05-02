@@ -140,6 +140,11 @@ h1.tag {
   color: #c63737;
 }
 
+:host ::ng-deep .status-fullstock{
+  background: #cdf9ff;
+  color: #374cc6;
+}
+
 // .scrollable { 
 //   overflow: auto; display: flex; flex-direction: column;
 // }

@@ -19,6 +19,21 @@ export class UsersService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
+  validateJWT(){
+    const headers = this.getToken()
+    return this.http.get(`${this.baseUrl}/auth/validate`, {headers})
+    .pipe(
+      map( resp =>{
+        return resp
+      }),
+      catchError(err => {
+        console.log(`${err.error.msg}`)
+        // of(err.error.msg)
+        return of(err.error.msg)
+      })
+    )
+  }
+
   getUsers(){
     const headers = this.getToken()
     return this.http.get<UserData>(`${this.baseUrl}/users`, {headers})
