@@ -359,7 +359,7 @@ export class ProductsComponent implements OnInit{
 
   tagsStock(row:any){
     if (row.inventario_min < row.existencias) { 
-      if(row.inventario_max === row.existencias){
+      if(row.inventario_max <= row.existencias){
         return `<span class="badge-stock status-fullstock">STOCK LLENO</span>`;
       }
       return `<span class="badge-stock status-instock">HAY EN STOCK</span>`; 
