@@ -40,36 +40,55 @@
     <nb-card-body class="animate__animated animate__pulse animate__faster">
       <div class="product-container">
         <div class="data-product">
-          <div class="block-data-product">
+          <!--? Descripción -->
+          <div class="block-data-product" *ngIf="product.descripcion">
             <span class="title-data-product">Descripción</span>
             <p class="text-data-product">{{product.descripcion}}</p>
           </div>
+          <!--? Fin Descripción -->
+
+          <!--? Finanzas -->
+          <div class="block-data-product">
+            <span class="title-data-product">Finanzas</span>
+            <p class="text-data-product">Precio de Compra x {{unit_value.venta_abv|uppercase}}: {{prizeUnit(product) |currency}}</p>
+            <p class="text-data-product">Precio de Venta x {{unit_value.venta_abv|uppercase}}: {{product.precio_venta|currency}}</p>
+            <p class="text-data-product" [ngClass]="getUtilityClass(utility)" *ngIf="utility">Utilidad: {{utility}}%</p>
+          </div>
+          <!--? Fin Finanzas -->
         
+
+          <!--? Factor Unidades -->
           <div class="block-data-product">
             <span class="title-data-product">Factor</span>
             <p class="text-data-product">{{product.factor}} {{unit_value.compra}} equivale a {{unit_value.venta}}</p>
           </div>
+          <!--? Fin Factor Unidades -->
         
-          <div class="block-data-product">
-            <span class="title-data-product">Dimensions</span>
-            <p class="text-data-product">6.25" x 3.55" x 1.15"</p>
-          </div>
-        
-          <div class="block-data-product">
+          <!--? Proveedor  -->
+          <div class="block-data-product" *ngIf="provider_value != ''">
             <span class="title-data-product">Proveedor</span>
-            <p class="text-data-product">{{provider_value|uppercase}}</p>
+            <p class="text-data-product" >{{provider_value|uppercase}}</p>
             <a *ngIf="provider_value != ''" nbButton status="info" size="tiny" [routerLink]="'/dashboard/providers'">Ver proveedores</a>
           </div>
+          <!--? Fin Proveedor  -->
         
+          <!--? Granel -->
           <div class="block-data-product">
-            <span class="title-data-product">Includes</span>
-            <p class="text-data-product">Wood card tray and 3 refill packs</p>
+            <span class="title-data-product">Granel 
+              <span *ngIf="product.granel" class="badge-stock status-instock">
+                SI
+              </span>
+              <span *ngIf="!product.granel" class="badge-stock status-fullstock">
+                NO
+              </span>
+            </span>
+            <p class="text-data-product">
+              <span *ngIf="product.granel">El producto se puede vender en cantidades fraccionadas</span>
+              <span *ngIf="!product.granel">El producto se vende en unidades netas</span>
+            </p>
           </div>
+          <!--? Fin Granel -->
         
-          <div class="block-data-product">
-            <span class="title-data-product">Considerations</span>
-            <p class="text-data-product">Made from natural materials. Grain and color vary with each item.</p>
-          </div>
         </div>
         <div style="display: flex; justify-content: center;">
         <img class="product-img" [src]="productSrc" alt="Product">
@@ -80,7 +99,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center;">
           <nb-icon icon="compass-outline" style="font-size: 2rem;"></nb-icon>
-          <span style="color: #8994a3; padding: 0.3125rem; font-weight: bold; font-size: 1.1em;">{{warehouse_value|uppercase}}</span>
+          <span style="color: #8994a3; padding: 0.3125rem; font-weight: bold; font-size: 1.1em;">{{warehouse_value||'Sin almacen'|uppercase}}</span>
         </div>
         <span style="font-size:1.2em; font-weight: bold; text-align: end;">Cantidad disponible: {{product.existencias}} {{unit_value.venta_abv}}</span>
       </div>
@@ -267,7 +286,7 @@
       <div class="col-sm-2" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Factor:</span>
           <nb-badge text="?" status="info" style="cursor: pointer;" (click)="openDialogInfo(InfoFactor, false)"></nb-badge>
-          <input placeholder="1" [(ngModel)]="new_producto.factor" type="text" id="input-desc" class="form-control input-sm" ngModel="1" style="background: #fff;">
+          <input placeholder="1" [(ngModel)]="new_producto.factor" type="number" min="1" id="input-desc" class="form-control input-sm" style="background: #fff;">
       </div>
     </div>
     <hr>

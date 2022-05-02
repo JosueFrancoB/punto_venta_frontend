@@ -62,6 +62,7 @@ export class ProductsComponent implements OnInit{
   current_category:string = ''
   current_unit_gen:string = this.unit_value.venta_abv
   current_unit_inv:string = this.unit_value.venta_abv
+  utility:number|undefined = undefined
 
   current_inv = {min:0,max:0}
   current_existencias:number = 0
@@ -187,7 +188,6 @@ export class ProductsComponent implements OnInit{
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
       this.product = this.getQuantityByFactor(this.new_producto)
       this.product = this.setInventoryMinMax(this.product)
-      console.log(this.product);
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
         if(resp.ok === true){
@@ -197,6 +197,8 @@ export class ProductsComponent implements OnInit{
           this.toastMixin.fire({
             title: 'Producto actualizado'
           });
+          this.utility = this.getUtility(this.product)
+          console.log(`Utilidad ${this.utility}`);
           this.getProducts(this.categoria)
           ref.close()
           this.resetProduct()
@@ -272,6 +274,8 @@ export class ProductsComponent implements OnInit{
     this.getProdByUnitId()
     this.getProviderById()
     this.getWarehouseById()
+    this.utility = this.getUtility(this.product)
+    console.log(`Utilidad ${this.utility}`);
     this.current_existencias = this.product.existencias || 0
     this.current_inv.min = this.product.inventario_min || 0
     this.current_inv.max = this.product.inventario_max || 0
@@ -469,6 +473,35 @@ export class ProductsComponent implements OnInit{
         this.user_rol = res.usuario.rol
       }
     })
+  }
+
+  getUtility(product:ProductosBody){
+    let utility = undefined
+    if(product.precio_compra && product.factor && product.precio_venta){
+      let prize_per_unit = this.prizeUnit(product)
+      let profit = product.precio_venta - prize_per_unit
+      utility = Math.round((profit * 100) / prize_per_unit)
+    }else{
+      utility = undefined
+    }
+    return utility
+  }
+
+  prizeUnit(product:any){
+    return product?.precio_compra / product?.factor
+  }
+
+  getUtilityClass(utility:any){
+    if(utility <= 10){
+      return {'badge-stock':true, 'status-outstock':true}
+    }else if(utility > 10 && utility < 35){
+      return {'badge-stock':true, 'status-lowstock':true}
+    }else if(utility >= 35){
+      return {'badge-stock':true, 'status-instock':true}
+    }
+    else{
+      return ''
+    }
   }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
