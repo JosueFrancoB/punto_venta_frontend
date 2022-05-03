@@ -59,8 +59,18 @@
 
           <!--? Factor Unidades -->
           <div class="block-data-product">
-            <span class="title-data-product">Factor</span>
-            <p class="text-data-product">{{product.factor}} {{unit_value.compra}} equivale a {{unit_value.venta}}</p>
+            <span class="title-data-product">Unidades</span>
+            <p class="text-data-product">
+              Unidad de compra: {{unit_value.compra}}
+            </p>
+            <p class="text-data-product">
+              Unidad de venta: {{unit_value.venta}}
+            </p>
+            <p class="text-data-product">
+              {{product.factor}} 
+              <span class="badge-stock status-fullstock">{{unit_value.venta_abv}}</span>
+              =  1 <span class="badge-stock status-fullstock">{{unit_value.compra_abv}}</span>
+            </p>
           </div>
           <!--? Fin Factor Unidades -->
         
@@ -78,7 +88,7 @@
               <span *ngIf="product.granel" class="badge-stock status-instock">
                 SI
               </span>
-              <span *ngIf="!product.granel" class="badge-stock status-fullstock">
+              <span *ngIf="!product.granel" class="badge-stock status-outstock">
                 NO
               </span>
             </span>

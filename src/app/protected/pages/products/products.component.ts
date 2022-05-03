@@ -198,7 +198,6 @@ export class ProductsComponent implements OnInit{
             title: 'Producto actualizado'
           });
           this.utility = this.getUtility(this.product)
-          console.log(`Utilidad ${this.utility}`);
           this.getProducts(this.categoria)
           ref.close()
           this.resetProduct()
@@ -275,7 +274,6 @@ export class ProductsComponent implements OnInit{
     this.getProviderById()
     this.getWarehouseById()
     this.utility = this.getUtility(this.product)
-    console.log(`Utilidad ${this.utility}`);
     this.current_existencias = this.product.existencias || 0
     this.current_inv.min = this.product.inventario_min || 0
     this.current_inv.max = this.product.inventario_max || 0
