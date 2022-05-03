@@ -52,7 +52,7 @@
             <span class="title-data-product">Finanzas</span>
             <p class="text-data-product">Precio de Compra x {{unit_value.venta_abv|uppercase}}: {{prizeUnit(product) |currency}}</p>
             <p class="text-data-product">Precio de Venta x {{unit_value.venta_abv|uppercase}}: {{product.precio_venta|currency}}</p>
-            <p class="text-data-product" [ngClass]="getUtilityClass(utility)" *ngIf="utility">Utilidad: {{utility}}%</p>
+            <p class="text-data-product" [ngClass]="getUtilityClass(utility)" *ngIf="utility != undefined">Utilidad: {{utility}}%</p>
           </div>
           <!--? Fin Finanzas -->
         
