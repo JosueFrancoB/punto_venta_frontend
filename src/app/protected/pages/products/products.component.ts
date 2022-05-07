@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { map, Observable, of } from 'rxjs';
 import { ProveedoresService } from '../../services/proveedores.service';
 import { WarehouseService } from '../../services/warehouse.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-products',
@@ -59,6 +60,13 @@ export class ProductsComponent implements OnInit{
   warehouse_value = ''
   new_provider: ProveedoresBody = {}
   current_category:string = ''
+  current_unit_gen:string = this.unit_value.venta_abv
+  current_unit_inv:string = this.unit_value.venta_abv
+  utility:number|undefined = undefined
+
+  current_inv = {min:0,max:0}
+  current_existencias:number = 0
+  user_rol:any = {}
 
   @ViewChild('Producto') Producto!: TemplateRef<any>;
   @ViewChild('AddUnit') AddUnit!: TemplateRef<any>;
@@ -80,6 +88,7 @@ export class ProductsComponent implements OnInit{
               private unitsService: UnitsService,
               private providerService: ProveedoresService,
               private warehouseService: WarehouseService,
+              private usersService: UsersService,
               private dialogService: NbDialogService,
               private uploadsService: UploadsService,
               private fb: FormBuilder,
@@ -112,7 +121,7 @@ export class ProductsComponent implements OnInit{
       this.getCategory(this.params.id)
     }
     this.settings.pager.display = true;
-    this.settings.pager.perPage = 5;
+    this.settings.pager.perPage = 15;
     
   }
 
@@ -127,7 +136,7 @@ export class ProductsComponent implements OnInit{
     })
   }
 
-  getClickedProduct(id: string|undefined){
+  editClickedProduct(id: string|undefined){
     
     this.viewLoading = true
     if (id !== undefined)
@@ -140,9 +149,13 @@ export class ProductsComponent implements OnInit{
             this.current_category = resp.producto.categoria.nombre
           }
           console.log(this.new_producto);
+          this.getUserRol()
           this.getUnitEditById()
           this.getEditProvById()
           this.getEditWarehouseById()
+          this.current_existencias = this.new_producto.existencias || 0
+          this.current_inv.min = this.new_producto.inventario_min || 0
+          this.current_inv.max = this.new_producto.inventario_max || 0
         }
         this.viewLoading = false
       })
@@ -150,6 +163,9 @@ export class ProductsComponent implements OnInit{
 
   addProduct(ref: any){
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
+      this.new_producto = this.getQuantityByFactor(this.new_producto)
+      this.new_producto = this.setInventoryMinMax(this.new_producto)
+      console.log(this.new_producto);
       this.productsService.addProduct(this.new_producto, this.categoria)
         .subscribe(resp =>{
           if (resp.ok === true){
@@ -170,7 +186,8 @@ export class ProductsComponent implements OnInit{
 
   updateProduct(id: string, ref: any){
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
-      this.product = this.new_producto
+      this.product = this.getQuantityByFactor(this.new_producto)
+      this.product = this.setInventoryMinMax(this.product)
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
         if(resp.ok === true){
@@ -180,6 +197,7 @@ export class ProductsComponent implements OnInit{
           this.toastMixin.fire({
             title: 'Producto actualizado'
           });
+          this.utility = this.getUtility(this.product)
           this.getProducts(this.categoria)
           ref.close()
           this.resetProduct()
@@ -255,6 +273,10 @@ export class ProductsComponent implements OnInit{
     this.getProdByUnitId()
     this.getProviderById()
     this.getWarehouseById()
+    this.utility = this.getUtility(this.product)
+    this.current_existencias = this.product.existencias || 0
+    this.current_inv.min = this.product.inventario_min || 0
+    this.current_inv.max = this.product.inventario_max || 0
   }
 
   get addProductFormControls(): any {
@@ -267,6 +289,20 @@ export class ProductsComponent implements OnInit{
     this.getProviders()
     this.getWarehouses()
     this.section_general = true
+    if(this.modalEdit===false){
+      this.prepareNewProduct()
+    }
+  }
+
+  prepareNewProduct(){
+    this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''}
+    this.provider_value = ''
+    this.warehouse_value = ''
+    this.current_existencias = 0
+    this.new_producto.factor = 1
+    this.current_unit_gen = this.unit_value.venta_abv
+    this.current_unit_inv = this.unit_value.venta_abv
+    this.current_inv = {min:0,max:0}
   }
 
   changeDialogSection(event:string){
@@ -294,9 +330,6 @@ export class ProductsComponent implements OnInit{
     let tmp_categoria = this.current_category
     this.new_producto = {};
     this.current_category = tmp_categoria
-    this.unit_value = {compra: '', venta: '', compra_abv:'', venta_abv: ''}
-    this.provider_value = ''
-    this.warehouse_value = ''
     this.changeDialogSection('general');
   }
 
@@ -324,6 +357,22 @@ export class ProductsComponent implements OnInit{
         this.trees.push(event.target.value)
     }
     // input.nativeElement.value = '';
+  }
+
+  tagsStock(row:any){
+    if (row.inventario_min < row.existencias) { 
+      if(row.inventario_max <= row.existencias){
+        return `<span class="badge-stock status-fullstock">STOCK LLENO</span>`;
+      }
+      return `<span class="badge-stock status-instock">HAY EN STOCK</span>`; 
+    }
+    else if(row.existencias <= 0) {return `<span class="badge-stock status-outstock">NO HAY STOCK</span>`;
+    }else if(row.inventario_min >= row.existencias){
+      return `<span class="badge-stock status-lowstock">STOCK BAJO</span>`;
+    }
+    else{
+      return `<span>No data</span>`
+    }
   }
 
   settings = {
@@ -362,16 +411,16 @@ export class ProductsComponent implements OnInit{
         type: 'number',
         filter: false,
       },
-      disponible: {
+      estado: {
         title: 'Estado',
         filter: false,
         type: 'html',
-        valuePrepareFunction: ((data:any, row:any) => { if (data === true) { return `<span class="badge-stock status-instock">HAY EN STOCK</span>`; } else {return `<span class="badge-stock status-outstock">NO HAY STOCK</span>`;}}),
-      },
+        valuePrepareFunction: ((data:any, row:any) => {return this.tagsStock(row)}),
+      }
     },
     pager: {
       display: true,
-      perPage: 5,
+      perPage: 15,
     }
   };
 
@@ -392,6 +441,65 @@ export class ProductsComponent implements OnInit{
       }
     ], false); 
   }
+  }
+
+  getQuantityByFactor(producto:ProductosBody){
+    if(this.unit_value.compra_abv === this.current_unit_gen){
+      if(!producto.factor) producto.factor = 1
+      producto.existencias = producto.factor * this.current_existencias
+    }else{
+      producto.existencias = this.current_existencias
+    }
+    return producto
+  }
+
+  setInventoryMinMax(producto:ProductosBody){
+    if(this.current_unit_inv === this.unit_value.compra_abv){
+      if(!producto.factor) producto.factor = 1
+      producto.inventario_min = producto.factor * this.current_inv.min
+      producto.inventario_max = producto.factor * this.current_inv.max
+    }else{
+      producto.inventario_min = this.current_inv.min
+      producto.inventario_max = this.current_inv.max
+    }
+    return producto
+  }
+
+  getUserRol(){
+    this.usersService.validateJWT().subscribe(res=>{
+      if(res.ok && res.ok ===true){
+        this.user_rol = res.usuario.rol
+      }
+    })
+  }
+
+  getUtility(product:ProductosBody){
+    let utility = undefined
+    if(product.precio_compra && product.factor && product.precio_venta){
+      let prize_per_unit = this.prizeUnit(product)
+      let profit = product.precio_venta - prize_per_unit
+      utility = Math.round((profit * 100) / prize_per_unit)
+    }else{
+      utility = undefined
+    }
+    return utility
+  }
+
+  prizeUnit(product:any){
+    return product?.precio_compra / product?.factor
+  }
+
+  getUtilityClass(utility:any){
+    if(utility <= 10){
+      return {'badge-stock':true, 'status-outstock':true}
+    }else if(utility > 10 && utility < 35){
+      return {'badge-stock':true, 'status-lowstock':true}
+    }else if(utility >= 35){
+      return {'badge-stock':true, 'status-instock':true}
+    }
+    else{
+      return ''
+    }
   }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -479,13 +587,17 @@ export class ProductsComponent implements OnInit{
     let unit = this.filterUnitNameCompra()
     if(unit.length > 0 && unit[0].abreviacion)
       this.unit_value.compra_abv = unit[0].abreviacion
+     
   }
   onVentaSelectionChange($event:any) {
     this.filteredVentaOptions$ = this.getFilteredOptions($event, this.options_units);
     this.unit_value.venta = $event
     let unit = this.filterUnitVenta()
-    if(unit.length > 0 && unit[0].abreviacion)
+    if(unit.length > 0 && unit[0].abreviacion){
       this.unit_value.venta_abv = unit[0].abreviacion
+      this.current_unit_gen = this.unit_value.venta_abv
+      this.current_unit_inv = this.unit_value.venta_abv
+    }
   }
   
   onProvSelectionChange($event:any) {
@@ -529,6 +641,23 @@ export class ProductsComponent implements OnInit{
     return true
   }
 
+  changeUnit(){
+    if(this.current_unit_gen === this.unit_value.venta_abv){
+      this.current_unit_gen = this.unit_value.compra_abv
+    }else{
+      this.current_unit_gen = this.unit_value.venta_abv
+    }
+  }
+
+  changeInvUnit(){
+    if(this.current_unit_inv === this.unit_value.venta_abv){
+      this.current_unit_inv = this.unit_value.compra_abv
+    }else{
+      this.current_unit_inv = this.unit_value.venta_abv
+    }
+  }
+
+
   getUnitEditById(){
     if (this.new_producto.unidad_compra){
       this.unitsService.getUnidad(this.new_producto.unidad_compra)
@@ -545,6 +674,8 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           this.unit_value.venta = resp.unidad.nombre.toLowerCase()
           this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
+          this.current_unit_gen = this.unit_value.venta_abv
+          this.current_unit_inv = this.unit_value.venta_abv
         }
       })
     }
@@ -557,6 +688,7 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           // this.product.unidad_compra = resp.unidad.nombre.toLowerCase()
           this.unit_value.compra = resp.unidad.nombre.toLowerCase()
+          this.unit_value.compra_abv = resp.unidad.abreviacion.toLowerCase()
         }
       })
     }
@@ -566,6 +698,9 @@ export class ProductsComponent implements OnInit{
         if (resp.ok === true){
           // this.product.unidad_venta = resp.unidad.nombre.toLowerCase()
           this.unit_value.venta = resp.unidad.nombre.toLowerCase()
+          this.unit_value.venta_abv = resp.unidad.abreviacion.toLowerCase()
+          this.current_unit_gen = this.unit_value.venta_abv
+          this.current_unit_inv = this.unit_value.venta_abv
         }
       })
     }
@@ -643,7 +778,7 @@ export class ProductsComponent implements OnInit{
       return true
     let providers = this.products_providers.filter(prov => prov.nombre_empresa.toLowerCase() === this.provider_value.toLowerCase())
     if(providers.length <= 0){
-      Swal.fire(`El proveedor ${this.provider_value} no existe`, 'Agregalo primero en la seccion de proveedores', 'error')
+      Swal.fire(`El proveedor ${this.provider_value} no existe`, 'Por favor, agreguelo primero en la sección de proveedores', 'error')
       return false
     }else{
       this.new_producto.proveedor = providers[0]._id
@@ -656,13 +791,14 @@ export class ProductsComponent implements OnInit{
       return true
     let warehouses = this.products_warehouses.filter(almacen => almacen.nombre.toLowerCase() === this.warehouse_value.toLowerCase())
     if(warehouses.length <= 0){
-      Swal.fire(`El almacen ${this.warehouse_value} no existe`, 'Agregalo primero en la seccion de almacenes', 'error')
+      Swal.fire(`El almacen ${this.warehouse_value} no existe`, 'Por favor, agregalo primero en la sección de almacenes', 'error')
       return false
     }else{
       this.new_producto.almacen = warehouses[0]._id
       return true
     }
   }
+  
 }
 
 

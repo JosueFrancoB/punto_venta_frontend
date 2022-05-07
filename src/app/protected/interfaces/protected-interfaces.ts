@@ -50,7 +50,6 @@ export interface ProductosBody{
 
 }
 
-
 export interface ClientesData{
     clientes: Array<ClientesBody>;
     total: number;
@@ -125,3 +124,67 @@ export interface WarehouseData{
     almacenes: Array<WarehouseBody>;
     total: number;
 }
+
+
+export interface UserSales{
+    id_usuario?:string
+    nombre?:string
+}
+
+export interface CustomerSales{
+    id_cliente?:string
+    nombre?:string
+    nombre_empresa?:string
+}
+export interface ProviderSales{
+    id_proveedor?:string
+    nombre?:string
+    nombre_empresa?:string
+}
+
+export interface ProductsPurchasesSales{
+    id_producto?:string
+    nombre?:string
+    precio?:number
+    cantidad?:number
+}
+
+export interface SalesBody{
+    _id?:string
+    fecha?:Date
+    codigo?:string
+    total_a_pagar?:number
+    iva?:number
+    descuento?:number
+    productos?:Array<ProductsPurchasesSales>
+    cliente?:CustomerSales
+    usuario_venta?:UserSales
+    estado?:boolean
+    notas?:string
+    cancelada?:boolean
+}
+
+export interface PurchasesBody{
+    _id?:string
+    fecha?:Date
+    total_compra?:number
+    productos?:Array<ProductsPurchasesSales>
+    proveedor?:ProviderSales
+    usuario_compra?:UserSales
+    notas?:string
+    estado?:boolean
+}
+
+export interface SalesData{
+    ok:boolean,
+    total:number
+    ventas:Array<SalesBody>
+}
+
+export interface PurchasesData{
+    ok:boolean,
+    total:number
+    compras:Array<PurchasesBody>
+}
+
+

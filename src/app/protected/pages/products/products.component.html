@@ -7,7 +7,7 @@
               <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
               <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
           </nb-form-field>
-          <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="openDialog(Producto, false); modalEdit = false;" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
+          <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="modalEdit = false; openDialog(Producto, false);" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
       </nb-card-header>
   
       <nb-card-body>        
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div>
-          <button nbbutton appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar" (click)="getClickedProduct(product._id); changeImg = false; openDialog(Producto, false);"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
+          <button nbbutton appearance="outline" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition" aria-disabled="false" nbTooltip="Editar" (click)="editClickedProduct(product._id); changeImg = false; openDialog(Producto, false);"><nb-icon icon="edit-outline" pack="eva" class="icon" ></nb-icon></button>
           <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteProduct(product._id);"><nb-icon icon="trash-outline" pack="eva" class="icon"></nb-icon></button>
         </div>
       </div>
@@ -40,36 +40,65 @@
     <nb-card-body class="animate__animated animate__pulse animate__faster">
       <div class="product-container">
         <div class="data-product">
-          <div class="block-data-product">
+          <!--? Descripción -->
+          <div class="block-data-product" *ngIf="product.descripcion">
             <span class="title-data-product">Descripción</span>
             <p class="text-data-product">{{product.descripcion}}</p>
           </div>
-        
+          <!--? Fin Descripción -->
+
+          <!--? Finanzas -->
           <div class="block-data-product">
-            <span class="title-data-product">Factor</span>
-            <p class="text-data-product">{{product.factor}} {{unit_value.compra}} equivale a {{unit_value.venta}}</p>
+            <span class="title-data-product">Finanzas</span>
+            <p class="text-data-product">Precio de Compra x {{unit_value.venta_abv|uppercase}}: {{prizeUnit(product) |currency}}</p>
+            <p class="text-data-product">Precio de Venta x {{unit_value.venta_abv|uppercase}}: {{product.precio_venta|currency}}</p>
+            <p class="text-data-product" [ngClass]="getUtilityClass(utility)" *ngIf="utility != undefined">Utilidad: {{utility}}%</p>
           </div>
+          <!--? Fin Finanzas -->
         
+
+          <!--? Factor Unidades -->
           <div class="block-data-product">
-            <span class="title-data-product">Dimensions</span>
-            <p class="text-data-product">6.25" x 3.55" x 1.15"</p>
+            <span class="title-data-product">Unidades</span>
+            <p class="text-data-product">
+              Unidad de compra: {{unit_value.compra}}
+            </p>
+            <p class="text-data-product">
+              Unidad de venta: {{unit_value.venta}}
+            </p>
+            <p class="text-data-product">
+              {{product.factor}} 
+              <span class="badge-stock status-fullstock">{{unit_value.venta_abv}}</span>
+              =  1 <span class="badge-stock status-fullstock">{{unit_value.compra_abv}}</span>
+            </p>
           </div>
+          <!--? Fin Factor Unidades -->
         
-          <div class="block-data-product">
+          <!--? Proveedor  -->
+          <div class="block-data-product" *ngIf="provider_value != ''">
             <span class="title-data-product">Proveedor</span>
-            <p class="text-data-product">{{provider_value|uppercase}}</p>
-            <button *ngIf="provider_value !=''" nbButton status="info" size="tiny">Ver proveedor</button>
+            <p class="text-data-product" >{{provider_value|uppercase}}</p>
+            <a *ngIf="provider_value != ''" nbButton status="info" size="tiny" [routerLink]="'/dashboard/providers'">Ver proveedores</a>
           </div>
+          <!--? Fin Proveedor  -->
         
+          <!--? Granel -->
           <div class="block-data-product">
-            <span class="title-data-product">Includes</span>
-            <p class="text-data-product">Wood card tray and 3 refill packs</p>
+            <span class="title-data-product">Granel 
+              <span *ngIf="product.granel" class="badge-stock status-instock">
+                SI
+              </span>
+              <span *ngIf="!product.granel" class="badge-stock status-outstock">
+                NO
+              </span>
+            </span>
+            <p class="text-data-product">
+              <span *ngIf="product.granel">El producto se puede vender en cantidades fraccionadas</span>
+              <span *ngIf="!product.granel">El producto se vende en unidades netas</span>
+            </p>
           </div>
+          <!--? Fin Granel -->
         
-          <div class="block-data-product">
-            <span class="title-data-product">Considerations</span>
-            <p class="text-data-product">Made from natural materials. Grain and color vary with each item.</p>
-          </div>
         </div>
         <div style="display: flex; justify-content: center;">
         <img class="product-img" [src]="productSrc" alt="Product">
@@ -80,9 +109,9 @@
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center;">
           <nb-icon icon="compass-outline" style="font-size: 2rem;"></nb-icon>
-          <span style="color: #8994a3; border-bottom: #8994a3; padding: 0.3125rem; font-weight: bold; font-size: 1.1em;">{{warehouse_value|uppercase}}</span>
+          <span style="color: #8994a3; padding: 0.3125rem; font-weight: bold; font-size: 1.1em;">{{warehouse_value||'Sin almacen'|uppercase}}</span>
         </div>
-        <span style="font-size:1.2em; font-weight: bold;">Cantidad disponible: {{product.existencias}}</span>
+        <span style="font-size:1.2em; font-weight: bold; text-align: end;">Cantidad disponible: {{product.existencias}} {{unit_value.venta_abv}}</span>
       </div>
     </nb-card-footer>
   </nb-card>
@@ -95,14 +124,14 @@
   <nb-card>
     <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Factor</nb-card-header>
     <nb-card-body>
-      <p style="font-size: 1em;">Escribe cuant@s <b>{{new_producto.unidad_venta ? new_producto.unidad_venta : "'unidad de venta'"}}</b> equivale a un <b>{{new_producto.unidad_compra ? new_producto.unidad_compra :  "'unidad de compra'"}}</b></p>
+      <p style="font-size: 1em;">Escribe cuant@s <b>{{unit_value.venta ? unit_value.venta : "'unidad de venta'"}}</b> contiene o son en un@ <b>{{unit_value.compra ? unit_value.compra :  "'unidad de compra'"}}</b></p>
       <nb-accordion style="margin-bottom: 5px;">
         <nb-accordion-item>
-         <nb-accordion-item-header>Ver Ejemplo:</nb-accordion-item-header>
-         <nb-accordion-item-body>
-          <p>Cada caja contiene 25kg</p>
+        <nb-accordion-item-header>Ver Ejemplo:</nb-accordion-item-header>
+        <nb-accordion-item-body>
           <p>Unidad de Compra: Caja</p>
           <p>Unidad de Venta: Kg</p>
+          <p>Cada caja contiene 25kg</p>
           <p>El Factor: 25</p>
          </nb-accordion-item-body>
         </nb-accordion-item>
@@ -161,12 +190,22 @@
 </ng-template>
 <!--? Fin -->
 
+<!--? Popover GranelInfo -->
+<ng-template #GranelInfo let-data let-ref="dialogRef">
+  <nb-card style="margin: 0; padding: 0 0.3125rem;">
+    <nb-card-body style="margin: 0; padding: 0 0.3125rem;">
+      <p style="text-align: center; vertical-align: middle; font-size: 0.9em; font-weight: bold; color: #8994a3;">Indica si el articulo se puede vender en cantidades fraccionadas</p>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!--? Fin -->
+
 <!--? Modal  -->
 
-<ng-template #Producto let-data let-ref="dialogRef" >
-  <nb-card class="scrollable" [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
+<ng-template #Producto let-data let-ref="dialogRef" id="modal-template">
+  <nb-card class="scrollable" [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant" style="max-height: 35.625rem;">
     <!--+ Modal Header -->
-    <nb-card-header style="display:flex; justify-content: space-between;overflow-y: auto;">
+    <nb-card-header style="display:flex; justify-content: space-between;">
       <div [ngClass]="{'border-section': section_general}" (click)="changeDialogSection('general')" style="display: flex; align-items: center; cursor: pointer;">
         <nb-icon [ngClass]="{'status-success': section_general}" icon="globe-outline"  style="cursor: pointer; font-size: 2rem;"></nb-icon>
         <span class="modal-header-text">Generales</span>
@@ -197,7 +236,7 @@
               <input placeholder="Clave Alterna" type="text" id="input-clave-alt" class="form-control input-sm" style="background: #fff;" name="clave_alterna" ngDefaultControl [(ngModel)]="new_producto.clave_alterna">
       </div>
     </div>
-    
+    <hr>
     <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-6" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Nombre del Producto:</span>
@@ -208,7 +247,7 @@
           <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{current_category}}" disabled style="background: #fff;">
       </div>
     </div>
-
+    <hr>
     <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-5" style="margin-top: 5px">
             <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span>
@@ -257,10 +296,10 @@
       <div class="col-sm-2" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Factor:</span>
           <nb-badge text="?" status="info" style="cursor: pointer;" (click)="openDialogInfo(InfoFactor, false)"></nb-badge>
-          <input placeholder="1" [(ngModel)]="new_producto.factor" type="text" id="input-desc" class="form-control input-sm" ngModel="1" style="background: #fff;">
+          <input placeholder="1" [(ngModel)]="new_producto.factor" type="number" min="1" id="input-desc" class="form-control input-sm" style="background: #fff;">
       </div>
     </div>
-
+    <hr>
     <div class="row" style="justify-content: center; max-width:34.375rem;">
       <div class="col-sm-4" style="margin-top: 0.3125rem;">
           <span class="input-group-addon" style="font-size:14px;">Precio de Compra</span>
@@ -283,9 +322,9 @@
       <div class="col-sm-4" style="margin-top: 0.3125rem;">
         <span class="input-group-addon" style="font-size:14px;">Cantidad Actual</span>
         <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
-        <input style="background: #fff;" id="in-cant-actual" class="form-control input-sm" type="number" min="0" placeholder="0" ngDefaultControl [(ngModel)]="new_producto.existencias">
+        <input style="background: #fff;" id="in-cant-actual" class="form-control input-sm" type="number" min="0" [disabled]="modalEdit && user_rol != 'Administrador'" placeholder="0" ngDefaultControl [(ngModel)]="current_existencias">
         <div class="input-group-btn">
-          <button class="btn btn-secondary btn-sm" disabled>x {{unit_value.compra_abv|uppercase}}</button>
+          <button class="btn btn-primary btn-sm" [disabled]="modalEdit && user_rol != 'Administrador'" (click)="changeUnit()"><i class="fas fa-retweet"></i> {{current_unit_gen|uppercase}}</button>
         </div>
         </div>
       </div>
@@ -298,14 +337,24 @@
       <div class="row" style="justify-content: center; max-width: 36.25rem;">
         <div class="col-sm-4" style="margin-top: 0.3125rem;">
           <label for="in-minimo">Inventario Mínimo</label>
-          <input id="in-minimo" class="form-control input-sm " type="number" min="0" placeholder="0" [(ngModel)]="new_producto.inventario_min">
+          <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
+            <input id="in-minimo" class="form-control input-sm " type="number" min="0" placeholder="0" [(ngModel)]="current_inv.min">
+            <div class="input-group-btn">
+              <button class="btn btn-primary btn-sm" (click)="changeInvUnit()"><i class="fas fa-retweet"></i> {{current_unit_inv|uppercase}}</button>
+            </div>
+          </div>
         </div>
         <div class="col-sm-4" style="margin-top: 0.3125rem;">
           <label for="in-maximo">Inventario Máximo</label>
-          <input id="in-maximo" class="form-control input-sm " type="number" min="0" placeholder="0" [(ngModel)]="new_producto.inventario_max">
+          <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
+            <input id="in-maximo" class="form-control input-sm " type="number" min="0" placeholder="0" [(ngModel)]="current_inv.max">
+            <div class="input-group-btn">
+              <button class="btn btn-primary btn-sm" (click)="changeInvUnit()"><i class="fas fa-retweet"></i> {{current_unit_inv|uppercase}}</button>
+            </div>
+          </div>
         </div>
         <div class="col-sm-4" style="display: flex; justify-content: center; align-items: center; margin-top: 0.3125rem;">
-          <nb-checkbox class="input-group-addon" id="check-granel" status="info" [(ngModel)]="new_producto.granel">Granel</nb-checkbox>
+          <nb-checkbox class="input-group-addon" id="check-granel" status="info" [(ngModel)]="new_producto.granel" [nbPopover]="GranelInfo" nbPopoverTrigger="hint" nbPopoverPlacement="top" style="cursor: pointer;">Granel</nb-checkbox>
         </div>
       </div>
       <hr>

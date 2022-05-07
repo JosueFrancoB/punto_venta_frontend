@@ -1,4 +1,20 @@
-<p>sales works!</p>
+<h3 class="group-title h4 ng-star-inserted">Ventas</h3>
+<nb-layout-header subheader>
+  <nb-actions>
+    <nb-action icon="plus-square" nbTooltip="Agregar Producto" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+    <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+    <nb-action icon="plus-outline" nbTooltip="Agregar Categoria" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+  </nb-actions>
+  <nb-form-field style="width: 50%;">
+    <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+    <input #autoInput
+    nbInput
+    type="text" fullWidth fieldSize="medium"
+    [(ngModel)]="searchText"
+    placeholder="Buscar un producto ..." class="search"/>
+  </nb-form-field>
+</nb-layout-header>
+<hr>
 
 <nb-card [size]="'medium'">
     <nb-card-header>List inside nb-card-body</nb-card-header>
@@ -9,4 +25,7 @@
         </nb-list-item>
       </nb-list>
     </nb-card-body>
-  </nb-card>
+</nb-card>
+
+<ng-template #sale></ng-template>
+

@@ -1,26 +1,25 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { catchError, map, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ProductosBody, ProductosData } from '../interfaces/protected-interfaces';
-import {Observable, of} from 'rxjs'
-import { map, catchError, tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { SalesBody, SalesData } from '../interfaces/protected-interfaces';
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductsService {
+export class SalesService {
 
   private baseUrl:string = environment.baseUrl
   constructor(private http:HttpClient) { }
-
   getToken(){
     return new HttpHeaders()
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getProducts(){
+  getSales(){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos`, {headers})
+    return this.http.get<SalesData>(`${this.baseUrl}/sales`, {headers})
       .pipe(
         map( resp => {
             return resp
@@ -35,26 +34,27 @@ export class ProductsService {
       )
   }
 
-  getProductsByCategoria(id: string){
+  getSale(id:string){
     const headers = this.getToken()
-    return this.http.get<ProductosData>(`${this.baseUrl}/productos/categoria/${id}`, {headers})
-      .pipe(
-        map( resp => {
-            return resp
-        }),
-        catchError(err => {
-          if(err.error.errors){
-            return of(err.error.errors[0].msg)
-          }else{
-            return of(err.error.msg)
-          }
-        })
-      )
+    return this.http.get(`${this.baseUrl}/sales/${id}`, {headers}).pipe(
+      map( resp => {
+        return resp
+    }),
+    catchError(err => {
+      if(err.error.errors){
+        return of(err.error.errors[0].msg)
+      }else{
+        return of(err.error.msg)
+      }
+    })
+    )
   }
 
-  getProduct(id:string){
+  addSale(sale: SalesBody){
     const headers = this.getToken()
-    return this.http.get<ProductosBody>(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
+    console.log(sale);
+    let body = sale
+    return this.http.post(`${this.baseUrl}/sales`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -69,9 +69,10 @@ export class ProductsService {
     )
   }
 
-  searchProducts(search:string){
+  updateSale(id:string, sale: SalesBody){
     const headers = this.getToken()
-    return this.http.get(`${this.baseUrl}/buscar/productos/${search}`, {headers}).pipe(
+    let body = sale
+    return this.http.patch(`${this.baseUrl}/sales/${id}`, body, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -86,12 +87,9 @@ export class ProductsService {
     )
   }
 
-  addProduct(product_data: ProductosBody, categoria: string){
+  deleteSale(id:string){
     const headers = this.getToken()
-    console.log(product_data);
-    product_data.categoria = categoria
-    let body = product_data
-    return this.http.post(`${this.baseUrl}/productos`, body, {headers}).pipe(
+    return this.http.delete(`${this.baseUrl}/sales/${id}`, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
@@ -106,28 +104,9 @@ export class ProductsService {
     )
   }
 
-  updateProduct(id:string, product_data: ProductosBody, categoria: string){
+  cancelSale(id:string){
     const headers = this.getToken()
-    product_data.categoria = categoria
-    let body = product_data
-    return this.http.patch(`${this.baseUrl}/productos/${id}`, body, {headers}).pipe(
-      map( resp => {
-        console.log(resp);
-        return resp
-    }),
-    catchError(err => {
-      if(err.error.errors){
-        return of(err.error.errors[0].msg)
-      }else{
-        return of(err.error.msg)
-      }
-    })
-    )
-  }
-
-  deleteProduct(id:string){
-    const headers = this.getToken()
-    return this.http.delete(`${this.baseUrl}/productos/${id}`, {headers}).pipe(
+    return this.http.patch(`${this.baseUrl}/sales/cancel/${id}`, {headers}).pipe(
       map( resp => {
         console.log(resp);
         return resp
