@@ -1,6 +1,6 @@
 <h3 class="group-title h4 ng-star-inserted">Ventas</h3>
 
-<nb-tabset>
+<nb-tabset (changeTab)="resetVenta()" #Tabs >
     <!--? Ventas -->
   <nb-tab tabTitle="Ventas" tabIcon="bookmark-outline">
     <nb-layout-header subheader>
@@ -32,10 +32,9 @@
   </nb-tab>
 
   <!--? Nueva Venta -->
-  <nb-tab tabTitle="Crear Venta" tabIcon="inbox-outline" (click)="resetVenta()">
+  <nb-tab tabTitle="Crear Venta" tabIcon="inbox-outline">
     <nb-layout-header subheader>
       <nb-actions>
-        <nb-action icon="plus-square" nbTooltip="Agregar Producto" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
         <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(SearchCustomer, true); modalEdit = false;"></nb-action>
         <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
         <nb-action icon="pricetags" nbTooltip="Añadir Iva o Impuestos" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
@@ -57,21 +56,30 @@
           <nb-option *ngFor="let product_option of filteredProductOptions$ | async" [value]="product_option">
             {{ product_option }}
           </nb-option>
-        
         </nb-autocomplete>
       </nb-form-field>
+      <nb-action icon="plus-square" nbTooltip="Agregar Producto" (click)="addSaleProduct(); modalEdit = false;"></nb-action>
     </nb-layout-header>
+
+    <hr>
+    
+    <nb-card [size]="'medium'">
+      <nb-card-header style="display: flex; justify-content: space-between;">
+        <div style="padding: 5px; margin-top:5px; border: solid 1px #ddd; background:white; text-align:center;">Núm de Venta [123213]</div>
+        <div>
+          <input nbInput placeholder="Escoge una fecha" [nbDatepicker]="dateSale">
+          <nb-datepicker #dateSale></nb-datepicker>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let product of sale_products">
+              {{ product.nombre }}
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
   </nb-tab>
-  <nb-card [size]="'medium'">
-    <nb-card-header>Productos</nb-card-header>
-    <nb-card-body>
-      <nb-list>
-        <nb-list-item *ngFor="let product of sale_products">
-            {{ product }}
-        </nb-list-item>
-      </nb-list>
-    </nb-card-body>
-  </nb-card>
 </nb-tabset>
 <ng-template #sale></ng-template>
 
@@ -98,7 +106,6 @@
         </nb-option>
       
       </nb-autocomplete>
-      <!-- <p style="font-size: 1em;">Escribe cuant@s <b>{{unit_value.venta ? unit_value.venta : "'unidad de venta'"}}</b> contiene o son en un@ <b>{{unit_value.compra ? unit_value.compra :  "'unidad de compra'"}}</b></p> -->
       <nb-accordion style="margin-bottom: 5px;">
         <nb-accordion-item>
         <nb-accordion-item-header>Ver Ejemplo:</nb-accordion-item-header>

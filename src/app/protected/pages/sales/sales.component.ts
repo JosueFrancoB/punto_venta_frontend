@@ -27,10 +27,12 @@ export class SalesComponent implements OnInit {
   sale_products:Array<ProductsPurchasesSales> = []
   filteredProductOptions$!: Observable<string[]>;
   filteredCustomerOptions$!: Observable<string[]>;
-  products_options:Array<String> = []
-  customers_options:Array<String> = []
+  products_options:Array<string> = []
+  customers_options:Array<string> = []
   @ViewChild('productInput') productInput: any;
   @ViewChild('customerInput') customerInput: any;
+  @ViewChild('dateSale') dateSale: any;
+  products_objects:Array<ProductsPurchasesSales> = []
 
   constructor(private dialogService: NbDialogService,
               private saleService: SalesService,
@@ -62,6 +64,7 @@ export class SalesComponent implements OnInit {
   resetVenta(){
     this.new_sale = {}
     this.sale_products = []
+    console.log('reset');
   }
 
   getVentas(){
@@ -146,13 +149,19 @@ export class SalesComponent implements OnInit {
   })
   }
 
-  addSaleProduct(search:string){
-    this.productService.searchProducts(search).subscribe(resp =>{
-      if(resp.count > 0){
-        console.log(`addSaleProduct - Response: ${resp.results}`);
-      }
-    })
-    // this.new_sale_product = 
+  addSaleProduct(){
+    if(!this.product_search) 
+      return
+    let products = this.products_objects.filter(prod => prod.nombre && prod.nombre.toLowerCase() === this.product_search.toLowerCase())
+    if(products.length <= 0){
+      Swal.fire(`El producto ${this.product_search} no existe`, 'Por favor, agreguelo primero en la sección de productos', 'error')
+    }else{
+      products.forEach((prod)=>{
+        this.sale_products.push(prod)
+      })
+      console.log('Los product added');
+      console.log(this.sale_products);
+    }
   }
 
   removeSaleProduct(id:string){
@@ -216,7 +225,7 @@ export class SalesComponent implements OnInit {
   }
 
   onCustomerSelectChange($event:any){
-    this.filteredProductOptions$ = this.getFilteredOptions($event, this.products_options);
+    this.filteredCustomerOptions$ = this.getFilteredOptions($event, this.customers_options);
     this.customer_search = $event
   }
 
@@ -245,12 +254,15 @@ export class SalesComponent implements OnInit {
             if(resp.count > 0){
               console.log(`searchProducts - Response:`);
               let products = resp.results
-              this.products_options = products.map(( prod:any ) => prod.nombre)
-              console.log(this.products_options);
+              console.log(products);
+              this.products_objects = products.map(( prod:any ) =>{
+                let {_id, nombre, precio_venta: precio, existencias} = prod
+                return {_id, nombre, precio, existencias}
+              })
+              this.products_options = products.map((prod:any)=> prod.nombre)
               this.filteredProductOptions$ = this.getFilteredOptions(this.productInput.nativeElement.value, this.products_options);
             }
           })
-          
         }
         break;
       case 'customer':
@@ -267,7 +279,6 @@ export class SalesComponent implements OnInit {
           this.filteredCustomerOptions$ = this.getFilteredOptions(this.customerInput.nativeElement.value, this.customers_options);
         }
         break;
-    
       default:
         break;
     }
