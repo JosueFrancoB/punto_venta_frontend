@@ -1,31 +1,118 @@
 <h3 class="group-title h4 ng-star-inserted">Ventas</h3>
-<nb-layout-header subheader>
-  <nb-actions>
-    <nb-action icon="plus-square" nbTooltip="Agregar Producto" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
-    <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
-    <nb-action icon="plus-outline" nbTooltip="Agregar Categoria" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
-  </nb-actions>
-  <nb-form-field style="width: 50%;">
-    <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
-    <input #autoInput
-    nbInput
-    type="text" fullWidth fieldSize="medium"
-    [(ngModel)]="searchText"
-    placeholder="Buscar un producto ..." class="search"/>
-  </nb-form-field>
-</nb-layout-header>
-<hr>
 
-<nb-card [size]="'medium'">
-    <nb-card-header>List inside nb-card-body</nb-card-header>
+<nb-tabset>
+    <!--? Ventas -->
+  <nb-tab tabTitle="Ventas" tabIcon="bookmark-outline">
+    <nb-layout-header subheader>
+      <nb-actions>
+        <nb-action icon="funnel" nbTooltip="Filtrar" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+        <select name="" id=""></select>
+      </nb-actions>
+      <nb-form-field style="width: 50%;">
+        <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+        <input #autoInput
+        nbInput
+        type="text" fullWidth fieldSize="medium"
+        [(ngModel)]="searchText"
+        placeholder="Buscar una venta ..." class="search"/>
+      </nb-form-field>
+    </nb-layout-header>
+    <hr>
+
+    <nb-card [size]="'medium'">
+        <nb-card-header>Ventas</nb-card-header>
+        <nb-card-body>
+          <nb-list>
+            <nb-list-item *ngFor="let sale of sales">
+                {{ sale }}
+            </nb-list-item>
+          </nb-list>
+        </nb-card-body>
+    </nb-card>
+  </nb-tab>
+
+  <!--? Nueva Venta -->
+  <nb-tab tabTitle="Crear Venta" tabIcon="inbox-outline" (click)="resetVenta()">
+    <nb-layout-header subheader>
+      <nb-actions>
+        <nb-action icon="plus-square" nbTooltip="Agregar Producto" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+        <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(SearchCustomer, true); modalEdit = false;"></nb-action>
+        <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+        <nb-action icon="pricetags" nbTooltip="Añadir Iva o Impuestos" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+        <nb-action icon="file-add" nbTooltip="Agregar Notas" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+      </nb-actions>
+      <nb-form-field style="width: 50%;">
+        <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+        <input #productInput
+        nbInput
+        type="text" fullWidth fieldSize="medium"
+        (input)="onChange('product')"
+        [nbAutocomplete]="autoProduct"
+        [(ngModel)]="product_search"
+        nbTooltip="Presiona enter"
+        placeholder="Buscar un producto ..." class="search"/>
+            
+        <nb-autocomplete #autoProduct (selectedChange)="onProductSelectChange($event)">
+        
+          <nb-option *ngFor="let product_option of filteredProductOptions$ | async" [value]="product_option">
+            {{ product_option }}
+          </nb-option>
+        
+        </nb-autocomplete>
+      </nb-form-field>
+    </nb-layout-header>
+  </nb-tab>
+  <nb-card [size]="'medium'">
+    <nb-card-header>Productos</nb-card-header>
     <nb-card-body>
       <nb-list>
-        <nb-list-item *ngFor="let fruit of fruits">
-            {{ fruit }}
+        <nb-list-item *ngFor="let product of sale_products">
+            {{ product }}
         </nb-list-item>
       </nb-list>
     </nb-card-body>
-</nb-card>
-
+  </nb-card>
+</nb-tabset>
 <ng-template #sale></ng-template>
+
+
+<!--? Dialog Search Customer -->
+<ng-template #SearchCustomer let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Cliente</nb-card-header>
+    <nb-card-body>
+      <label for="in-local">Busca un cliente</label>
+      <input #customerInput
+      nbInput
+      type="text" fullWidth fieldSize="medium"
+      (input)="onChange('customer')"
+      [nbAutocomplete]="autoCustomer"
+      [(ngModel)]="customer_search"
+      nbTooltip="Presiona enter"
+      placeholder="Buscar un cliente ..." class="search"/>
+          
+      <nb-autocomplete #autoCustomer (selectedChange)="onCustomerSelectChange($event)">
+      
+        <nb-option *ngFor="let customer_option of filteredCustomerOptions$ | async" [value]="customer_option">
+          {{ customer_option }}
+        </nb-option>
+      
+      </nb-autocomplete>
+      <!-- <p style="font-size: 1em;">Escribe cuant@s <b>{{unit_value.venta ? unit_value.venta : "'unidad de venta'"}}</b> contiene o son en un@ <b>{{unit_value.compra ? unit_value.compra :  "'unidad de compra'"}}</b></p> -->
+      <nb-accordion style="margin-bottom: 5px;">
+        <nb-accordion-item>
+        <nb-accordion-item-header>Ver Ejemplo:</nb-accordion-item-header>
+        <nb-accordion-item-body>
+          <p>Unidad de Compra: Caja</p>
+          <p>Unidad de Venta: Kg</p>
+          <p>Cada caja contiene 25kg</p>
+          <p>El Factor: 25</p>
+         </nb-accordion-item-body>
+        </nb-accordion-item>
+       </nb-accordion>
+      <button nbButton status="success" (click)="ref.close()">De acuerdo</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!-- ? Fin -->
 

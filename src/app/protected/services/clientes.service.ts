@@ -46,6 +46,24 @@ export class ClientesService {
     })
     )
   }
+
+  searchClientes(search:string){
+    const headers = this.getToken()
+    return this.http.get(`${this.baseUrl}/buscar/clientes/${search}`, {headers}).pipe(
+      map( resp => {
+        console.log(resp);
+        return resp
+    }),
+    catchError(err => {
+      if(err.error.errors){
+        return of(err.error.errors[0].msg)
+      }else{
+        return of(err.error.msg)
+      }
+    })
+    )
+  }
+
   addCliente(client: any){
     const headers = this.getToken()
     console.log(client);
