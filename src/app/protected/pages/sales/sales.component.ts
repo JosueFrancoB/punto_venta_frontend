@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { map, Observable, of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { ProductsPurchasesSales, SalesBody } from '../../interfaces/protected-interfaces';
 import { ClientesService } from '../../services/clientes.service';
@@ -24,7 +25,7 @@ export class SalesComponent implements OnInit {
   new_sale:SalesBody = {}
   sales:Array<SalesBody> = []
   new_sale_product:ProductsPurchasesSales = {}
-  sale_products:Array<ProductsPurchasesSales> = []
+  sale_products:Array<any> = []
   filteredProductOptions$!: Observable<string[]>;
   filteredCustomerOptions$!: Observable<string[]>;
   products_options:Array<string> = []
@@ -33,6 +34,7 @@ export class SalesComponent implements OnInit {
   @ViewChild('customerInput') customerInput: any;
   @ViewChild('dateSale') dateSale: any;
   products_objects:Array<ProductsPurchasesSales> = []
+  uploadsUrl:string = environment.baseUrl + '/uploads/productos'
 
   constructor(private dialogService: NbDialogService,
               private saleService: SalesService,
@@ -80,6 +82,7 @@ export class SalesComponent implements OnInit {
   }
 
   addVenta(ref: any){
+    this.new_sale.productos = this.sale_products
     console.log(`AddVenta - New sale: ${this.new_sale}`);
     this.saleService.addSale(this.new_sale)
     .subscribe(resp =>{
@@ -157,31 +160,56 @@ export class SalesComponent implements OnInit {
       Swal.fire(`El producto ${this.product_search} no existe`, 'Por favor, agreguelo primero en la sección de productos', 'error')
     }else{
       products.forEach((prod)=>{
-        this.sale_products.push(prod)
+        prod.cantidad = 1
+        prod.amount = prod.precio
+        if (!this.sale_products.includes(prod)) {
+          this.sale_products.push(prod)
+          this.getTotalAmount()
+        }
       })
       console.log('Los product added');
-      console.log(this.sale_products);
+      
     }
   }
 
   removeSaleProduct(id:string){
-    this.sale_products = this.sale_products.filter(product => product.id_producto !== id)
+    this.sale_products = this.sale_products.filter(product => product._id !== id)
+    this.getTotalAmount()
     // this.new_sale_product = 
   }
 
-  quantityProduct(_case_:string, id:string){
+  quantityProduct(_case_:string, id:string|undefined){
+    this.getTotalAmount()
     if(_case_ === 'inc'){
+      console.log('increment');
       this.sale_products.forEach(product =>{
-        if(product.id_producto === id){
-          if(product.cantidad)
+        if(product._id === id){
+          if(product.cantidad != undefined){
             product.cantidad ++
+            product.amount = product.precio * product.cantidad
+            console.log(product.precio);
+            this.getTotalAmount()
+          }
+        }
+      })
+    }else if(_case_ === 'dec'){
+      this.sale_products.forEach(product =>{
+        if(product._id === id){
+          if(product.cantidad && product.cantidad > 1){
+            product.cantidad --
+            product.amount = product.precio * product.cantidad
+            this.getTotalAmount()
+          }
         }
       })
     }else{
       this.sale_products.forEach(product =>{
-        if(product.id_producto === id){
-          if(product.cantidad)
-            product.cantidad --
+        if(product._id === id){
+          if(product.cantidad && product.cantidad >= 1){
+            // product.cantidad --
+            product.amount = product.precio * product.cantidad
+            this.getTotalAmount()
+          }
         }
       })
     }
@@ -190,7 +218,7 @@ export class SalesComponent implements OnInit {
   discountPerProduct(discount:number, id:string){
     if (discount > 0)
       this.sale_products.forEach(product =>{
-        if(product.id_producto === id){
+        if(product._id === id){
           if(product.precio){
             discount *= product.precio / 100
             product.precio -= discount 
@@ -201,7 +229,7 @@ export class SalesComponent implements OnInit {
 
   getTotalAmount(){
     this.total_amount = this.sale_products.reduce((accumulator, object) => {
-      return accumulator + (object.precio || 0);
+      return accumulator + (object.precio * object.cantidad || 0);
     }, 0);
   }
   
@@ -255,9 +283,10 @@ export class SalesComponent implements OnInit {
               console.log(`searchProducts - Response:`);
               let products = resp.results
               console.log(products);
+              this.products_objects = products
               this.products_objects = products.map(( prod:any ) =>{
-                let {_id, nombre, precio_venta: precio, existencias} = prod
-                return {_id, nombre, precio, existencias}
+                let {_id, nombre, precio_venta: precio, existencias, img} = prod
+                return {_id, nombre, precio, existencias, img}
               })
               this.products_options = products.map((prod:any)=> prod.nombre)
               this.filteredProductOptions$ = this.getFilteredOptions(this.productInput.nativeElement.value, this.products_options);

@@ -33,7 +33,7 @@
 
   <!--? Nueva Venta -->
   <nb-tab tabTitle="Crear Venta" tabIcon="inbox-outline">
-    <nb-layout-header subheader>
+    <nb-layout-header subheader style="flex-wrap: wrap;">
       <nb-actions>
         <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(SearchCustomer, true); modalEdit = false;"></nb-action>
         <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
@@ -49,7 +49,7 @@
         [nbAutocomplete]="autoProduct"
         [(ngModel)]="product_search"
         nbTooltip="Presiona enter"
-        placeholder="Buscar un producto ..." class="search"/>
+        placeholder="Buscar un producto ..." class="search" (keydown.enter)="addSaleProduct(); modalEdit = false;"/>
             
         <nb-autocomplete #autoProduct (selectedChange)="onProductSelectChange($event)">
         
@@ -67,17 +67,28 @@
       <nb-card-header style="display: flex; justify-content: space-between;">
         <div style="padding: 5px; margin-top:5px; border: solid 1px #ddd; background:white; text-align:center;">Núm de Venta [123213]</div>
         <div>
-          <input nbInput placeholder="Escoge una fecha" [nbDatepicker]="dateSale">
+          <input nbInput placeholder="Elige una fecha" [nbDatepicker]="dateSale" [(ngModel)]="dateSale.value" (ngModelChange)="new_sale.fecha = dateSale.value">
           <nb-datepicker #dateSale></nb-datepicker>
         </div>
       </nb-card-header>
       <nb-card-body>
         <nb-list>
-          <nb-list-item *ngFor="let product of sale_products">
-              {{ product.nombre }}
+          <nb-list-item *ngFor="let product of sale_products" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center;">
+              <img class="component-icon" src="{{(product._id) ? uploadsUrl + '/' + product._id : 'assets/images/components/layout.svg'}}" alt="Layout">
+              <p style="margin: 0;">{{ product.nombre }}</p>
+              <div>
+                <button nbButton ghost status="danger" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
+                <input nbInput type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" size="tiny" style="max-width: auto;">
+                <button nbButton ghost status="danger" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
+              </div>
+              <p style="margin: 0;">{{product.amount|currency}}</p>
+              <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="removeSaleProduct(product._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
           </nb-list-item>
         </nb-list>
       </nb-card-body>
+      <nb-card-footer style="display: flex; justify-content: flex-end; ">
+        <p class="total_amount" style="font-weight: bold;">Total: {{total_amount|currency}}</p>
+      </nb-card-footer>
     </nb-card>
   </nb-tab>
 </nb-tabset>

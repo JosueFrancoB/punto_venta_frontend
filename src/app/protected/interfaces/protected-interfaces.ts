@@ -147,6 +147,8 @@ export interface ProductsPurchasesSales{
     nombre?:string
     precio?:number
     cantidad?:number
+    img?:string
+    amount?:number
 }
 
 export interface SalesBody{
