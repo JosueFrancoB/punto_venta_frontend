@@ -36,11 +36,11 @@
     <nb-layout-header subheader style="flex-wrap: wrap;">
       <nb-actions>
         <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(SearchCustomer, true); modalEdit = false;"></nb-action>
-        <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="discountModal('product',''); modalEdit = false;"></nb-action>
-        <nb-action icon="pricetags" nbTooltip="Añadir Iva o Impuestos" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
-        <nb-action icon="file-add" nbTooltip="Agregar Notas" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+        <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="discountModal('total',''); modalEdit = false;"></nb-action>
+        <nb-action icon="pricetags" nbTooltip="Añadir Iva o Impuestos" (click)="openDialog(TotalTaxes, true); modalEdit = false;"></nb-action>
+        <!-- <nb-action icon="file-add" nbTooltip="Agregar Notas" (click)="openDialog(sale, true); modalEdit = false;"></nb-action> -->
       </nb-actions>
-      <nb-form-field style="width: 50%;">
+      <nb-form-field style="width: 30%;">
         <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
         <input #productInput
         nbInput
@@ -58,6 +58,7 @@
           </nb-option>
         </nb-autocomplete>
       </nb-form-field>
+      <button *ngIf="sale_products.length > 0" nbButton status="success" (click)="openDialog(Venta, true)">Cerrar Venta</button>
     </nb-layout-header>
 
     <hr>
@@ -77,11 +78,11 @@
         <nb-list>
           <nb-list-item *ngFor="let product of sale_products" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center;">
               <img class="component-icon" src="{{(product._id) ? uploadsUrl + '/' + product._id : 'assets/images/components/layout.svg'}}" alt="Layout">
-              <p style="margin: 0;">{{ product.nombre }}</p>
+              <p style="margin: 0; font-size: 1.2rem;">{{ product.nombre }}</p>
               <div>
-                <button nbButton ghost status="danger" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
-                <input nbInput type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" size="tiny" style="max-width: auto;">
-                <button nbButton ghost status="danger" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
+                <button nbButton ghost status="info" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
+                <input nbInput type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" size="tiny" style="max-width: 6.25rem;">
+                <button nbButton ghost status="info" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
               </div>
               <p style="margin: 0;">{{product.amount|currency}}</p>
               <button nbbutton apparence="outline" class="toggle-settings appearance-outline size-medium shape-rectangle icon-start icon-end status-warning nb-transition" nbTooltip="Agregar Descuento" aria-disabled="false" (click)="discountModal('product', product)">{{product.discount || 0}}%</button>
@@ -89,7 +90,9 @@
           </nb-list-item>
         </nb-list>
       </nb-card-body>
-      <nb-card-footer style="display: flex; justify-content: flex-end; ">
+      <nb-card-footer style="display: flex; justify-content: space-around; align-items: center;">
+        <p *ngIf="total_taxes > 0 && total_amount > 0" class="total_taxes" style="font-weight: bold;">Iva: {{total_taxes}}%</p>
+        <p *ngIf="total_discount > 0 && total_amount > 0" class="total_discount" style="font-weight: bold;">Descuento: {{total_discount}}%</p>
         <p class="total_amount" style="font-weight: bold;">Total: {{total_amount|currency}}</p>
       </nb-card-footer>
     </nb-card>
@@ -135,7 +138,7 @@
     <nb-card-body>
       <label for="in-local">Agregar descuento</label>
       <hr>
-      <nb-button-group (valueChange)="updateSingleSelectGroupValue($event)">
+      <nb-button-group (valueChange)="groupDiscounts($event)">
         <button nbButtonToggle value="5">5%</button>
         <button nbButtonToggle value="20">20%</button>
         <button nbButtonToggle value="50">50%</button>
@@ -146,3 +149,69 @@
 </ng-template>
 <!-- ? Fin -->
 
+<!--? Dialog Total Discount -->
+<ng-template #TotalDiscount let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Descuento</nb-card-header>
+    <nb-card-body>
+      <label for="in-local">Agregar descuento</label>
+      <hr>
+      <nb-button-group (valueChange)="groupTotalDiscount($event)">
+        <button nbButtonToggle value="0" status="warning">0%</button>
+        <button nbButtonToggle value="5" status="warning">5%</button>
+        <button nbButtonToggle value="10" status="warning">10%</button>
+        <button nbButtonToggle value="25" status="warning">25%</button>
+        <button nbButtonToggle value="50" status="warning">50%</button>
+        <button nbButtonToggle value="75" status="warning">75%</button>
+      </nb-button-group>
+      <button nbButton status="info" (click)="discountTotalAmount(); ref.close()">Guardar Descuento</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!-- ? Fin -->
+
+
+<!--? Dialog Total Taxes -->
+<ng-template #TotalTaxes let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Impuestos</nb-card-header>
+    <nb-card-body>
+      <label for="in-local">Agregar Impuestos</label>
+      <hr>
+      <nb-button-group (valueChange)="groupTaxes($event)">
+        <button nbButtonToggle value="0" status="warning">0%</button>
+        <button nbButtonToggle value="5" status="warning">5%</button>
+        <button nbButtonToggle value="10" status="warning">10%</button>
+        <button nbButtonToggle value="25" status="warning">25%</button>
+        <button nbButtonToggle value="50" status="warning">50%</button>
+        <button nbButtonToggle value="75" status="warning">75%</button>
+      </nb-button-group>
+      <button nbButton status="info" (click)="applyTaxes(); ref.close()">Guardar Impuestos</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!-- ? Fin -->
+
+<!--? Dialog Venta -->
+<ng-template #Venta let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Cerrar Venta</nb-card-header>
+    <nb-card-body>
+      <label for="in-local">Pagar en efectivo</label>
+      <hr>
+      <div style="display: flex; justify-content: space-around; align-items: center;">
+        <label for="">Pago</label>
+        <input nbInput type="number" [(ngModel)]="pay" placeholder="0.00">
+        <button nbButton ghost status="success" (click)="pay = total_amount"><nb-icon icon="credit-card"></nb-icon></button>
+      </div>
+      <hr>
+      <div style="display: flex; justify-content: space-around; align-items: center;">
+        <label for="">Cambio</label>
+        <input nbInput type="number" [(ngModel)]="total_amount-pay">
+      </div>
+      <hr>
+      <button nbButton status="info" (click)="applyTaxes(); ref.close()">Completar Venta</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!-- ? Fin -->

@@ -20,6 +20,8 @@ export class SalesComponent implements OnInit {
   modalLoading: boolean = false
   searchText:string = ''
   discountsArray:any = []
+  totalDiscountArray:any = []
+  taxesArray:any = []
   product_search:string = ''
   customer_search:string = ''
   total_amount:number = 0
@@ -32,12 +34,15 @@ export class SalesComponent implements OnInit {
   filteredCustomerOptions$!: Observable<string[]>;
   products_options:Array<string> = []
   customers_options:Array<string> = []
+  pay:number = 0
   total_discount:number = 0
+  total_taxes:number = 0
   discount_product:number = 0
   @ViewChild('productInput') productInput: any;
   @ViewChild('customerInput') customerInput: any;
   @ViewChild('dateSale') dateSale: any;
   @ViewChild('AddDiscount') AddDiscount!: TemplateRef<any>;
+  @ViewChild('TotalDiscount') TotalDiscount!: TemplateRef<any>;
   products_objects:Array<ProductsPurchasesSales> = []
   customers_objects:any = []
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
@@ -173,6 +178,11 @@ export class SalesComponent implements OnInit {
         if (current_products.length <= 0) {
           this.sale_products.push(prod)
           this.getTotalAmount()
+          if(this.total_discount > 0)
+            this.discountTotalAmount()
+          if(this.total_taxes > 0)
+            this.applyTaxes()
+          
         }
       })
       console.log('Los product added');
@@ -211,6 +221,10 @@ export class SalesComponent implements OnInit {
             product.cantidad ++
             product.amount = product.precio * product.cantidad
             this.getTotalAmount()
+            if(this.total_discount > 0)
+              this.discountTotalAmount()
+            if(this.total_taxes > 0)
+              this.applyTaxes()
           }
         }
       })
@@ -221,6 +235,10 @@ export class SalesComponent implements OnInit {
             product.cantidad --
             product.amount = product.precio * product.cantidad
             this.getTotalAmount()
+            if(this.total_discount > 0)
+              this.discountTotalAmount()
+            if(this.total_taxes > 0)
+              this.applyTaxes()
           }
         }
       })
@@ -260,14 +278,25 @@ export class SalesComponent implements OnInit {
   }
   
   discountTotalAmount(){
-    if (this.total_discount > 0){
-      this.total_amount = this.current_total_amount
-      this.total_discount *= this.total_amount / 100
-      this.total_amount -= this.total_discount
+    let current_amount = 0
+    this.total_discount = Number(this.totalDiscountArray[0])
+    if(this.total_taxes > 0 && this.total_discount > 0){
+      current_amount = this.total_amount
+    }else{
+      current_amount = this.current_total_amount
+    }
+    if(this.total_amount > 0){
+      if (this.total_discount > 0){
+        let discount = this.total_discount
+        this.total_amount = current_amount
+        discount *= this.total_amount / 100
+        this.total_amount -= discount
+      }
     }
   }
 
   discountModal(_case_:string, product:any){
+    this.discountsArray = []
     switch (_case_) {
       case 'product':
         console.log(product);
@@ -275,7 +304,7 @@ export class SalesComponent implements OnInit {
         this.openDialog(this.AddDiscount, true)
         break;
       case 'total':
-        
+        this.openDialog(this.TotalDiscount, true)
         break;
       default:
         break;
@@ -284,7 +313,24 @@ export class SalesComponent implements OnInit {
 
   // TODO: Generate sale code based on date time
 
-  fruits = ['manzana', 'naranja', 'uvas']
+
+  applyTaxes(){
+    let current_amount = 0
+    this.total_taxes = Number(this.taxesArray[0])
+    if(this.total_taxes > 0 && this.total_discount > 0){
+      current_amount = this.total_amount
+    }else{
+      current_amount = this.current_total_amount
+    }
+    if(this.total_amount > 0){
+      if (this.total_taxes > 0){
+        let taxes = this.total_taxes
+        this.total_amount = current_amount
+        taxes *= this.total_amount / 100
+        this.total_amount += taxes
+      }
+    }
+  }
 
 
   //+ Buscar Clientes y productos //
@@ -355,8 +401,18 @@ export class SalesComponent implements OnInit {
     }
   }
 
-  updateSingleSelectGroupValue(value:any): void {
+  groupDiscounts(value:any): void {
     this.discountsArray = value;
+    this.cd.markForCheck();
+  }
+
+  groupTotalDiscount(value:any): void {
+    this.totalDiscountArray = value;
+    this.cd.markForCheck();
+  }
+
+  groupTaxes(value:any): void {
+    this.taxesArray = value;
     this.cd.markForCheck();
   }
 
