@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { map, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -19,27 +19,34 @@ export class SalesComponent implements OnInit {
   modalEdit: boolean = false
   modalLoading: boolean = false
   searchText:string = ''
+  discountsArray:any = []
   product_search:string = ''
   customer_search:string = ''
   total_amount:number = 0
+  current_total_amount:number = 0
   new_sale:SalesBody = {}
   sales:Array<SalesBody> = []
-  new_sale_product:ProductsPurchasesSales = {}
+  new_sale_product:any = {}
   sale_products:Array<any> = []
   filteredProductOptions$!: Observable<string[]>;
   filteredCustomerOptions$!: Observable<string[]>;
   products_options:Array<string> = []
   customers_options:Array<string> = []
+  total_discount:number = 0
+  discount_product:number = 0
   @ViewChild('productInput') productInput: any;
   @ViewChild('customerInput') customerInput: any;
   @ViewChild('dateSale') dateSale: any;
+  @ViewChild('AddDiscount') AddDiscount!: TemplateRef<any>;
   products_objects:Array<ProductsPurchasesSales> = []
+  customers_objects:any = []
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
 
   constructor(private dialogService: NbDialogService,
               private saleService: SalesService,
               private productService: ProductsService,
-              private clientsService:ClientesService) { 
+              private clientsService:ClientesService,
+              private cd: ChangeDetectorRef) { 
     this.toastMixin = Swal.mixin({
       toast: true,
       icon: 'success',
@@ -152,17 +159,18 @@ export class SalesComponent implements OnInit {
   })
   }
 
-  addSaleProduct(){
-    if(!this.product_search) 
+  addSaleProduct(product_value:string){
+    if(!product_value) 
       return
-    let products = this.products_objects.filter(prod => prod.nombre && prod.nombre.toLowerCase() === this.product_search.toLowerCase())
+    let products = this.products_objects.filter(prod => prod.nombre && prod.nombre.trim().toLowerCase() === product_value.trim().toLowerCase())
     if(products.length <= 0){
-      Swal.fire(`El producto ${this.product_search} no existe`, 'Por favor, agreguelo primero en la sección de productos', 'error')
+      Swal.fire(`El producto ${product_value} no existe`, 'Por favor, agreguelo primero en la sección de productos', 'error')
     }else{
       products.forEach((prod)=>{
         prod.cantidad = 1
         prod.amount = prod.precio
-        if (!this.sale_products.includes(prod)) {
+        let current_products = this.sale_products.filter(prod => prod.nombre.trim().toLowerCase() === product_value.trim().toLowerCase())
+        if (current_products.length <= 0) {
           this.sale_products.push(prod)
           this.getTotalAmount()
         }
@@ -172,22 +180,36 @@ export class SalesComponent implements OnInit {
     }
   }
 
+  addSaleClient(){
+    if(!this.customer_search) 
+      return
+
+    let customers = this.customers_objects.filter((customer:any) => customer.nombre && customer.nombre.trim().toLowerCase() === this.customer_search.trim().toLowerCase())
+    if(customers.length <= 0){
+      Swal.fire(`El cliente ${this.customer_search} no existe`, 'Por favor, agreguelo primero en la sección de clientes', 'error')
+    }else{
+      customers.forEach((customer:any) => {
+        this.new_sale.cliente = customer
+      });
+    }
+
+    
+  }
+
   removeSaleProduct(id:string){
     this.sale_products = this.sale_products.filter(product => product._id !== id)
+    this.new_sale_product = {}
     this.getTotalAmount()
-    // this.new_sale_product = 
   }
 
   quantityProduct(_case_:string, id:string|undefined){
     this.getTotalAmount()
     if(_case_ === 'inc'){
-      console.log('increment');
       this.sale_products.forEach(product =>{
         if(product._id === id){
           if(product.cantidad != undefined){
             product.cantidad ++
             product.amount = product.precio * product.cantidad
-            console.log(product.precio);
             this.getTotalAmount()
           }
         }
@@ -206,7 +228,6 @@ export class SalesComponent implements OnInit {
       this.sale_products.forEach(product =>{
         if(product._id === id){
           if(product.cantidad && product.cantidad >= 1){
-            // product.cantidad --
             product.amount = product.precio * product.cantidad
             this.getTotalAmount()
           }
@@ -215,28 +236,49 @@ export class SalesComponent implements OnInit {
     }
   }
 
-  discountPerProduct(discount:number, id:string){
-    if (discount > 0)
+  discountPerProduct(id:string){
+    this.discount_product = Number(this.discountsArray[0])
+    if (this.discount_product > 0){
       this.sale_products.forEach(product =>{
         if(product._id === id){
           if(product.precio){
-            discount *= product.precio / 100
-            product.precio -= discount 
+            product.discount = this.discount_product
+            this.discount_product *= product.precio / 100
+            product.amount -= this.discount_product 
           }
         }
       })
+      this.discountsArray = []
+    }
   }
 
   getTotalAmount(){
     this.total_amount = this.sale_products.reduce((accumulator, object) => {
       return accumulator + (object.precio * object.cantidad || 0);
     }, 0);
+    this.current_total_amount = this.total_amount
   }
   
-  discountTotalAmount(discount:number){
-    if (discount > 0){
-      discount *= this.total_amount / 100
-      this.total_amount -= discount
+  discountTotalAmount(){
+    if (this.total_discount > 0){
+      this.total_amount = this.current_total_amount
+      this.total_discount *= this.total_amount / 100
+      this.total_amount -= this.total_discount
+    }
+  }
+
+  discountModal(_case_:string, product:any){
+    switch (_case_) {
+      case 'product':
+        console.log(product);
+        this.new_sale_product = product
+        this.openDialog(this.AddDiscount, true)
+        break;
+      case 'total':
+        
+        break;
+      default:
+        break;
     }
   }
 
@@ -249,7 +291,7 @@ export class SalesComponent implements OnInit {
 
   onProductSelectChange($event:any){
     this.filteredProductOptions$ = this.getFilteredOptions($event, this.products_options);
-    this.product_search = $event
+    this.addSaleProduct($event)
   }
 
   onCustomerSelectChange($event:any){
@@ -271,8 +313,6 @@ export class SalesComponent implements OnInit {
     );
   }
 
-
-
   onChange(field:string){
     switch (field) {
       case 'product':
@@ -283,7 +323,6 @@ export class SalesComponent implements OnInit {
               console.log(`searchProducts - Response:`);
               let products = resp.results
               console.log(products);
-              this.products_objects = products
               this.products_objects = products.map(( prod:any ) =>{
                 let {_id, nombre, precio_venta: precio, existencias, img} = prod
                 return {_id, nombre, precio, existencias, img}
@@ -300,17 +339,25 @@ export class SalesComponent implements OnInit {
           this.clientsService.searchClientes(search_cust).subscribe(resp =>{
             if(resp.count > 0){
               console.log(`searchClientes - Response:`);
-              let customers = resp.results
-              this.customers_options = customers.map((customer:any)=> customer.nombre)
+              this.customers_objects = resp.results.map(( customer:any ) =>{
+                let {_id, nombre, nombre_empresa} = customer
+                return {_id, nombre, nombre_empresa}
+              })
+              this.customers_options = this.customers_objects.map((customer:any)=> customer.nombre)
               console.log(this.customers_options);
+              this.filteredCustomerOptions$ = this.getFilteredOptions(this.customerInput.nativeElement.value, this.customers_options);
             }
           })
-          this.filteredCustomerOptions$ = this.getFilteredOptions(this.customerInput.nativeElement.value, this.customers_options);
         }
         break;
       default:
         break;
     }
+  }
+
+  updateSingleSelectGroupValue(value:any): void {
+    this.discountsArray = value;
+    this.cd.markForCheck();
   }
 
 }

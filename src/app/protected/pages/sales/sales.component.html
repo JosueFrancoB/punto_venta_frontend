@@ -36,7 +36,7 @@
     <nb-layout-header subheader style="flex-wrap: wrap;">
       <nb-actions>
         <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(SearchCustomer, true); modalEdit = false;"></nb-action>
-        <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
+        <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="discountModal('product',''); modalEdit = false;"></nb-action>
         <nb-action icon="pricetags" nbTooltip="Añadir Iva o Impuestos" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
         <nb-action icon="file-add" nbTooltip="Agregar Notas" (click)="openDialog(sale, true); modalEdit = false;"></nb-action>
       </nb-actions>
@@ -47,9 +47,9 @@
         type="text" fullWidth fieldSize="medium"
         (input)="onChange('product')"
         [nbAutocomplete]="autoProduct"
-        [(ngModel)]="product_search"
         nbTooltip="Presiona enter"
-        placeholder="Buscar un producto ..." class="search" (keydown.enter)="addSaleProduct(); modalEdit = false;"/>
+        [(ngModel)]="product_search"
+        placeholder="Buscar un producto ..." class="search"/>
             
         <nb-autocomplete #autoProduct (selectedChange)="onProductSelectChange($event)">
         
@@ -58,7 +58,6 @@
           </nb-option>
         </nb-autocomplete>
       </nb-form-field>
-      <nb-action icon="plus-square" nbTooltip="Agregar Producto" (click)="addSaleProduct(); modalEdit = false;"></nb-action>
     </nb-layout-header>
 
     <hr>
@@ -66,6 +65,9 @@
     <nb-card [size]="'medium'">
       <nb-card-header style="display: flex; justify-content: space-between;">
         <div style="padding: 5px; margin-top:5px; border: solid 1px #ddd; background:white; text-align:center;">Núm de Venta [123213]</div>
+        <div>
+          <p class="total_amount">{{new_sale.cliente?.nombre || ''}}</p>
+        </div>
         <div>
           <input nbInput placeholder="Elige una fecha" [nbDatepicker]="dateSale" [(ngModel)]="dateSale.value" (ngModelChange)="new_sale.fecha = dateSale.value">
           <nb-datepicker #dateSale></nb-datepicker>
@@ -82,6 +84,7 @@
                 <button nbButton ghost status="danger" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
               </div>
               <p style="margin: 0;">{{product.amount|currency}}</p>
+              <button nbbutton apparence="outline" class="toggle-settings appearance-outline size-medium shape-rectangle icon-start icon-end status-warning nb-transition" nbTooltip="Agregar Descuento" aria-disabled="false" (click)="discountModal('product', product)">{{product.discount || 0}}%</button>
               <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="removeSaleProduct(product._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
           </nb-list-item>
         </nb-list>
@@ -117,18 +120,27 @@
         </nb-option>
       
       </nb-autocomplete>
-      <nb-accordion style="margin-bottom: 5px;">
-        <nb-accordion-item>
-        <nb-accordion-item-header>Ver Ejemplo:</nb-accordion-item-header>
-        <nb-accordion-item-body>
-          <p>Unidad de Compra: Caja</p>
-          <p>Unidad de Venta: Kg</p>
-          <p>Cada caja contiene 25kg</p>
-          <p>El Factor: 25</p>
-         </nb-accordion-item-body>
-        </nb-accordion-item>
-       </nb-accordion>
-      <button nbButton status="success" (click)="ref.close()">De acuerdo</button>
+      <hr>
+      <button nbButton status="success" (click)="addSaleClient();ref.close()">Agregar cliente</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!-- ? Fin -->
+
+
+<!--? Dialog Add Discount -->
+<ng-template #AddDiscount let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Descuento</nb-card-header>
+    <nb-card-body>
+      <label for="in-local">Agregar descuento</label>
+      <hr>
+      <nb-button-group (valueChange)="updateSingleSelectGroupValue($event)">
+        <button nbButtonToggle value="5">5%</button>
+        <button nbButtonToggle value="20">20%</button>
+        <button nbButtonToggle value="50">50%</button>
+      </nb-button-group>
+      <button nbButton status="info" (click)="discountPerProduct(new_sale_product._id); ref.close()">Guardar Descuento</button>
     </nb-card-body>
   </nb-card>
 </ng-template>

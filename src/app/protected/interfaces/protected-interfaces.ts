@@ -149,6 +149,7 @@ export interface ProductsPurchasesSales{
     cantidad?:number
     img?:string
     amount?:number
+    discount?:number
 }
 
 export interface SalesBody{
