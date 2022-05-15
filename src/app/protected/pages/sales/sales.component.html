@@ -1,6 +1,6 @@
 <h3 class="group-title h4 ng-star-inserted">Ventas</h3>
 
-<nb-tabset (changeTab)="resetVenta()" #Tabs >
+<nb-tabset (changeTab)="resetVenta(); today(); getVentas()" #Tabs >
     <!--? Ventas -->
   <nb-tab tabTitle="Ventas" tabIcon="bookmark-outline">
     <nb-layout-header subheader>
@@ -23,8 +23,15 @@
         <nb-card-header>Ventas</nb-card-header>
         <nb-card-body>
           <nb-list>
-            <nb-list-item *ngFor="let sale of sales">
-                {{ sale }}
+            <nb-list-item *ngFor="let sale of sales" style="display: flex; justify-content: space-around; align-items: center;">
+              <p>{{ sale.codigo }}</p>
+              <div>
+                <p style="margin: 0;"> {{sale.cliente?.nombre}}</p>
+                <p style="margin: 0;"> {{sale.cliente?.nombre_empresa}}</p>
+              </div>
+              <p>{{sale.total_a_pagar|currency}}</p>
+              <p>{{ sale.fecha | date }}</p>
+              <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteVenta(sale._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
             </nb-list-item>
           </nb-list>
         </nb-card-body>
@@ -65,12 +72,9 @@
     
     <nb-card [size]="'medium'">
       <nb-card-header style="display: flex; justify-content: space-between;">
-        <div style="padding: 5px; margin-top:5px; border: solid 1px #ddd; background:white; text-align:center;">Núm de Venta [123213]</div>
+        <div *ngIf="new_sale.cliente" style="padding: 5px; margin-top:5px; border: solid 1px #ddd; background:white; text-align:center;"><p class="total_amount" style="margin: 0;">{{new_sale.cliente?.nombre || ''}}</p></div>
         <div>
-          <p class="total_amount">{{new_sale.cliente?.nombre || ''}}</p>
-        </div>
-        <div>
-          <input nbInput placeholder="Elige una fecha" [nbDatepicker]="dateSale" [(ngModel)]="dateSale.value" (ngModelChange)="new_sale.fecha = dateSale.value">
+          <input nbInput placeholder="Elige una fecha" [nbDatepicker]="dateSale" [(ngModel)]="date" (ngModelChange)="changeDate($event)">
           <nb-datepicker #dateSale></nb-datepicker>
         </div>
       </nb-card-header>
@@ -210,7 +214,7 @@
         <input nbInput type="number" [(ngModel)]="total_amount-pay">
       </div>
       <hr>
-      <button nbButton status="info" (click)="applyTaxes(); ref.close()">Completar Venta</button>
+      <button nbButton status="info" (click)="endSale(Venta);">Completar Venta</button>
     </nb-card-body>
   </nb-card>
 </ng-template>

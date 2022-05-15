@@ -3,10 +3,11 @@ import { NbDialogService } from '@nebular/theme';
 import { map, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { ProductsPurchasesSales, SalesBody } from '../../interfaces/protected-interfaces';
+import { ProductsPurchasesSales, SalesBody, UserSales } from '../../interfaces/protected-interfaces';
 import { ClientesService } from '../../services/clientes.service';
 import { ProductsService } from '../../services/products.service';
 import { SalesService } from '../../services/sales.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-sales',
@@ -19,17 +20,21 @@ export class SalesComponent implements OnInit {
   modalEdit: boolean = false
   modalLoading: boolean = false
   searchText:string = ''
+  temp_amount:any 
   discountsArray:any = []
   totalDiscountArray:any = []
   taxesArray:any = []
   product_search:string = ''
   customer_search:string = ''
   total_amount:number = 0
+  date: any
   current_total_amount:number = 0
+  user_sale:UserSales = {}
   new_sale:SalesBody = {}
   sales:Array<SalesBody> = []
   new_sale_product:any = {}
   sale_products:Array<any> = []
+  temp_products:Array<any> = []
   filteredProductOptions$!: Observable<string[]>;
   filteredCustomerOptions$!: Observable<string[]>;
   products_options:Array<string> = []
@@ -51,6 +56,7 @@ export class SalesComponent implements OnInit {
               private saleService: SalesService,
               private productService: ProductsService,
               private clientsService:ClientesService,
+              private userService:UsersService,
               private cd: ChangeDetectorRef) { 
     this.toastMixin = Swal.mixin({
       toast: true,
@@ -84,7 +90,7 @@ export class SalesComponent implements OnInit {
   getVentas(){
     this.saleService.getSales().subscribe(resp => {
       if (resp.ok === true){
-        console.log(`getVentas - Response: ${resp}`);
+        console.log(resp);
         this.sales = resp.ventas
       }else{
       console.log('error', resp)
@@ -100,10 +106,10 @@ export class SalesComponent implements OnInit {
     .subscribe(resp =>{
       if(resp.ok === true){
         console.log(`AddVenta - Response: ${resp}`)
-        ref.close()
         this.toastMixin.fire({
           title: 'Venta completada'
         });
+        ref.close()
         this.resetVenta()
       }else{
         Swal.fire('Error', resp, 'error')
@@ -140,7 +146,7 @@ export class SalesComponent implements OnInit {
     })
   }
 
-  deleteVenta(id:string){
+  deleteVenta(id:any){
     Swal.fire({
       title: '¿Estás seguro de eliminarla?',
       icon: 'warning',
@@ -156,6 +162,7 @@ export class SalesComponent implements OnInit {
           this.toastMixin.fire({
             title: 'Venta eliminada'
           });
+          this.getVentas()
         }else{
           Swal.fire('Error', resp, 'error')
         }
@@ -177,6 +184,7 @@ export class SalesComponent implements OnInit {
         let current_products = this.sale_products.filter(prod => prod.nombre.trim().toLowerCase() === product_value.trim().toLowerCase())
         if (current_products.length <= 0) {
           this.sale_products.push(prod)
+          this.temp_products.push(prod)
           this.getTotalAmount()
           if(this.total_discount > 0)
             this.discountTotalAmount()
@@ -186,7 +194,6 @@ export class SalesComponent implements OnInit {
         }
       })
       console.log('Los product added');
-      
     }
   }
 
@@ -208,6 +215,7 @@ export class SalesComponent implements OnInit {
 
   removeSaleProduct(id:string){
     this.sale_products = this.sale_products.filter(product => product._id !== id)
+    this.temp_products = this.temp_products.filter(product => product._id !== id)
     this.new_sale_product = {}
     this.getTotalAmount()
   }
@@ -255,14 +263,20 @@ export class SalesComponent implements OnInit {
   }
 
   discountPerProduct(id:string){
+    console.log(this.temp_products);
     this.discount_product = Number(this.discountsArray[0])
     if (this.discount_product > 0){
       this.sale_products.forEach(product =>{
-        if(product._id === id){
-          if(product.precio){
-            product.discount = this.discount_product
-            this.discount_product *= product.precio / 100
-            product.amount -= this.discount_product 
+        if(product._id === id && product.precio){
+          product.discount = this.discount_product
+          this.discount_product *= product.precio / 100
+          this.temp_amount = this.temp_products.filter(temp_prod => temp_prod._id === id && temp_prod.amount !== product.amount)
+          if(this.temp_amount.length <=0){
+            product.amount -= this.discount_product
+          }
+          else{
+            console.log('Entro');
+            product.amount = this.temp_amount[0].amount - this.discount_product
           }
         }
       })
@@ -299,7 +313,6 @@ export class SalesComponent implements OnInit {
     this.discountsArray = []
     switch (_case_) {
       case 'product':
-        console.log(product);
         this.new_sale_product = product
         this.openDialog(this.AddDiscount, true)
         break;
@@ -310,9 +323,6 @@ export class SalesComponent implements OnInit {
         break;
     }
   }
-
-  // TODO: Generate sale code based on date time
-
 
   applyTaxes(){
     let current_amount = 0
@@ -330,6 +340,31 @@ export class SalesComponent implements OnInit {
         this.total_amount += taxes
       }
     }
+  }
+
+  today(){
+    this.date = new Date();
+  }
+
+  changeDate($event:any){
+    this.date = $event
+  }
+
+  endSale(ref:any){
+    this.new_sale.total_a_pagar = this.total_amount
+    this.new_sale.descuento = this.total_discount
+    this.new_sale.productos = this.sale_products
+    this.new_sale.iva = this.total_taxes
+    this.new_sale.fecha = this.date
+    this.userService.validateJWT().subscribe(resp=>{
+      if(resp.ok){
+        console.log(resp);
+        this.user_sale.id_usuario = resp.usuario.uid
+        this.user_sale.nombre = resp.usuario.nombre
+        this.new_sale.usuario_venta = this.user_sale
+        this.addVenta(ref)
+      }
+    })
   }
 
 
