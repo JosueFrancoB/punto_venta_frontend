@@ -47,10 +47,12 @@ export class SalesComponent implements OnInit {
   @ViewChild('customerInput') customerInput: any;
   @ViewChild('dateSale') dateSale: any;
   @ViewChild('AddDiscount') AddDiscount!: TemplateRef<any>;
+  @ViewChild('Venta') Venta!: TemplateRef<any>;
   @ViewChild('TotalDiscount') TotalDiscount!: TemplateRef<any>;
   products_objects:Array<ProductsPurchasesSales> = []
   customers_objects:any = []
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
+  products_conflicts:boolean = false
 
   constructor(private dialogService: NbDialogService,
               private saleService: SalesService,
@@ -72,7 +74,7 @@ export class SalesComponent implements OnInit {
       }
     })
   }
-
+  
   ngOnInit(){
     this.getVentas()
   }
@@ -84,7 +86,10 @@ export class SalesComponent implements OnInit {
   resetVenta(){
     this.new_sale = {}
     this.sale_products = []
-    console.log('reset');
+    this.total_amount = 0
+    this.total_discount = 0
+    this.total_taxes = 0
+    this.pay = 0
   }
 
   getVentas(){
@@ -93,28 +98,63 @@ export class SalesComponent implements OnInit {
         console.log(resp);
         this.sales = resp.ventas
       }else{
-      console.log('error', resp)
       Swal.fire('Error', resp, 'error')
       }
     })
   }
 
-  addVenta(ref: any){
-    this.new_sale.productos = this.sale_products
-    console.log(`AddVenta - New sale: ${this.new_sale}`);
-    this.saleService.addSale(this.new_sale)
-    .subscribe(resp =>{
-      if(resp.ok === true){
-        console.log(`AddVenta - Response: ${resp}`)
-        this.toastMixin.fire({
-          title: 'Venta completada'
-        });
-        ref.close()
-        this.resetVenta()
+  NoProdConflicts(){
+    return new Promise<boolean>((resolve, reject) => {
+      let prod_conflicts = this.sale_products.map(prod =>{
+        if(prod.existencias <= 0)
+          return prod.nombre
+      })
+      if(prod_conflicts[0] !== undefined){
+        Swal.fire({
+          title: `No hay existencias de los productos ${JSON.stringify(prod_conflicts).replace('[', '').replace(']','')}, el inventario no se verá afectado en esos productos, ¿Desea continuar con la venta?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Confirmar'
+        }).then((result) => {
+          if(result.isConfirmed){
+            // Continue? Yes
+            resolve(true)
+          }else{
+            // Continue? No
+            resolve(false)
+          }
+      })
       }else{
-        Swal.fire('Error', resp, 'error')
+        // Continue? Yes
+        resolve(true)
       }
     })
+  }
+
+  async addVenta(ref: any){
+    if(this.pay < this.total_amount){
+      Swal.fire(`Monto Incompleto`, 'El monto del pago es incompleto', 'error')
+    }else{
+      let no_conflicts = await this.NoProdConflicts()
+      if(no_conflicts === true){
+        this.new_sale.productos = this.sale_products
+        this.saleService.addSale(this.new_sale)
+        .subscribe(resp =>{
+          if(resp.ok === true){
+            this.toastMixin.fire({
+              title: 'Venta completada'
+            });
+            ref.close()
+            this.resetVenta()
+          }else{
+            Swal.fire('Error', resp, 'error')
+          }
+        })
+      }
+    }
   }
 
   updateVenta(sale:SalesBody, ref: any){
@@ -137,10 +177,8 @@ export class SalesComponent implements OnInit {
     this.modalEdit = true;
     this.saleService.getSale(id).subscribe(resp => {
       if (resp.ok === true){
-        console.log(`getVenta - Response: ${resp}`);
         this.new_sale = resp.venta
       }else{
-      console.log('error', resp)
       Swal.fire('Error', resp, 'error')
       }
     })
@@ -193,7 +231,6 @@ export class SalesComponent implements OnInit {
           
         }
       })
-      console.log('Los product added');
     }
   }
 
@@ -206,6 +243,7 @@ export class SalesComponent implements OnInit {
       Swal.fire(`El cliente ${this.customer_search} no existe`, 'Por favor, agreguelo primero en la sección de clientes', 'error')
     }else{
       customers.forEach((customer:any) => {
+        console.log('customer', customer);
         this.new_sale.cliente = customer
       });
     }
@@ -275,7 +313,6 @@ export class SalesComponent implements OnInit {
             product.amount -= this.discount_product
           }
           else{
-            console.log('Entro');
             product.amount = this.temp_amount[0].amount - this.discount_product
           }
         }
@@ -358,7 +395,6 @@ export class SalesComponent implements OnInit {
     this.new_sale.fecha = this.date
     this.userService.validateJWT().subscribe(resp=>{
       if(resp.ok){
-        console.log(resp);
         this.user_sale.id_usuario = resp.usuario.uid
         this.user_sale.nombre = resp.usuario.nombre
         this.new_sale.usuario_venta = this.user_sale
@@ -401,9 +437,7 @@ export class SalesComponent implements OnInit {
         if(search_prod.length >= 2){
           this.productService.searchProducts(search_prod).subscribe(resp =>{
             if(resp.count > 0){
-              console.log(`searchProducts - Response:`);
               let products = resp.results
-              console.log(products);
               this.products_objects = products.map(( prod:any ) =>{
                 let {_id, nombre, precio_venta: precio, existencias, img} = prod
                 return {_id, nombre, precio, existencias, img}
@@ -419,13 +453,11 @@ export class SalesComponent implements OnInit {
         if(search_cust.length >= 2){
           this.clientsService.searchClientes(search_cust).subscribe(resp =>{
             if(resp.count > 0){
-              console.log(`searchClientes - Response:`);
               this.customers_objects = resp.results.map(( customer:any ) =>{
                 let {_id, nombre, nombre_empresa} = customer
                 return {_id, nombre, nombre_empresa}
               })
               this.customers_options = this.customers_objects.map((customer:any)=> customer.nombre)
-              console.log(this.customers_options);
               this.filteredCustomerOptions$ = this.getFilteredOptions(this.customerInput.nativeElement.value, this.customers_options);
             }
           })
@@ -451,4 +483,12 @@ export class SalesComponent implements OnInit {
     this.cd.markForCheck();
   }
 
+  tagsStock(product:any){
+    if (product.existencias) { 
+      return true
+    }
+    else{
+      return false
+    }
+  }
 }

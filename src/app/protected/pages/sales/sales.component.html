@@ -21,16 +21,16 @@
 
     <nb-card [size]="'medium'">
         <nb-card-header>Ventas</nb-card-header>
-        <nb-card-body>
+        <nb-card-body style="padding: 0 0.9375rem;">
           <nb-list>
-            <nb-list-item *ngFor="let sale of sales" style="display: flex; justify-content: space-around; align-items: center;">
-              <p>{{ sale.codigo }}</p>
-              <div>
+            <nb-list-item *ngFor="let sale of sales|filter:searchText" style="display: flex; justify-content: space-around; align-items: center;">
+              <b style="min-width: 70px; max-width: 70px;">{{ sale.codigo }}</b>
+              <div style="min-width: 80px; max-width: 80px;">
                 <p style="margin: 0;"> {{sale.cliente?.nombre}}</p>
-                <p style="margin: 0;"> {{sale.cliente?.nombre_empresa}}</p>
+                <p style="margin: 0; font-weight: bold;"> {{sale.cliente?.nombre_empresa}}</p>
               </div>
-              <p>{{sale.total_a_pagar|currency}}</p>
-              <p>{{ sale.fecha | date }}</p>
+              <p style="min-width: 30px; max-width: 30px;"><b>Total: </b>{{sale.total_a_pagar|currency}}</p>
+              <p style="min-width: 200px; max-width: 200px;"><b>Fecha: </b>{{ sale.fecha| date:"dd/MM/yyyy HH:m:s" }}</p>
               <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteVenta(sale._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
             </nb-list-item>
           </nb-list>
@@ -80,9 +80,12 @@
       </nb-card-header>
       <nb-card-body>
         <nb-list>
-          <nb-list-item *ngFor="let product of sale_products" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center;">
+          <nb-list-item *ngFor="let product of sale_products" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center; flex-wrap: wrap;">
               <img class="component-icon" src="{{(product._id) ? uploadsUrl + '/' + product._id : 'assets/images/components/layout.svg'}}" alt="Layout">
-              <p style="margin: 0; font-size: 1.2rem;">{{ product.nombre }}</p>
+              <div>
+                <p style="margin: 0; font-size: 1.2rem;">{{ product.nombre }}</p>
+                <p class="badge-stock" [ngClass]="tagsStock(product) ? 'status-instock' : 'status-outstock'" style="margin:0; padding: 5px; font-size: 0.8rem; font-weight: bold;">{{ product.existencias }} Disponibles</p>
+              </div>
               <div>
                 <button nbButton ghost status="info" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
                 <input nbInput type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" size="tiny" style="max-width: 6.25rem;">
@@ -204,17 +207,17 @@
       <label for="in-local">Pagar en efectivo</label>
       <hr>
       <div style="display: flex; justify-content: space-around; align-items: center;">
-        <label for="">Pago</label>
+        <label style="padding: 10px; margin: 0;">Pago</label>
         <input nbInput type="number" [(ngModel)]="pay" placeholder="0.00">
         <button nbButton ghost status="success" (click)="pay = total_amount"><nb-icon icon="credit-card"></nb-icon></button>
       </div>
       <hr>
       <div style="display: flex; justify-content: space-around; align-items: center;">
-        <label for="">Cambio</label>
+        <label style="padding: 10px; margin: 0;">Cambio</label>
         <input nbInput type="number" [(ngModel)]="total_amount-pay">
       </div>
       <hr>
-      <button nbButton status="info" (click)="endSale(Venta);">Completar Venta</button>
+      <button nbButton status="info" (click)="endSale(ref);">Completar Venta</button>
     </nb-card-body>
   </nb-card>
 </ng-template>
