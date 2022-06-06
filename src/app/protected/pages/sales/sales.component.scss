@@ -69,3 +69,11 @@
 .product-sale-details{
     list-style: none; padding: 7px; font-size: 1.1em; font-weight: 500;
 }
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] { -moz-appearance:textfield; }

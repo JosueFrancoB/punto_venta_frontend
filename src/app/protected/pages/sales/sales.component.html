@@ -35,7 +35,7 @@
                 <p style="min-width: 30px; max-width: 30px;"><b>Total: </b>{{sale.total_a_pagar|currency}}</p>
               </div>
               <div>
-                <p style="min-width: 200px; max-width: 200px;"><b>Fecha: </b>{{ sale.fecha| date:"dd/MM/yyyy HH:m:ss" }}</p>
+                <p style="min-width: 200px; max-width: 200px;"><b>Fecha: </b>{{ sale.fecha| date:"dd/MM/yyyy" }}</p>
               </div>
               <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteVenta(sale._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
             </nb-list-item>
@@ -51,7 +51,6 @@
         <nb-action icon="person-add" nbTooltip="Agregar Cliente" (click)="openDialog(SearchCustomer, true); modalEdit = false;"></nb-action>
         <nb-action icon="percent" nbTooltip="Añadir Descuento al Total" (click)="discountModal('total',''); modalEdit = false;"></nb-action>
         <nb-action icon="pricetags" nbTooltip="Añadir Iva o Impuestos" (click)="openDialog(TotalTaxes, true); modalEdit = false;"></nb-action>
-        <!-- <nb-action icon="file-add" nbTooltip="Agregar Notas" (click)="openDialog(sale, true); modalEdit = false;"></nb-action> -->
       </nb-actions>
 
       <nb-form-field style="width: 30%;">

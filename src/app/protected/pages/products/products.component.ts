@@ -229,6 +229,7 @@ export class ProductsComponent implements OnInit{
                 this.toastMixin.fire({
                   title: 'Producto eliminado'
                 });
+                this.product_selected = false
               }else{
                 Swal.fire('Error', resp, 'error')
                 console.log(resp)

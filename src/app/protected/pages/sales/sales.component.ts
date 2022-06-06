@@ -109,12 +109,12 @@ export class SalesComponent implements OnInit {
   NoProdConflicts(){
     return new Promise<boolean>((resolve, reject) => {
       let prod_conflicts = this.sale_products.map(prod =>{
-        if(prod.existencias <= 0)
+        if(prod.existencias <= 0 || prod.cantidad > prod.existencias)
           return prod.nombre
       })
       if(prod_conflicts[0] !== undefined){
         Swal.fire({
-          title: `No hay existencias de los productos ${JSON.stringify(prod_conflicts).replace('[', '').replace(']','').replace('null','')}, el inventario no se verá afectado en esos productos, ¿Desea continuar con la venta?`,
+          title: `No hay suficientes existencias de los productos ${JSON.stringify(prod_conflicts).replace('[', '').replace(']','').replace('null','')}, el inventario no se verá afectado en esos productos, ¿Desea continuar con la venta?`,
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -266,7 +266,7 @@ export class SalesComponent implements OnInit {
     if(_case_ === 'inc'){
       this.sale_products.forEach(product =>{
         if(product._id === id){
-          if(product.cantidad != undefined){
+          if(product.cantidad != undefined && product.cantidad < product.existencias){
             product.cantidad ++
             product.amount = product.precio * product.cantidad
             this.getTotalAmount()
@@ -492,12 +492,7 @@ export class SalesComponent implements OnInit {
   }
 
   tagsStock(product:any){
-    if (product.existencias) { 
-      return true
-    }
-    else{
-      return false
-    }
+    return product.existencias ? true : false
   }
 
   searchProducts(product_search:string){
