@@ -22,6 +22,7 @@ import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination
 import { SwiperModule } from 'swiper/angular';
 import { PurchasesComponent } from './pages/purchases/purchases.component';
 import { WarehousesComponent } from './pages/warehouses/warehouses.component';
+import { InputSearchComponent } from './components/input-search/input-search.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { WarehousesComponent } from './pages/warehouses/warehouses.component';
     SalesComponent,
     PerfilComponent,
     PurchasesComponent,
-    WarehousesComponent
+    WarehousesComponent,
+    InputSearchComponent
   ],
   imports: [
     CommonModule,
@@ -79,7 +81,8 @@ import { WarehousesComponent } from './pages/warehouses/warehouses.component';
     Ng2SearchPipeModule,
     NbTabsetModule,
     NbStepperModule,
-    NbListModule
+    NbListModule,
+    FormsModule
   ]
 })
 export class ProtectedModule { }

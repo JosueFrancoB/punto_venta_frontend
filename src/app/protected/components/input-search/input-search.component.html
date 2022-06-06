@@ -1,0 +1,10 @@
+<form (ngSubmit)="search()">
+    <nb-form-field>
+        <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+        <input 
+        nbInput name="search_term" type="text" fullWidth fieldSize="medium" #productInput placeholder="Buscar un producto ..." 
+        nbTooltip="Presiona enter" class="search" 
+        [(ngModel)]="search_term"
+        (input)="teclaPresionada()">
+    </nb-form-field>
+</form>

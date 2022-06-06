@@ -54,3 +54,18 @@
     background: #FFCDD2;
     color: #c63737;
 }
+.sale-item{
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center;
+    flex-wrap: wrap;
+    cursor: pointer;
+}
+
+.sale-item:hover{
+    background-color: #eee;
+}
+
+.product-sale-details{
+    list-style: none; padding: 7px; font-size: 1.1em; font-weight: 500;
+}

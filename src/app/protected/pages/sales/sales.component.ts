@@ -53,6 +53,9 @@ export class SalesComponent implements OnInit {
   customers_objects:any = []
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
   products_conflicts:boolean = false
+  sale_details:SalesBody = {} 
+  productosSugeridos:Array<ProductsPurchasesSales> = []
+  mostrarSugerencias:boolean = false
 
   constructor(private dialogService: NbDialogService,
               private saleService: SalesService,
@@ -111,7 +114,7 @@ export class SalesComponent implements OnInit {
       })
       if(prod_conflicts[0] !== undefined){
         Swal.fire({
-          title: `No hay existencias de los productos ${JSON.stringify(prod_conflicts).replace('[', '').replace(']','')}, el inventario no se verá afectado en esos productos, ¿Desea continuar con la venta?`,
+          title: `No hay existencias de los productos ${JSON.stringify(prod_conflicts).replace('[', '').replace(']','').replace('null','')}, el inventario no se verá afectado en esos productos, ¿Desea continuar con la venta?`,
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -403,6 +406,11 @@ export class SalesComponent implements OnInit {
     })
   }
 
+  viewSale(ref:any, sale:SalesBody){
+    this.sale_details = sale
+    this.openDialog(ref,true)
+  }
+
 
   //+ Buscar Clientes y productos //
 
@@ -490,5 +498,37 @@ export class SalesComponent implements OnInit {
     else{
       return false
     }
+  }
+
+  searchProducts(product_search:string){
+    this.product_search = product_search
+    this.productService.searchProducts(product_search).subscribe(resp =>{
+      if(resp.count > 0){
+        let products = resp.results
+        this.products_objects = products.map(( prod:any ) =>{
+          let {_id, nombre, precio_venta: precio, existencias, img} = prod
+          return {_id, nombre, precio, existencias, img}
+        })
+      }
+    })
+  }
+
+  sugerencias(termino:string){
+    this.mostrarSugerencias = true
+    this.product_search = termino
+    this.productService.searchProducts(termino)
+      .subscribe(resp => {
+        if(resp.count > 0){
+          this.productosSugeridos = resp.results.splice(0,5)
+        }
+        else{
+          this.productosSugeridos = []
+        }
+      })
+  }
+
+  buscarSugerencias(termino:string){
+    this.searchProducts(termino)
+    this.mostrarSugerencias = false
   }
 }

@@ -23,14 +23,20 @@
         <nb-card-header>Ventas</nb-card-header>
         <nb-card-body style="padding: 0 0.9375rem;">
           <nb-list>
-            <nb-list-item *ngFor="let sale of sales|filter:searchText" style="display: flex; justify-content: space-around; align-items: center;">
-              <b style="min-width: 70px; max-width: 70px;">{{ sale.codigo }}</b>
+            <nb-list-item *ngFor="let sale of sales|filter:searchText" class="sale-item" (click)="viewSale(InfoVenta, sale)">
+              <div>
+                <b style="min-width: 70px; max-width: 70px;">{{ sale.codigo }}</b>
+              </div>
               <div style="min-width: 80px; max-width: 80px;">
                 <p style="margin: 0;"> {{sale.cliente?.nombre}}</p>
                 <p style="margin: 0; font-weight: bold;"> {{sale.cliente?.nombre_empresa}}</p>
               </div>
-              <p style="min-width: 30px; max-width: 30px;"><b>Total: </b>{{sale.total_a_pagar|currency}}</p>
-              <p style="min-width: 200px; max-width: 200px;"><b>Fecha: </b>{{ sale.fecha| date:"dd/MM/yyyy HH:m:s" }}</p>
+              <div>
+                <p style="min-width: 30px; max-width: 30px;"><b>Total: </b>{{sale.total_a_pagar|currency}}</p>
+              </div>
+              <div>
+                <p style="min-width: 200px; max-width: 200px;"><b>Fecha: </b>{{ sale.fecha| date:"dd/MM/yyyy HH:m:ss" }}</p>
+              </div>
               <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteVenta(sale._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
             </nb-list-item>
           </nb-list>
@@ -47,6 +53,7 @@
         <nb-action icon="pricetags" nbTooltip="Añadir Iva o Impuestos" (click)="openDialog(TotalTaxes, true); modalEdit = false;"></nb-action>
         <!-- <nb-action icon="file-add" nbTooltip="Agregar Notas" (click)="openDialog(sale, true); modalEdit = false;"></nb-action> -->
       </nb-actions>
+
       <nb-form-field style="width: 30%;">
         <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
         <input #productInput
@@ -222,3 +229,41 @@
   </nb-card>
 </ng-template>
 <!-- ? Fin -->
+
+
+<!--? Info Venta  -->
+<ng-template #InfoVenta let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Detalle de venta {{sale_details.codigo}}</nb-card-header>
+    <nb-card-body>
+      <div style="justify-content: space-around;">
+        <p>
+          <span style="font-size: 1.15em; font-weight: bold;">Fecha: </span> <span style="font-size: 1.1em;">{{sale_details.fecha|date:"dd/MM/yyyy HH:m:ss"}}</span>
+        </p>
+        <p>
+          <span style="font-size: 1.15em; font-weight: bold;">Vendido por: </span> 
+          <span style="font-size: 1.1em;">{{sale_details.usuario_venta?.nombre}}</span>
+        </p>
+        <p *ngIf="sale_details.cliente">
+          <span style="font-size: 1.15em; font-weight: bold;">Cliente: </span> 
+          <span style="font-size: 1.1em;">{{sale_details.cliente.nombre}}</span>
+        </p>
+      </div>
+      <nb-accordion style="margin-bottom: 5px;">
+        <nb-accordion-item>
+        <nb-accordion-item-header>Productos:</nb-accordion-item-header>
+        <nb-accordion-item-body>
+          <ul *ngFor="let product of sale_details.productos;" style="display: flex; flex-direction: row; padding: 0px; flex-wrap: wrap; background-color: cornsilk; margin: 5px 0px;">
+            <li class="product-sale-details">{{product.nombre}}</li>
+            <li class="product-sale-details">Cantidad: {{product.cantidad}}</li>
+            <li class="product-sale-details" *ngIf="product.cantidad && product.precio">Monto: {{product.cantidad * product.precio|currency}}</li>
+          </ul>
+         </nb-accordion-item-body>
+        </nb-accordion-item>
+      </nb-accordion>
+      <p style="margin-top:1em; position:relative; left: 0; font-size: 1.3em; color: #222; font-weight: bold;">Total de la venta: {{sale_details.total_a_pagar|currency}}</p>
+      <button nbButton status="success" (click)="ref.close()">De acuerdo</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!--? Fin -->
