@@ -409,7 +409,7 @@ export class ProductsComponent implements OnInit{
       },
       precio_venta: {
         title: 'Precio Venta',
-        type: 'number',
+        valuePrepareFunction: (value:any) => { return value === 'Total'? value : Intl.NumberFormat('en-US',{style:'currency', currency: 'USD'}).format(value)},
         filter: false,
       },
       estado: {

@@ -3,7 +3,7 @@ import { NbDialogService } from '@nebular/theme';
 import { map, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { ProductsPurchasesSales, SalesBody, UserSales } from '../../interfaces/protected-interfaces';
+import { ProductsSales, SalesBody, UserSales } from '../../interfaces/protected-interfaces';
 import { ClientesService } from '../../services/clientes.service';
 import { ProductsService } from '../../services/products.service';
 import { SalesService } from '../../services/sales.service';
@@ -49,12 +49,12 @@ export class SalesComponent implements OnInit {
   @ViewChild('AddDiscount') AddDiscount!: TemplateRef<any>;
   @ViewChild('Venta') Venta!: TemplateRef<any>;
   @ViewChild('TotalDiscount') TotalDiscount!: TemplateRef<any>;
-  products_objects:Array<ProductsPurchasesSales> = []
+  products_objects:Array<ProductsSales> = []
   customers_objects:any = []
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
   products_conflicts:boolean = false
   sale_details:SalesBody = {} 
-  productosSugeridos:Array<ProductsPurchasesSales> = []
+  productosSugeridos:Array<ProductsSales> = []
   mostrarSugerencias:boolean = false
 
   constructor(private dialogService: NbDialogService,

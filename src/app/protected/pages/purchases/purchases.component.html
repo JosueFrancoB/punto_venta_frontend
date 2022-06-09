@@ -1,1 +1,58 @@
-<p>purchases works!</p>
+<h3 class="group-title h4 ng-star-inserted">Compras</h3>
+<nb-layout-header subheader>
+    <nb-actions>
+    <!-- <nb-action icon="funnel" nbTooltip="Filtrar" (click)="openDialog(compra, true); modalEdit = false;"></nb-action> -->
+    </nb-actions>
+    <nb-form-field style="width: 50%;">
+        <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+        <input #productInput
+        nbInput
+        type="text" fullWidth fieldSize="medium"
+        (input)="buscando()"
+        [nbAutocomplete]="purchase_product"
+        nbTooltip="Presiona enter"
+        [(ngModel)]="termino"
+        placeholder="Buscar un producto ..." class="search"/>
+            
+        <nb-autocomplete #purchase_product (selectedChange)="addProdutToPurchase($event)">
+        
+        <nb-option *ngFor="let product of search_products" [value]="product">
+            {{ product.nombre }}
+        </nb-option>
+        </nb-autocomplete>
+    </nb-form-field>
+</nb-layout-header>
+<hr>
+<nb-card [size]="'medium'">
+    <nb-card-header style="display: flex; justify-content: space-between;">
+      <!-- <div *ngIf="new_sale.cliente" style="padding: 5px; margin-top:5px; border: solid 1px #ddd; background:white; text-align:center;"><p class="total_amount" style="margin: 0;">{{new_sale.cliente?.nombre || ''}}</p></div> -->
+      <div>
+        <!-- <input nbInput placeholder="Elige una fecha" [nbDatepicker]="dateSale" [(ngModel)]="date" (ngModelChange)="changeDate($event)">
+        <nb-datepicker #dateSale></nb-datepicker> -->
+      </div>
+    </nb-card-header>
+    <nb-card-body>
+      <nb-list>
+        <nb-list-item *ngFor="let product of new_purchase.productos" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center; flex-wrap: wrap;">
+            <img class="component-icon" src="{{(product._id) ? uploadsUrl + '/' + product._id : 'assets/images/components/layout.svg'}}" alt="Layout">
+            <div>
+              <p style="margin: 0; font-size: 1.2rem;">{{ product.nombre }}</p>
+              <p class="badge-stock" [ngClass]="tagsStock(product) ? 'status-instock' : 'status-outstock'" style="margin:0; padding: 5px; font-size: 0.8rem; font-weight: bold;">{{ product.existencias }} Disponibles</p>
+            </div>
+            <div>
+              <button nbButton ghost status="info" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
+              <input nbInput type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" size="tiny" style="max-width: 6.25rem;">
+              <button nbButton ghost status="info" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
+            </div>
+            <p style="margin: 0;">{{product.amount|currency}}</p>
+            <!-- <button nbbutton apparence="outline" class="toggle-settings appearance-outline size-medium shape-rectangle icon-start icon-end status-warning nb-transition" nbTooltip="Agregar Descuento" aria-disabled="false" (click)="discountModal('product', product)">{{product.discount || 0}}%</button> -->
+            <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="removeProductFromPurchase(product._id!);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
+        </nb-list-item>
+      </nb-list>
+    </nb-card-body>
+    <nb-card-footer style="display: flex; justify-content: space-around; align-items: center;">
+      <p *ngIf="total_taxes > 0 && total_amount > 0" class="total_taxes" style="font-weight: bold;">Iva: {{total_taxes}}%</p>
+      <p *ngIf="total_discount > 0 && total_amount > 0" class="total_discount" style="font-weight: bold;">Descuento: {{total_discount}}%</p>
+      <p class="total_amount" style="font-weight: bold;">Total: {{total_amount|currency}}</p>
+    </nb-card-footer>
+  </nb-card>
