@@ -55,6 +55,11 @@ export class PurchasesComponent implements OnInit {
   }
 
   buscando(){
+    if (!this.termino){
+      this.search_products = []
+      return
+    }
+    
     this.productService.searchProducts(this.termino)
       .subscribe(resp => {
         if(resp.count > 0){
@@ -63,12 +68,14 @@ export class PurchasesComponent implements OnInit {
       })
   }
 
-  addProdutToPurchase(event:any){
-    // console.log(event);
-    // let product:ProductosBody = event
-    // this.termino = product.nombre!
-    this.new_purchase.productos?.push(event)
-    console.log(this.new_purchase.productos);
+  addProdutToPurchase(event:ProductosBody){
+    console.log('productos en purchase:',this.new_purchase.productos);
+    // Para que no se guarden repetidos
+    const index = this.new_purchase.productos.findIndex(object => object._id === event._id);
+    this.termino = ''
+    this.search_products = []
+    if(event && index === -1)
+      this.new_purchase.productos?.push(event)
   }
 
   removeProductFromPurchase(id:string){

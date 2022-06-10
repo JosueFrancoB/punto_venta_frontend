@@ -160,6 +160,7 @@ export interface ProductsPurchases{
     amount?:number
     discount?:number
     existencias?:number
+    categoria?:any
 }
 
 export interface SalesBody{

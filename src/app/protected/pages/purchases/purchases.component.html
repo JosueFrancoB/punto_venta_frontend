@@ -16,8 +16,9 @@
             
         <nb-autocomplete #purchase_product (selectedChange)="addProdutToPurchase($event)">
         
-        <nb-option *ngFor="let product of search_products" [value]="product">
-            {{ product.nombre }}
+        <nb-option *ngFor="let product of search_products" [value]="product"style="display: flex; justify-content: space-between;">
+            <span>{{ product.nombre }}</span>
+            <span style="font-size: 0.9em; color: #ccc;">{{product.categoria.nombre}}</span>
         </nb-option>
         </nb-autocomplete>
     </nb-form-field>
