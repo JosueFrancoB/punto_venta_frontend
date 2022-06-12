@@ -3,9 +3,10 @@ import { NbDialogService } from '@nebular/theme';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { ProductosBody, ProductsPurchases, PurchasesBody } from '../../interfaces/protected-interfaces';
+import { ProductosBody, ProductsPurchases, PurchasesBody, UnitsBody } from '../../interfaces/protected-interfaces';
 import { ProductsService } from '../../services/products.service';
 import { PurchasesService } from '../../services/purchases.service';
+import { UnitsService } from '../../services/units.service';
 
 @Component({
   selector: 'app-purchases',
@@ -27,10 +28,12 @@ export class PurchasesComponent implements OnInit {
   purchases:Array<PurchasesBody> = []
   search_products!:ProductsPurchases[];
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
+  filter: string = 'nombre'
 
   constructor(private dialogService: NbDialogService,
               private purchaseService: PurchasesService,
-              private productService: ProductsService) { 
+              private productService: ProductsService,
+              private unitsService: UnitsService) { 
               this.toastMixin = Swal.mixin({
               toast: true,
               icon: 'success',
@@ -54,28 +57,54 @@ export class PurchasesComponent implements OnInit {
     this.dialogService.open(dialog, { closeOnBackdropClick });
   }
 
+  // filter_toggle(){
+  //   this.filter =  this.filter == 'nombre' ? 'categoria' : 'nombre'
+  // }
+
   buscando(){
     if (!this.termino){
       this.search_products = []
       return
     }
     
-    this.productService.searchProducts(this.termino)
-      .subscribe(resp => {
-        if(resp.count > 0){
-          this.search_products = resp.results
-        }
-      })
+    this.productService.searchProducts(this.termino, this.filter)
+    .subscribe(resp => {
+      if(resp.count > 0){
+        this.search_products = resp.results
+      }
+    })
   }
 
-  addProdutToPurchase(event:ProductosBody){
-    console.log('productos en purchase:',this.new_purchase.productos);
+  getUnit(unidad:string){
+    return new Promise<any>((resolve, reject) => {
+      this.unitsService.getUnidad(unidad)
+      .subscribe(resp=> resp.ok ? resolve(resp.unidad) : resolve(undefined))
+    })
+    
+  }
+
+  async addProdutToPurchase(req_product:ProductosBody){
+    if (!req_product) return
+    let new_product:ProductsPurchases = {}
+    const {precio_compra: precio, inventario_max, inventario_min, ...product} = req_product
+    new_product = product
+    new_product.precio = precio
     // Para que no se guarden repetidos
-    const index = this.new_purchase.productos.findIndex(object => object._id === event._id);
+    const index = this.new_purchase.productos.findIndex(object => object._id === new_product._id);
     this.termino = ''
     this.search_products = []
-    if(event && index === -1)
-      this.new_purchase.productos?.push(event)
+    if(new_product && index === -1){
+      let unit_compra:UnitsBody = await this.getUnit(new_product.unidad_compra!)
+      let unit_venta:UnitsBody = await this.getUnit(new_product.unidad_venta!)
+      console.log('unidad compra', unit_compra);
+      new_product.unidad_compra = unit_compra.nombre
+      new_product.unidad_venta = unit_venta.nombre
+      new_product.cantidad = 1
+      new_product.amount = new_product.precio
+      this.new_purchase.productos?.push(new_product)
+      console.log('products: ',this.new_purchase.productos);
+      this.getTotalAmount()
+    }
   }
 
   removeProductFromPurchase(id:string){
@@ -173,8 +202,8 @@ export class PurchasesComponent implements OnInit {
     return product.existencias ? true : false
   }
   getTotalAmount(){
-    this.total_amount = this.new_purchase.productos?.reduce((accumulator, object) => {
-      return accumulator + (object.precio! * object.cantidad! || 0);
+    this.total_amount = this.new_purchase.productos?.reduce((accumulator, product) => {
+      return accumulator + (product.precio! * product.cantidad! || 0);
     }, 0);
     this.current_total_amount = this.total_amount
   }
@@ -182,33 +211,27 @@ export class PurchasesComponent implements OnInit {
   quantityProduct(_case_:string, id:string|undefined){
     this.getTotalAmount()
     if(_case_ === 'inc'){
-      this.new_purchase.productos?.forEach(product =>{
+      this.new_purchase.productos?.forEach(product =>{ 
         if(product._id === id){
-          if(product.cantidad != undefined && product.cantidad < product.existencias!){
-            product.cantidad ++
-            product.amount = product.precio! * product.cantidad
-            this.getTotalAmount()
-          }
+          product.cantidad! ++
+          product.amount = product.precio! * product.cantidad!
+          this.getTotalAmount()
         }
       })
     }else if(_case_ === 'dec'){
       this.new_purchase.productos?.forEach(product =>{
-        if(product._id === id){
-          if(product.cantidad && product.cantidad > 1){
-            product.cantidad --
-            product.amount = product.precio! * product.cantidad
-            this.getTotalAmount()
-          }
+        if(product._id === id && product.cantidad! > 1){
+          product.cantidad! --
+          product.amount = product.precio! * product.cantidad!
+          this.getTotalAmount()
         }
       })
     }else{
       this.new_purchase.productos?.forEach(product =>{
-        if(product._id === id){
-          if(product.cantidad && product.cantidad >= 1){
-            product.amount = product.precio! * product.cantidad
+        if(product._id === id && product.cantidad! >= 1){
+            product.amount = product.precio! * product.cantidad!
             this.getTotalAmount()
           }
-        }
       })
     }
   }

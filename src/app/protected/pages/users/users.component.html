@@ -87,7 +87,7 @@
     <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
         <nb-form-field>
             <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
-            <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
+            <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." (input)="onSearch(search.value)"> 
         </nb-form-field>
         <button nbButton size="medium" nbTooltip="Crear nuevo usuario" (click)="openDialog(Usuario, false); modalEdit = false; userReset()"status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
     </nb-card-header>

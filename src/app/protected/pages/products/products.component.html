@@ -5,7 +5,7 @@
       <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
           <nb-form-field>
               <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
-              <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
+              <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." (input)="onSearch(search.value)"> 
           </nb-form-field>
           <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="modalEdit = false; openDialog(Producto, false);" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
       </nb-card-header>
@@ -24,7 +24,7 @@
         <div style="text-align: center; display: flex; justify-content: center; flex-direction: column;">
           <span class="title-product border-section">{{product.nombre}}</span>
           <div >
-            <span *ngIf="product.clave_alterna" class="clave-product" [nbPopover]="ClaveAlt" nbPopoverTrigger="hint" nbPopoverPlacement="right" style="cursor: pointer;">{{product.clave}}
+            <span *ngIf="product.clave_alterna" class="clave-product" [nbPopover]="ClaveAlt" nbPopoverTrigger="hover" nbPopoverPlacement="right" style="cursor: pointer;">{{product.clave}}
             </span>
             <span *ngIf="!product.clave_alterna" class="clave-product">
               {{product.clave}}
@@ -244,7 +244,7 @@
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
           <span class="input-group-addon" style="font-size:14px;">Categoría:</span>
-          <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{current_category}}" disabled style="background: #fff;">
+          <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{current_category}}" readonly style="background: #fff;">
       </div>
     </div>
     <hr>

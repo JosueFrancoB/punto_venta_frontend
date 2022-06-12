@@ -147,6 +147,8 @@ export interface ProductsSales{
     nombre?:string
     precio?:number
     cantidad?:number
+    unidad_venta?:string
+    factor?:number
     img?:string
     amount?:number
     discount?:number
@@ -156,6 +158,9 @@ export interface ProductsPurchases{
     nombre?:string
     precio?:number
     cantidad?:number
+    unidad_compra?:string
+    unidad_venta?:string
+    factor?:number
     img?:string
     amount?:number
     discount?:number

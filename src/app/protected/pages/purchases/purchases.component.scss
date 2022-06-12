@@ -54,3 +54,62 @@
     background: #FFCDD2;
     color: #c63737;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+@media screen and (max-width:1620px) {
+    body {
+        font-size: 14px;
+    }
+  
+  
+  }
+  
+  @media screen and (max-width:1420px) {
+    body {
+        font-size: 13px;
+    }
+  
+  
+  }
+  
+  @media screen and (max-width:1190px) {
+    body {
+        font-size: 12px;
+    }
+  
+  }
+  
+  @media screen and (max-width:1000px) {
+    body {
+        font-size: 12px;
+    }
+  }
+  
+  @media screen and (max-width:850px) {
+    body {
+        font-size: 10px;
+    }
+  }
+  
+  @media screen and (max-width:730px) {
+    body {
+        font-size: 10px;
+    }
+  }
+
+  @media screen and (max-width:600px) {
+    body {
+        font-size: 10px;
+    }
+  }
+  

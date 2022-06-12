@@ -1,27 +1,27 @@
 <h3 class="group-title h4 ng-star-inserted">Compras</h3>
 <nb-layout-header subheader>
-    <nb-actions>
-    <!-- <nb-action icon="funnel" nbTooltip="Filtrar" (click)="openDialog(compra, true); modalEdit = false;"></nb-action> -->
-    </nb-actions>
-    <nb-form-field style="width: 50%;">
+    <nb-form-field style="width: 40%;">
         <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
         <input #productInput
         nbInput
         type="text" fullWidth fieldSize="medium"
         (input)="buscando()"
         [nbAutocomplete]="purchase_product"
-        nbTooltip="Presiona enter"
         [(ngModel)]="termino"
         placeholder="Buscar un producto ..." class="search"/>
             
         <nb-autocomplete #purchase_product (selectedChange)="addProdutToPurchase($event)">
         
-        <nb-option *ngFor="let product of search_products" [value]="product"style="display: flex; justify-content: space-between;">
+        <nb-option *ngFor="let product of search_products" [value]="product"style="display: flex; justify-content: space-between; flex-direction:column;">
             <span>{{ product.nombre }}</span>
             <span style="font-size: 0.9em; color: #ccc;">{{product.categoria.nombre}}</span>
         </nb-option>
         </nb-autocomplete>
     </nb-form-field>
+    <nb-actions>
+      <nb-action icon="funnel" nbTooltip="Filtrar" [nbPopover]="Filter" nbPopoverTrigger="click" nbPopoverPlacement="bottom"></nb-action>
+      <nb-action icon="car-outline" nbTooltip="Agregar Proveedor" (click)="openDialog(SearchProvider, true); modalEdit = false;"></nb-action>
+    </nb-actions>
 </nb-layout-header>
 <hr>
 <nb-card [size]="'medium'">
@@ -38,15 +38,24 @@
             <img class="component-icon" src="{{(product._id) ? uploadsUrl + '/' + product._id : 'assets/images/components/layout.svg'}}" alt="Layout">
             <div>
               <p style="margin: 0; font-size: 1.2rem;">{{ product.nombre }}</p>
-              <p class="badge-stock" [ngClass]="tagsStock(product) ? 'status-instock' : 'status-outstock'" style="margin:0; padding: 5px; font-size: 0.8rem; font-weight: bold;">{{ product.existencias }} Disponibles</p>
+              <p class="badge-stock" [ngClass]="tagsStock(product) ? 'status-instock' : 'status-outstock'" style="margin:0; padding: 5px; font-size: 0.8rem; font-weight: bold;">{{ product.existencias }} {{product.unidad_venta |lowercase}}{{product.existencias! == 1 ? '' : 's'}} en tu stock</p>
             </div>
-            <div>
-              <button nbButton ghost status="info" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
-              <input nbInput type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" size="tiny" style="max-width: 6.25rem;">
-              <button nbButton ghost status="info" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
+            <div style="display: flex; flex-direction:row; align-items: center;">
+              <button nbButton ghost status="success" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
+              <div class="input-group" style="align-items: center; display:flex; flex-direction: row;" [nbPopover]="UnitFactor" nbPopoverTrigger="hover" nbPopoverPlacement="top">
+                <input class="form-control input-sm" type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" style="max-width: 5.25rem;"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="7">
+                <div class="input-group-btn" >
+                  <button class="btn btn-primary btn-sm">{{product.unidad_compra |uppercase}}{{product.cantidad! > 1 ? 'S' : ''}}</button>
+                </div>
+              </div>
+              <button nbButton ghost status="success" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
             </div>
-            <p style="margin: 0;">{{product.amount|currency}}</p>
-            <!-- <button nbbutton apparence="outline" class="toggle-settings appearance-outline size-medium shape-rectangle icon-start icon-end status-warning nb-transition" nbTooltip="Agregar Descuento" aria-disabled="false" (click)="discountModal('product', product)">{{product.discount || 0}}%</button> -->
+            <p style="margin: 0; font-size:1.2em; font-weight: bold;">{{product.amount|currency}}</p>
+            <!--? Popover Unidad Factor -->
+            <ng-template #UnitFactor let-data let-ref="dialogRef">
+                  <span style="font-weight: bold; padding: 5px;">Hay {{product.factor}} {{product.unidad_venta|lowercase}}s en 1 {{product.unidad_compra|uppercase}}</span>
+            </ng-template>
+            <!--? Fin -->
             <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="removeProductFromPurchase(product._id!);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
         </nb-list-item>
       </nb-list>
@@ -57,3 +66,47 @@
       <p class="total_amount" style="font-weight: bold;">Total: {{total_amount|currency}}</p>
     </nb-card-footer>
   </nb-card>
+
+<!--? Popover Filter -->
+<ng-template #Filter let-data let-ref="dialogRef">
+  <nb-card style="margin: 0; padding: 0;">
+    <nb-card-body style="margin: 0; padding: 0;">
+      <nb-select  [(selected)]="filter">
+        <nb-option value="nombre">Nombre</nb-option>
+        <nb-option value="categoria" >Categorias</nb-option>
+      </nb-select>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!--? Fin -->
+
+<!--? Dialog Search Provider -->
+<ng-template #SearchProvider></ng-template>
+
+<!-- <ng-template #SearchProvider let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Cliente</nb-card-header>
+    <nb-card-body>
+      <label for="in-local">Busca un cliente</label>
+      <input #customerInput
+      nbInput
+      type="text" fullWidth fieldSize="medium"
+      (input)="onChange('customer')"
+      [nbAutocomplete]="autoCustomer"
+      [(ngModel)]="customer_search"
+      nbTooltip="Presiona enter"
+      placeholder="Buscar un cliente ..." class="search"/>
+          
+      <nb-autocomplete #autoCustomer (selectedChange)="onCustomerSelectChange($event)">
+      
+        <nb-option *ngFor="let customer_option of filteredCustomerOptions$ | async" [value]="customer_option">
+          {{ customer_option }}
+        </nb-option>
+      
+      </nb-autocomplete>
+      <hr>
+      <button nbButton status="success" (click)="addSaleClient();ref.close()">Agregar cliente</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template> -->
+<!-- ? Fin -->

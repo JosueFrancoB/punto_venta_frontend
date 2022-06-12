@@ -185,6 +185,7 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
+    console.log('El producto en update', this.product);
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
       this.product = this.getQuantityByFactor(this.new_producto)
       this.product = this.setInventoryMinMax(this.product)
@@ -343,7 +344,7 @@ export class ProductsComponent implements OnInit{
     this.files.push(...event.addedFiles);
     console.log(...event.addedFiles);
   }
-   
+
   onRemoveDrag(event:any) {
     this.files.splice(this.files.indexOf(event), 1);
   }
