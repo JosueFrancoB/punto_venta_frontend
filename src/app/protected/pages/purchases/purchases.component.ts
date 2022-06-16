@@ -56,12 +56,13 @@ export class PurchasesComponent implements OnInit {
 }
 
   ngOnInit(){
-    this.getCompras()
     this.today();
   }
 
   toggleShow(){
-    this.show_purchases = !this.show_purchases 
+    this.show_purchases = !this.show_purchases
+    if(this.show_purchases)
+      this.getCompras()
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
@@ -83,7 +84,7 @@ export class PurchasesComponent implements OnInit {
   }
 
   changeDate($event:any){
-    this.new_purchase.fecha = $event
+    this.date = $event
   }
 
   today(){
@@ -144,14 +145,20 @@ export class PurchasesComponent implements OnInit {
     })
   }
 
-  addCompra(){
+  endCompra(){
+    this.new_purchase.usuario_compra = {id_usuario: ''}
+    this.new_purchase.usuario_compra = {nombre: ''}
     this.userService.validateJWT().subscribe(resp=>{
       if(resp.ok){
         this.new_purchase.usuario_compra!.id_usuario = resp.usuario.uid
         this.new_purchase.usuario_compra!.nombre = resp.usuario.nombre
+        this.new_purchase.fecha = this.date
+        this.new_purchase.total_compra = this.total_amount
+        this.addCompra()
       }
     })
-    this.new_purchase.total_compra = this.total_amount
+  }
+  addCompra(){
     this.purchaseService.addPurchase(this.new_purchase)
     .subscribe(resp =>{
       if(resp.ok === true){

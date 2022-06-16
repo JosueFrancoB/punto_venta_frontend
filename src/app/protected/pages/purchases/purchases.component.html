@@ -55,6 +55,7 @@
 <!-- ? End Show Purchases -->
 
 <hr>
+<!-- ? New Purchase -->
 <nb-card [size]="'medium'" *ngIf="!show_purchases">
     <nb-card-header style="display: flex; justify-content: space-between;">
       <!-- <div *ngIf="new_sale.cliente" style="padding: 5px; margin-top:5px; border: solid 1px #ddd; background:white; text-align:center;"><p class="total_amount" style="margin: 0;">{{new_sale.cliente?.nombre || ''}}</p></div> -->
@@ -95,10 +96,12 @@
       <p *ngIf="total_taxes > 0 && total_amount > 0" class="total_taxes" style="font-weight: bold;">Iva: {{total_taxes}}%</p>
       <p *ngIf="total_discount > 0 && total_amount > 0" class="total_discount" style="font-weight: bold;">Descuento: {{total_discount}}%</p>
       <p class="total_amount" style="font-weight: bold;">Total: {{total_amount|currency}}</p>
-      <button *ngIf="new_purchase.productos.length > 0" nbButton status="info" size="medium" (click)="addCompra()">Completar Compra</button>
+      <button *ngIf="new_purchase.productos.length > 0" nbButton status="info" size="medium" (click)="endCompra()">Completar Compra</button>
     </nb-card-footer>
 </nb-card>
+<!-- ? End New Purchase -->
 
+<!-- ? Show Purchases -->
 <nb-card [size]="'medium'" *ngIf="show_purchases">
   <nb-card-header>Compras</nb-card-header>
   <nb-card-body style="padding: 0 0.9375rem;">
@@ -119,6 +122,7 @@
     </nb-list>
   </nb-card-body>
 </nb-card>
+<!-- ? End Show Purchases -->
 
 
 <!--? Popover FilterProducts -->

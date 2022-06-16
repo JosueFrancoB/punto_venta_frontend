@@ -55,6 +55,10 @@
     color: #c63737;
 }
 
+.product-sale-details{
+  list-style: none; padding: 7px; font-size: 1.1em; font-weight: 500;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -65,6 +69,8 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+
 
 @media screen and (max-width:1620px) {
     body {
