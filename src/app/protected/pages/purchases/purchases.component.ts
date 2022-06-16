@@ -7,6 +7,7 @@ import { ProductosBody, ProductsPurchases, PurchasesBody, UnitsBody } from '../.
 import { ProductsService } from '../../services/products.service';
 import { PurchasesService } from '../../services/purchases.service';
 import { UnitsService } from '../../services/units.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-purchases',
@@ -15,6 +16,7 @@ import { UnitsService } from '../../services/units.service';
 })
 export class PurchasesComponent implements OnInit {
 
+  date: any
   termino: string = ''
   total_taxes:number = 0
   total_discount:number = 0
@@ -28,12 +30,16 @@ export class PurchasesComponent implements OnInit {
   purchases:Array<PurchasesBody> = []
   search_products!:ProductsPurchases[];
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
-  filter: string = 'nombre'
+  filter_products: string = 'nombre'
+  filter_purchase: string = 'fecha'
+  show_purchases = false
+  purchase_details:PurchasesBody = {productos:[]} 
 
   constructor(private dialogService: NbDialogService,
               private purchaseService: PurchasesService,
               private productService: ProductsService,
-              private unitsService: UnitsService) { 
+              private unitsService: UnitsService,
+              private userService: UsersService) { 
               this.toastMixin = Swal.mixin({
               toast: true,
               icon: 'success',
@@ -51,15 +57,16 @@ export class PurchasesComponent implements OnInit {
 
   ngOnInit(){
     this.getCompras()
+    this.today();
+  }
+
+  toggleShow(){
+    this.show_purchases = !this.show_purchases 
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     this.dialogService.open(dialog, { closeOnBackdropClick });
   }
-
-  // filter_toggle(){
-  //   this.filter =  this.filter == 'nombre' ? 'categoria' : 'nombre'
-  // }
 
   buscando(){
     if (!this.termino){
@@ -67,12 +74,20 @@ export class PurchasesComponent implements OnInit {
       return
     }
     
-    this.productService.searchProducts(this.termino, this.filter)
+    this.productService.searchProducts(this.termino, this.filter_products)
     .subscribe(resp => {
       if(resp.count > 0){
         this.search_products = resp.results
       }
     })
+  }
+
+  changeDate($event:any){
+    this.new_purchase.fecha = $event
+  }
+
+  today(){
+    this.date = new Date();
   }
 
   getUnit(unidad:string){
@@ -114,6 +129,7 @@ export class PurchasesComponent implements OnInit {
 
   resetCompra(){
     this.new_purchase = {productos:[]}
+    this.total_amount = 0
   }
 
   getCompras(){
@@ -128,13 +144,17 @@ export class PurchasesComponent implements OnInit {
     })
   }
 
-  addCompra(ref: any){
-    console.log(`AddCompra - New sale: ${this.new_purchase}`);
+  addCompra(){
+    this.userService.validateJWT().subscribe(resp=>{
+      if(resp.ok){
+        this.new_purchase.usuario_compra!.id_usuario = resp.usuario.uid
+        this.new_purchase.usuario_compra!.nombre = resp.usuario.nombre
+      }
+    })
+    this.new_purchase.total_compra = this.total_amount
     this.purchaseService.addPurchase(this.new_purchase)
     .subscribe(resp =>{
       if(resp.ok === true){
-        console.log(`AddCompra - Response: ${resp}`)
-        ref.close()
         this.toastMixin.fire({
           title: 'Compra completada'
         });
@@ -190,12 +210,18 @@ export class PurchasesComponent implements OnInit {
           this.toastMixin.fire({
             title: 'Compra eliminada'
           });
+          this.getCompras()
         }else{
           Swal.fire('Error', resp, 'error')
         }
       })
     }
   })
+  }
+
+  viewPurchase(ref:any, purchase:PurchasesBody){
+    this.purchase_details = purchase
+    this.openDialog(ref,true)
   }
 
   tagsStock(product:any){

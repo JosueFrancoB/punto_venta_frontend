@@ -259,8 +259,8 @@
          </nb-accordion-item-body>
         </nb-accordion-item>
       </nb-accordion>
-      <p style="margin-top:1em; position:relative; left: 0; font-size: 1.3em; color: #222; font-weight: bold;">Total de la venta: {{sale_details.total_a_pagar|currency}}</p>
-      <button nbButton status="success" (click)="ref.close()">De acuerdo</button>
+      <p style="margin-top:1em; position:relative; left: 0; font-size: 1.2em; color: #222; font-weight: bold;">Total de la venta: <b class="status-instock" style="padding: 0.125rem;">{{sale_details.total_a_pagar|currency}}</b></p>
+      <button nbButton status="info" (click)="ref.close()">De acuerdo</button>
     </nb-card-body>
   </nb-card>
 </ng-template>
