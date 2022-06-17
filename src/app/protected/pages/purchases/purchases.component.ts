@@ -3,8 +3,9 @@ import { NbDialogService } from '@nebular/theme';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { ProductosBody, ProductsPurchases, PurchasesBody, UnitsBody } from '../../interfaces/protected-interfaces';
+import { ProductosBody, ProductsPurchases, ProveedoresBody, ProviderPurchases, PurchasesBody, UnitsBody } from '../../interfaces/protected-interfaces';
 import { ProductsService } from '../../services/products.service';
+import { ProveedoresService } from '../../services/proveedores.service';
 import { PurchasesService } from '../../services/purchases.service';
 import { UnitsService } from '../../services/units.service';
 import { UsersService } from '../../services/users.service';
@@ -17,7 +18,7 @@ import { UsersService } from '../../services/users.service';
 export class PurchasesComponent implements OnInit {
 
   date: any
-  termino: string = ''
+  search_product: string = ''
   total_taxes:number = 0
   total_discount:number = 0
   toastMixin: any
@@ -33,11 +34,15 @@ export class PurchasesComponent implements OnInit {
   filter_products: string = 'nombre'
   filter_purchase: string = 'fecha'
   show_purchases = false
+  search_providers:ProviderPurchases[] = []
+  search_provider:string = ''
+  selected_provider:ProviderPurchases = {}
   purchase_details:PurchasesBody = {productos:[]} 
 
   constructor(private dialogService: NbDialogService,
               private purchaseService: PurchasesService,
               private productService: ProductsService,
+              private providerService: ProveedoresService,
               private unitsService: UnitsService,
               private userService: UsersService) { 
               this.toastMixin = Swal.mixin({
@@ -69,19 +74,48 @@ export class PurchasesComponent implements OnInit {
     this.dialogService.open(dialog, { closeOnBackdropClick });
   }
 
-  buscando(){
-    if (!this.termino){
+  searchProduct(){
+    if (!this.search_product){
       this.search_products = []
       return
     }
     
-    this.productService.searchProducts(this.termino, this.filter_products)
+    this.productService.searchProducts(this.search_product, this.filter_products)
     .subscribe(resp => {
       if(resp.count > 0){
         this.search_products = resp.results
       }
     })
   }
+
+  searchProvider(){
+    if(!this.search_provider) {
+      this.search_providers = []
+      return
+    }
+
+    this.providerService.searchProveedores(this.search_provider)
+    .subscribe(resp => {
+      if(resp.count > 0){
+        this.search_providers = resp.results
+      }
+    })
+  }
+
+  addPurchaseProvider(req_provider:ProveedoresBody){
+      if (!req_provider) return
+      let new_product:ProductsPurchases = {}
+      this.search_provider = ''
+      const {telefonos, correos, rfc, direcciones, ...provider} = req_provider
+      this.selected_provider = provider
+      // this.search_provider = this.selected_provider.nombre_contacto!
+    }
+
+  addProvider(){
+    this.new_purchase.proveedor = this.selected_provider
+  }
+
+
 
   changeDate($event:any){
     this.date = $event
@@ -99,7 +133,7 @@ export class PurchasesComponent implements OnInit {
     
   }
 
-  async addProdutToPurchase(req_product:ProductosBody){
+  async addProductToPurchase(req_product:ProductosBody){
     if (!req_product) return
     let new_product:ProductsPurchases = {}
     const {precio_compra: precio, inventario_max, inventario_min, ...product} = req_product
@@ -107,7 +141,7 @@ export class PurchasesComponent implements OnInit {
     new_product.precio = precio
     // Para que no se guarden repetidos
     const index = this.new_purchase.productos.findIndex(object => object._id === new_product._id);
-    this.termino = ''
+    this.search_product = ''
     this.search_products = []
     if(new_product && index === -1){
       let unit_compra:UnitsBody = await this.getUnit(new_product.unidad_compra!)

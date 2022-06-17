@@ -136,9 +136,9 @@ export interface CustomerSales{
     nombre?:string
     nombre_empresa?:string
 }
-export interface ProviderSales{
+export interface ProviderPurchases{
     id_proveedor?:string
-    nombre?:string
+    nombre_contacto?:string
     nombre_empresa?:string
 }
 
@@ -188,7 +188,7 @@ export interface PurchasesBody{
     fecha?:Date
     total_compra?:number
     productos:Array<ProductsPurchases>
-    proveedor?:ProviderSales
+    proveedor?:ProviderPurchases
     usuario_compra?:UserSales
     notas?:string
     estado?:boolean
