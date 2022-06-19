@@ -143,7 +143,7 @@ export interface ProviderPurchases{
 }
 
 export interface ProductsSales{
-    id_producto?:string
+    _id?:string
     nombre?:string
     precio?:number
     cantidad?:number
@@ -152,6 +152,8 @@ export interface ProductsSales{
     img?:string
     amount?:number
     discount?:number
+    existencias?:number
+    categoria?:any
 }
 export interface ProductsPurchases{
     _id?:string

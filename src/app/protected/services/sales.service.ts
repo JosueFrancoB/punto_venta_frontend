@@ -17,9 +17,9 @@ export class SalesService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getSales(){
+  getSales(limit:number,from:number){
     const headers = this.getToken()
-    return this.http.get<SalesData>(`${this.baseUrl}/sales`, {headers})
+    return this.http.get<SalesData>(`${this.baseUrl}/sales?limite=${limit}&desde=${from}`, {headers})
       .pipe(
         map( resp => {
             return resp

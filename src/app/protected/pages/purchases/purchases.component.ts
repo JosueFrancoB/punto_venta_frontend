@@ -18,6 +18,8 @@ import { UsersService } from '../../services/users.service';
 export class PurchasesComponent implements OnInit {
 
   date: any
+  page!:number;
+  total_pages:number = 7;
   search_product: string = ''
   total_taxes:number = 0
   total_discount:number = 0
@@ -104,11 +106,9 @@ export class PurchasesComponent implements OnInit {
 
   addPurchaseProvider(req_provider:ProveedoresBody){
       if (!req_provider) return
-      let new_product:ProductsPurchases = {}
       this.search_provider = ''
       const {telefonos, correos, rfc, direcciones, ...provider} = req_provider
       this.selected_provider = provider
-      // this.search_provider = this.selected_provider.nombre_contacto!
     }
 
   addProvider(){
@@ -165,6 +165,7 @@ export class PurchasesComponent implements OnInit {
   resetCompra(){
     this.new_purchase = {productos:[]}
     this.total_amount = 0
+    this.selected_provider = {}
   }
 
   getCompras(){

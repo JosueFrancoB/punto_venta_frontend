@@ -45,6 +45,7 @@
       nbInput
       type="text" fullWidth fieldSize="medium"
       [(ngModel)]="searchText"
+      (input)="page = 1"
       placeholder="Buscar una compra ..." class="search"/>
     </nb-form-field>
   </div>
@@ -58,7 +59,7 @@
 <!-- ? New Purchase -->
 <nb-card [size]="'medium'" *ngIf="!show_purchases" class="animate__animated animate__fadeIn animate_faster">
     <nb-card-header style="display: flex; justify-content: space-between;">
-      <div *ngIf="new_purchase.proveedor" style="padding: 5px; margin-top:5px; border: solid 3px #CBE3FA; background:white; text-align:center; font-weight: bold;"><p class="total_amount" style="margin: 0; color:#FF6D7A;">{{new_purchase.proveedor?.nombre_empresa || ''}}</p></div>
+      <div *ngIf="new_purchase.proveedor" style="padding: 5px; margin-top:5px; border: solid 3px #CBE3FA; background:white; text-align:center; font-weight: bold;"><p class="total_amount" style="margin: 0; color:#FF6D7A;">{{new_purchase.proveedor?.nombre_empresa || new_purchase.proveedor?.nombre_contacto || ''}}</p></div>
       <div>
         <input nbInput placeholder="Elige una fecha" [nbDatepicker]="dateSale" [(ngModel)]="date" (ngModelChange)="changeDate($event)">
         <nb-datepicker #dateSale></nb-datepicker>
@@ -66,7 +67,7 @@
     </nb-card-header>
     <nb-card-body>
       <nb-list>
-        <nb-list-item *ngFor="let product of new_purchase.productos" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center; flex-wrap: wrap;">
+        <nb-list-item *ngFor="let product of new_purchase.productos" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center; flex-wrap: wrap; padding: 0.4375rem;">
             <img class="component-icon" src="{{(product._id) ? uploadsUrl + '/' + product._id : 'assets/images/components/layout.svg'}}" alt="Layout">
             <div>
               <p style="margin: 0; font-size: 1.2rem;">{{ product.nombre }}</p>
@@ -103,24 +104,32 @@
 
 <!-- ? Show Purchases -->
 <nb-card [size]="'medium'" *ngIf="show_purchases" class="animate__animated animate__fadeIn animate_faster">
-  <nb-card-header>Compras</nb-card-header>
+  <nb-card-header style="display: flex; justify-content: space-between; align-items: center;">
+    <span style="font-weight: bold; margin: 0; padding: 0;">Compras</span>
+    <span style="margin: 0; padding: 0;" class="status-fullstock">Se muestran {{purchases.length < total_pages ? purchases.length : total_pages}} de {{purchases.length}}</span>
+  </nb-card-header>
   <nb-card-body style="padding: 0 0.9375rem;">
     <nb-list>
-      <nb-list-item *ngFor="let purchase of purchases|filter:searchText" class="sale-item" (click)="viewPurchase(InfoPurchase, purchase)">
+      <nb-list-item *ngFor="let purchase of purchases|filter:searchText | paginate: { itemsPerPage: 7, currentPage: page}" class="sale-item" (click)="viewPurchase(InfoPurchase, purchase)"  style="padding: 0.625rem;">
         <div style="min-width: 80px; max-width: 80px;">
           <p style="margin: 0;"> {{purchase.proveedor?.nombre_contacto}}</p>
           <p style="margin: 0; font-weight: bold;"> {{purchase.proveedor?.nombre_empresa}}</p>
         </div>
         <div>
-          <p style="min-width: 30px; max-width: 30px;"><b>Total: </b>{{purchase.total_compra|currency}}</p>
+          <p style="min-width: 30px; max-width: 30px; margin: 0;"><b>Total: </b>{{purchase.total_compra|currency}}</p>
         </div>
         <div>
-          <p style="min-width: 200px; max-width: 200px;"><b>Fecha: </b>{{ purchase.fecha| date:"dd/MM/yyyy" }}</p>
+          <p style="min-width: 200px; max-width: 200px; margin: 0;"><b>Fecha: </b>{{ purchase.fecha| date:"dd/MM/yyyy" }}</p>
         </div>
         <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteCompra(purchase._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
       </nb-list-item>
     </nb-list>
   </nb-card-body>
+  <nb-card-footer style="padding: 0.3125rem; align-items: center;">
+    <div [hidden]="purchases.length <= 7" style="display: flex; justify-content: flex-end;">
+      <pagination-controls (pageChange)="page = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+    </div>
+  </nb-card-footer>
 </nb-card>
 <!-- ? End Show Purchases -->
 
@@ -198,7 +207,7 @@
     <nb-card-body>
       <div style="justify-content: space-around;">
         <p>
-          <span style="font-size: 1.15em; font-weight: bold;">Fecha: </span> <span style="font-size: 1.1em;">{{purchase_details.fecha|date:"dd/MM/yyyy HH:m:ss"}}</span>
+          <span style="font-size: 1.15em; font-weight: bold;">Fecha: </span> <span style="font-size: 1.1em;">{{purchase_details.fecha|date:"dd/MM/yyyy HH:mm:ss"}}</span>
         </p>
         <p>
           <span style="font-size: 1.15em; font-weight: bold;">Comprado por: </span> 
@@ -216,7 +225,7 @@
         <nb-accordion-item-body>
           <ul *ngFor="let product of purchase_details.productos;" style="display: flex; flex-direction: row; padding: 0px; flex-wrap: wrap; background-color: cornsilk; margin: 5px 0px;">
             <li class="product-sale-details">{{product.nombre}}</li>
-            <li class="product-sale-details">Cantidad: {{product.cantidad}} {{product.unidad_compra|uppercase}}{{product.cantidad! > 1 ? 'S' : ''}}</li>
+            <li class="product-sale-details">Cantidad: {{product.cantidad}} {{product.unidad_compra|lowercase}}{{product.cantidad! > 1 ? 's' : ''}}</li>
             <li class="product-sale-details" *ngIf="product.cantidad && product.precio">Monto: {{product.cantidad * product.precio|currency}}</li>
           </ul>
          </nb-accordion-item-body>

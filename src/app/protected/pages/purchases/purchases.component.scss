@@ -86,6 +86,9 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+:host ::ng-deep a{
+  text-decoration: none;
+}
 
 
 @media screen and (max-width:1620px) {
