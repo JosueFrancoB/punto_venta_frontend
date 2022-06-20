@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NbAccordionModule, NbActionsModule, NbAlertModule, NbAutocompleteModule, NbBadgeModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbMenuModule, NbPopoverModule, NbRadioModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbStepperModule, NbTabsetModule, NbTagModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
+import { NbAccordionModule, NbActionsModule, NbAlertModule, NbAutocompleteModule, NbBadgeModule, NbButtonGroupModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbContextMenuModule, NbDatepickerModule, NbDialogModule, NbFormFieldModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbMenuModule, NbPopoverModule, NbRadioModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbStepperModule, NbTabsetModule, NbTagModule, NbToggleModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './pages/users/users.component';
@@ -22,6 +23,7 @@ import { JwPaginationComponent, JwPaginationModule } from 'jw-angular-pagination
 import { SwiperModule } from 'swiper/angular';
 import { PurchasesComponent } from './pages/purchases/purchases.component';
 import { WarehousesComponent } from './pages/warehouses/warehouses.component';
+import { InputSearchComponent } from './components/input-search/input-search.component';
 
 @NgModule({
   declarations: [
@@ -36,13 +38,15 @@ import { WarehousesComponent } from './pages/warehouses/warehouses.component';
     SalesComponent,
     PerfilComponent,
     PurchasesComponent,
-    WarehousesComponent
+    WarehousesComponent,
+    InputSearchComponent
   ],
   imports: [
     CommonModule,
     JwPaginationModule,
     ProtectedRoutingModule,
     NbBadgeModule,
+    NbButtonGroupModule,
     NbPopoverModule,
     NbAccordionModule,
     NbTagModule,
@@ -63,6 +67,7 @@ import { WarehousesComponent } from './pages/warehouses/warehouses.component';
     NbIconModule,
     Ng2SmartTableModule,
     NbContextMenuModule,
+    NbDatepickerModule.forRoot(),
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDialogModule.forChild(),
@@ -77,7 +82,9 @@ import { WarehousesComponent } from './pages/warehouses/warehouses.component';
     Ng2SearchPipeModule,
     NbTabsetModule,
     NbStepperModule,
-    NbListModule
+    NbListModule,
+    FormsModule,
+    NgxPaginationModule
   ]
 })
 export class ProtectedModule { }

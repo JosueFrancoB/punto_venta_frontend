@@ -1,1 +1,237 @@
-<p>purchases works!</p>
+<h3 class="group-title h4 ng-star-inserted">Compras</h3>
+
+<!-- ? New Purchase -->
+<nb-layout-header class="nav-bar"  style="flex-wrap: wrap;" *ngIf="!show_purchases" class="animate__animated animate__fadeIn animate_faster">
+      <div style="display: flex; flex-wrap: wrap; width: 80%;" >
+        <nb-form-field style="width: 50%;">
+            <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+            <input #productInput
+            nbInput
+            type="text" fullWidth fieldSize="medium"
+            (input)="searchProduct()"
+            [nbAutocomplete]="purchase_product"
+            [(ngModel)]="search_product"
+            placeholder="Buscar un producto ..." class="search"/>
+                
+            <nb-autocomplete #purchase_product (selectedChange)="addProductToPurchase($event)">
+            
+            <nb-option *ngFor="let product of search_products" [value]="product"style="display: flex; justify-content: space-between; flex-direction:column;">
+                <span>{{ product.nombre }}</span>
+                <span style="font-size: 0.9em; color: #ccc;">{{product.categoria.nombre}}</span>
+            </nb-option>
+            </nb-autocomplete>
+        </nb-form-field>
+        <nb-actions>
+          <nb-action icon="funnel" nbTooltip="Filtrar" [nbPopover]="FilterProducts" nbPopoverTrigger="click" nbPopoverPlacement="bottom"></nb-action>
+          <nb-action icon="car-outline" nbTooltip="Agregar Proveedor" (click)="openDialog(SearchProvider, true); modalEdit = false;"></nb-action>
+        </nb-actions>
+      </div>
+      <div>
+        <button nbButton status="warning" size="small" (click)="toggleShow()">Ver mis compras</button>
+      </div>
+</nb-layout-header>
+<!-- ? End New Purchase -->
+
+<!-- ? Show Purchases -->
+<nb-layout-header subheader *ngIf="show_purchases" class="animate__animated animate__fadeIn animate_faster">
+  <div style="display: flex; flex-wrap: wrap; width: 80%;">
+    <nb-actions>
+      <nb-action icon="funnel" nbTooltip="Filtrar" [nbPopover]="FilterPurchase" nbPopoverTrigger="click" nbPopoverPlacement="bottom"></nb-action>
+      <select name="" id=""></select>
+    </nb-actions>
+    <nb-form-field style="width: 50%;">
+      <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+      <input #autoInput
+      nbInput
+      type="text" fullWidth fieldSize="medium"
+      [(ngModel)]="searchText"
+      (input)="paginaActual = 1"
+      placeholder="Buscar una compra ..." class="search"/>
+    </nb-form-field>
+  </div>
+  <div>
+    <button nbButton status="success" size="small" (click)="toggleShow()">Nueva Compra +</button>
+  </div>
+</nb-layout-header>
+<!-- ? End Show Purchases -->
+
+<hr>
+<!-- ? New Purchase -->
+<nb-card [size]="'medium'" *ngIf="!show_purchases" class="animate__animated animate__fadeIn animate_faster">
+    <nb-card-header style="display: flex; justify-content: space-between;">
+      <div *ngIf="new_purchase.proveedor" style="padding: 5px; margin-top:5px; border: solid 3px #CBE3FA; background:white; text-align:center; font-weight: bold;"><p class="total_amount" style="margin: 0; color:#FF6D7A;">{{new_purchase.proveedor?.nombre_empresa || new_purchase.proveedor?.nombre_contacto || ''}}</p></div>
+      <div>
+        <input nbInput placeholder="Elige una fecha" [nbDatepicker]="dateSale" [(ngModel)]="date" (ngModelChange)="changeDate($event)">
+        <nb-datepicker #dateSale></nb-datepicker>
+      </div>
+    </nb-card-header>
+    <nb-card-body>
+      <nb-list>
+        <nb-list-item *ngFor="let product of new_purchase.productos" style="display: flex; justify-content: space-around; flex-direction: row; align-items: center; flex-wrap: wrap; padding: 0.4375rem;">
+            <img class="component-icon" src="{{(product._id) ? uploadsUrl + '/' + product._id : 'assets/images/components/layout.svg'}}" alt="Layout">
+            <div>
+              <p style="margin: 0; font-size: 1.2rem;">{{ product.nombre }}</p>
+              <p class="badge-stock" [ngClass]="tagsStock(product) ? 'status-instock' : 'status-outstock'" style="margin:0; padding: 5px; font-size: 0.8rem; font-weight: bold;">{{ product.existencias }} {{product.unidad_venta |lowercase}}{{product.existencias! == 1 ? '' : 's'}} en tu stock</p>
+            </div>
+            <div style="display: flex; flex-direction:row; align-items: center;">
+              <button nbButton ghost status="success" (click)="quantityProduct('dec', product._id)"><nb-icon icon="minus"></nb-icon></button>
+              <div class="input-group" style="align-items: center; display:flex; flex-direction: row;" [nbPopover]="UnitFactor" nbPopoverTrigger="hover" nbPopoverPlacement="top">
+                <input class="form-control input-sm" type="number" min="1" placeholder="1" [(ngModel)]="product.cantidad" (ngModelChange)="quantityProduct('input', product._id)" style="max-width: 5.25rem;"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="7">
+                <div class="input-group-btn" >
+                  <button class="btn btn-primary btn-sm">{{product.unidad_compra |uppercase}}{{product.cantidad! > 1 ? 'S' : ''}}</button>
+                </div>
+              </div>
+              <button nbButton ghost status="success" (click)="quantityProduct('inc', product._id)"><nb-icon icon="plus"></nb-icon></button>
+            </div>
+            <p style="margin: 0; font-size:1.2em; font-weight: bold;">{{product.amount|currency}}</p>
+            <!--? Popover Unidad Factor -->
+            <ng-template #UnitFactor let-data let-ref="dialogRef">
+                  <span style="font-weight: bold; padding: 5px;">Hay {{product.factor}} {{product.unidad_venta|lowercase}}s en 1 {{product.unidad_compra|uppercase}}</span>
+            </ng-template>
+            <!--? Fin -->
+            <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="removeProductFromPurchase(product._id!);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
+        </nb-list-item>
+      </nb-list>
+    </nb-card-body>
+    <nb-card-footer style="display: flex; justify-content: space-around; align-items: center;">
+      <p *ngIf="total_taxes > 0 && total_amount > 0" class="total_taxes" style="font-weight: bold;">Iva: {{total_taxes}}%</p>
+      <p *ngIf="total_discount > 0 && total_amount > 0" class="total_discount" style="font-weight: bold;">Descuento: {{total_discount}}%</p>
+      <p class="total_amount" style="font-weight: bold;">Total: {{total_amount|currency}}</p>
+      <button *ngIf="new_purchase.productos.length > 0" nbButton status="info" size="medium" (click)="endCompra()">Completar Compra</button>
+    </nb-card-footer>
+</nb-card>
+<!-- ? End New Purchase -->
+
+<!-- ? Show Purchases -->
+<nb-card [size]="'medium'" *ngIf="show_purchases" class="animate__animated animate__fadeIn animate_faster">
+  <nb-card-header style="display: flex; justify-content: space-between; align-items: center;">
+    <span style="font-weight: bold; margin: 0; padding: 0;">Purchases</span>
+    <span style="margin: 0; padding: 0.3125rem;" class="status-fullstock">Se muestran {{purchases.length}} de {{total_items}}</span>
+  </nb-card-header>
+  <nb-card-body style="padding: 0 0.9375rem;">
+    <nb-list>
+      <nb-list-item *ngFor="let purchase of purchases|filter:searchText | paginate: { itemsPerPage: itemsPerPage, currentPage: paginaActual, totalItems: total_items}" class="sale-item" (click)="viewPurchase(InfoPurchase, purchase)"  style="padding: 0.625rem;">
+        <div style="min-width: 80px; max-width: 80px;">
+          <p style="margin: 0;"> {{purchase.proveedor?.nombre_contacto}}</p>
+          <p style="margin: 0; font-weight: bold;"> {{purchase.proveedor?.nombre_empresa}}</p>
+        </div>
+        <div>
+          <p style="min-width: 30px; max-width: 30px; margin: 0;"><b>Total: </b>{{purchase.total_compra|currency}}</p>
+        </div>
+        <div>
+          <p style="min-width: 200px; max-width: 200px; margin: 0;"><b>Fecha: </b>{{ purchase.fecha| date:"dd/MM/yyyy" }}</p>
+        </div>
+        <button nbbutton appearance="outline" style="right: 0;" class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-danger nb-transition" nbTooltip="Eliminar" aria-disabled="false" (click)="deleteCompra(purchase._id);"><nb-icon icon="trash-2-outline" pack="eva" class="icon"></nb-icon></button>
+      </nb-list-item>
+    </nb-list>
+  </nb-card-body>
+  <nb-card-footer style="padding: 0.3125rem; align-items: center;">
+    <pagination-controls [responsive]="true" [autoHide]="true" (pageChange)="cambioPagina($event)" previousLabel="Anterior" nextLabel="Siguiente" ></pagination-controls>
+  </nb-card-footer>
+</nb-card>
+<!-- ? End Show Purchases -->
+
+
+<!--? Popover FilterProducts -->
+<ng-template #FilterProducts let-data let-ref="dialogRef">
+  <nb-card style="margin: 0; padding: 0;">
+    <nb-card-body style="margin: 0; padding: 0;">
+      <nb-select  [(selected)]="filter_products">
+        <nb-option value="nombre">Nombre</nb-option>
+        <nb-option value="categoria" >Categorias</nb-option>
+      </nb-select>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!--? Fin -->
+
+<!--? Popover FilterPurchase -->
+<ng-template #FilterPurchase let-data let-ref="dialogRef">
+  <nb-card style="margin: 0; padding: 0;">
+    <nb-card-body style="margin: 0; padding: 0;">
+      <nb-select  [(selected)]="filter_purchase">
+        <nb-option value="fecha">Fecha</nb-option>
+        <nb-option value="usuario" >Usuario</nb-option>
+      </nb-select>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!--? Fin -->
+
+<!--? Dialog Search Provider -->
+<ng-template #SearchProvider let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Proveedor</nb-card-header>
+    <nb-card-body>
+      <label for="in-local">Busca un proveedor</label>
+      <input #productInput
+      nbInput
+      type="text" fullWidth fieldSize="medium"
+      (input)="searchProvider()"
+      [nbAutocomplete]="purchase_provider"
+      [(ngModel)]="search_provider"
+      placeholder="Buscar un proveedor ..." class="search"/>
+          
+      <nb-autocomplete #purchase_provider (selectedChange)="addPurchaseProvider($event)">
+      
+      <nb-option *ngFor="let provider of search_providers" [value]="provider"style="display: flex; justify-content: space-between; flex-direction:column;">
+          <span>{{ provider.nombre_contacto }}</span>
+          <span style="font-size: 0.9em; color: #ccc;">{{provider.nombre_empresa}}</span>
+      </nb-option>
+      </nb-autocomplete>
+      <hr>
+      <div style="font-size: 1.5m; padding: 0.625rem; display: flex; flex-direction:column; font-weight: bold;">
+        <div *ngIf="selected_provider.nombre_contacto">
+          <b>Contacto: </b>
+          <span class="status-fullstock" style="font-size: 1.1em !important;">{{selected_provider.nombre_contacto}}</span>
+        </div>
+
+        <div *ngIf="selected_provider.nombre_empresa">
+          <b>Empresa: </b>
+          <span class="status-fullstock" style="font-size: 1.1em !important;">{{selected_provider.nombre_empresa}}</span>
+        </div>
+
+      </div>
+      <button nbButton status="success" (click)="addProvider();ref.close()">Agregar proveedor</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!-- ? Fin -->
+
+<!--? Info Purchase  -->
+<ng-template #InfoPurchase let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header style="font-size: 1.2em; font-weight: bold; color: #222;">Detalle de compra</nb-card-header>
+    <nb-card-body>
+      <div style="justify-content: space-around;">
+        <p>
+          <span style="font-size: 1.15em; font-weight: bold;">Fecha: </span> <span style="font-size: 1.1em;">{{purchase_details.fecha|date:"dd/MM/yyyy HH:mm:ss"}}</span>
+        </p>
+        <p>
+          <span style="font-size: 1.15em; font-weight: bold;">Comprado por: </span> 
+          <span style="font-size: 1.1em;">{{purchase_details.usuario_compra?.nombre}}</span>
+        </p>
+        <p *ngIf="purchase_details.proveedor">
+          <span style="font-size: 1.15em; font-weight: bold;">Proveedor: </span> 
+          <span style="font-size: 1.1em;">{{purchase_details.proveedor?.nombre_contacto}}</span>
+          <span style="font-size: 1.1em; font-weight: bold;"> | {{purchase_details.proveedor?.nombre_empresa}}</span>
+        </p>
+      </div>
+      <nb-accordion style="margin-bottom: 5px;">
+        <nb-accordion-item>
+        <nb-accordion-item-header>Productos:</nb-accordion-item-header>
+        <nb-accordion-item-body>
+          <ul *ngFor="let product of purchase_details.productos;" style="display: flex; flex-direction: row; padding: 0px; flex-wrap: wrap; background-color: cornsilk; margin: 5px 0px;">
+            <li class="product-sale-details">{{product.nombre}}</li>
+            <li class="product-sale-details">Cantidad: {{product.cantidad}} {{product.unidad_compra|lowercase}}{{product.cantidad! > 1 ? 's' : ''}}</li>
+            <li class="product-sale-details" *ngIf="product.cantidad && product.precio">Monto: {{product.cantidad * product.precio|currency}}</li>
+          </ul>
+         </nb-accordion-item-body>
+        </nb-accordion-item>
+      </nb-accordion>
+      <p style="margin-top:1em; position:relative; left: 0; font-size: 1.2em; color: #222; font-weight: bold;">Total de la compra: <b class="status-fullstock" style="padding: 0.125rem;">{{purchase_details.total_compra|currency}}</b></p>
+      <button nbButton status="info" (click)="ref.close()">De acuerdo</button>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+<!--? Fin -->

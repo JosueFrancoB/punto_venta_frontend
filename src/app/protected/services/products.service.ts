@@ -69,11 +69,10 @@ export class ProductsService {
     )
   }
 
-  searchProducts(search:string){
+  searchProducts(search:string, filter:string='nombre'){
     const headers = this.getToken()
-    return this.http.get(`${this.baseUrl}/buscar/productos/${search}`, {headers}).pipe(
+    return this.http.get(`${this.baseUrl}/buscar/productos/${search}?filter=${filter}`, {headers}).pipe(
       map( resp => {
-        console.log(resp);
         return resp
     }),
     catchError(err => {

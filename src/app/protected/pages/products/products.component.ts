@@ -185,6 +185,7 @@ export class ProductsComponent implements OnInit{
 }
 
   updateProduct(id: string, ref: any){
+    console.log('El producto en update', this.product);
     if(this.validUnit()===true && this.validWarehouse()===true && this.validProvider()===true){
       this.product = this.getQuantityByFactor(this.new_producto)
       this.product = this.setInventoryMinMax(this.product)
@@ -229,6 +230,7 @@ export class ProductsComponent implements OnInit{
                 this.toastMixin.fire({
                   title: 'Producto eliminado'
                 });
+                this.product_selected = false
               }else{
                 Swal.fire('Error', resp, 'error')
                 console.log(resp)
@@ -342,7 +344,7 @@ export class ProductsComponent implements OnInit{
     this.files.push(...event.addedFiles);
     console.log(...event.addedFiles);
   }
-   
+
   onRemoveDrag(event:any) {
     this.files.splice(this.files.indexOf(event), 1);
   }
@@ -408,7 +410,7 @@ export class ProductsComponent implements OnInit{
       },
       precio_venta: {
         title: 'Precio Venta',
-        type: 'number',
+        valuePrepareFunction: (value:any) => { return value === 'Total'? value : Intl.NumberFormat('en-US',{style:'currency', currency: 'USD'}).format(value)},
         filter: false,
       },
       estado: {

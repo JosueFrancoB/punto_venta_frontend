@@ -136,17 +136,38 @@ export interface CustomerSales{
     nombre?:string
     nombre_empresa?:string
 }
-export interface ProviderSales{
+export interface ProviderPurchases{
     id_proveedor?:string
-    nombre?:string
+    nombre_contacto?:string
     nombre_empresa?:string
 }
 
-export interface ProductsPurchasesSales{
-    id_producto?:string
+export interface ProductsSales{
+    _id?:string
     nombre?:string
     precio?:number
     cantidad?:number
+    unidad_venta?:string
+    factor?:number
+    img?:string
+    amount?:number
+    discount?:number
+    existencias?:number
+    categoria?:any
+}
+export interface ProductsPurchases{
+    _id?:string
+    nombre?:string
+    precio?:number
+    cantidad?:number
+    unidad_compra?:string
+    unidad_venta?:string
+    factor?:number
+    img?:string
+    amount?:number
+    discount?:number
+    existencias?:number
+    categoria?:any
 }
 
 export interface SalesBody{
@@ -156,7 +177,7 @@ export interface SalesBody{
     total_a_pagar?:number
     iva?:number
     descuento?:number
-    productos?:Array<ProductsPurchasesSales>
+    productos?:Array<ProductsSales>
     cliente?:CustomerSales
     usuario_venta?:UserSales
     estado?:boolean
@@ -168,8 +189,8 @@ export interface PurchasesBody{
     _id?:string
     fecha?:Date
     total_compra?:number
-    productos?:Array<ProductsPurchasesSales>
-    proveedor?:ProviderSales
+    productos:Array<ProductsPurchases>
+    proveedor?:ProviderPurchases
     usuario_compra?:UserSales
     notas?:string
     estado?:boolean

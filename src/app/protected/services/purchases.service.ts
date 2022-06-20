@@ -17,9 +17,9 @@ export class PurchasesService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getPurchases(){
+  getPurchases(limit:number,from:number){
     const headers = this.getToken()
-    return this.http.get<PurchasesData>(`${this.baseUrl}/purchases`, {headers})
+    return this.http.get<PurchasesData>(`${this.baseUrl}/purchases?limite=${limit}&desde=${from}`, {headers})
       .pipe(
         map( resp => {
             return resp

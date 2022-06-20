@@ -1,11 +1,11 @@
 <h3 class="group-title h4 ng-star-inserted">{{title}}</h3>
 <!-- ? Card Edit y Table -->
 <div style="display: flex; flex-direction: row;">
-  <nb-card *ngIf="!product_selected" class="animate__animated animate__fadeIn animate__faster" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" style="width: 100%;">
+  <nb-card *ngIf="!product_selected" style="width: 100%;">
       <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
           <nb-form-field>
               <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
-              <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." nbTooltip="Presiona enter para buscar"  (keydown.enter)="onSearch(search.value)"> 
+              <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." (input)="onSearch(search.value)"> 
           </nb-form-field>
           <button nbButton size="medium" nbTooltip="Crear nuevo producto" (click)="modalEdit = false; openDialog(Producto, false);" status="success">Agregar <nb-icon icon="plus-outline" style="font-size: 1.5rem;"></nb-icon></button>
       </nb-card-header>
@@ -24,7 +24,7 @@
         <div style="text-align: center; display: flex; justify-content: center; flex-direction: column;">
           <span class="title-product border-section">{{product.nombre}}</span>
           <div >
-            <span *ngIf="product.clave_alterna" class="clave-product" [nbPopover]="ClaveAlt" nbPopoverTrigger="hint" nbPopoverPlacement="right" style="cursor: pointer;">{{product.clave}}
+            <span *ngIf="product.clave_alterna" class="clave-product" [nbPopover]="ClaveAlt" nbPopoverTrigger="hover" nbPopoverPlacement="right" style="cursor: pointer;">{{product.clave}}
             </span>
             <span *ngIf="!product.clave_alterna" class="clave-product">
               {{product.clave}}
@@ -229,22 +229,22 @@
     <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-6" style="margin-top: 5px">
               <span style="font-size:14px;">Clave:</span>
-              <input placeholder="Clave principal" type="text" id="input-clave" class="form-control input-sm" style="background: #fff;" name="clave" ngDefaultControl [(ngModel)]="new_producto.clave">
+              <input placeholder="Clave principal" type="text" id="input-clave" class="form-control input-sm" style="background: #fff;" name="clave" ngDefaultControl [(ngModel)]="new_producto.clave" [maxlength]="20">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
         <span style="font-size:14px;">Clave Alterna:</span>
-              <input placeholder="Clave Alterna" type="text" id="input-clave-alt" class="form-control input-sm" style="background: #fff;" name="clave_alterna" ngDefaultControl [(ngModel)]="new_producto.clave_alterna">
+              <input placeholder="Clave Alterna" type="text" id="input-clave-alt" class="form-control input-sm" style="background: #fff;" name="clave_alterna" ngDefaultControl [(ngModel)]="new_producto.clave_alterna" [maxlength]="20">
       </div>
     </div>
     <hr>
     <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-6" style="margin-top: 5px;">
           <span class="input-group-addon" style="font-size:14px;">Nombre del Producto:</span>
-          <input placeholder="Nombre" type="text" id="input-nom" class="form-control input-sm" name="nombre" ngDefaultControl [(ngModel)]="new_producto.nombre" style="background: #fff;">
+          <input placeholder="Nombre" type="text" id="input-nom" class="form-control input-sm" name="nombre" ngDefaultControl [(ngModel)]="new_producto.nombre" style="background: #fff;" [maxlength]="20">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
           <span class="input-group-addon" style="font-size:14px;">Categoría:</span>
-          <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{current_category}}" disabled style="background: #fff;">
+          <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{current_category}}" readonly style="background: #fff;">
       </div>
     </div>
     <hr>
