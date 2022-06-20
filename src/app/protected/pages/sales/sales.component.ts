@@ -25,6 +25,7 @@ export class SalesComponent implements OnInit {
   pay:number = 0
   taxes:number = 0
   discount:number = 0
+  viewLoading:boolean = false
   sale_discount:number = 0
   search_product: string = ''
   total_taxes:number = 0
@@ -189,13 +190,13 @@ export class SalesComponent implements OnInit {
 
   getVentas(from:number,search:string='', searchField:string=''){
     let limite = this.limit
+    this.viewLoading = true
     this.salesService.getSales(limite,from, search, searchField).subscribe(resp => {
       if (resp.ok === true){
         console.log(`getVentas - Response: ${resp}`);
         this.sales = resp.ventas
         this.total_items = resp.total
-        console.log('ventas:', this.sales);
-        console.log('total:', this.total_items);
+        this.viewLoading = false
       }else{
       console.log('error', resp)
       Swal.fire('Error', resp, 'error')

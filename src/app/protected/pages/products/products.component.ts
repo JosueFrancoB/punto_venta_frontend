@@ -269,9 +269,7 @@ export class ProductsComponent implements OnInit{
   onProductRowSelect(event:any): void {
     this.product_selected = true
     this.product = event.data
-    if(this.product.img){
-      this.productSrc = this.uploadsUrl + '/' + this.product._id
-    }
+    this.productSrc = this.uploadsUrl + '/' + this.product._id
     this.getProdByUnitId()
     this.getProviderById()
     this.getWarehouseById()

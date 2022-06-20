@@ -23,6 +23,7 @@ export class PurchasesComponent implements OnInit {
   paginaActual!:number;
   total_items:number = 0;
   search_product: string = ''
+  viewLoading:boolean = false
   total_taxes:number = 0
   total_discount:number = 0
   toastMixin: any
@@ -175,12 +176,14 @@ export class PurchasesComponent implements OnInit {
   }
 
   getCompras(from:number){
+    this.viewLoading = true
     let limite = this.limit
     this.purchaseService.getPurchases(limite,from).subscribe(resp => {
       if (resp.ok === true){
         console.log(`getCompras - Response: ${resp}`);
         this.purchases = resp.compras
         this.total_items = resp.total
+        this.viewLoading = false
       }else{
       console.log('error', resp)
       Swal.fire('Error', resp, 'error')
