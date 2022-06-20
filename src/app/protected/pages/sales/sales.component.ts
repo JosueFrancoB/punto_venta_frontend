@@ -21,7 +21,7 @@ export class SalesComponent implements OnInit {
   limit:number= 5;
   itemsPerPage: number = 5;
   paginaActual!:number;
-  total_pages:number = 0;
+  total_items:number = 0;
   pay:number = 0
   taxes:number = 0
   discount:number = 0
@@ -40,7 +40,7 @@ export class SalesComponent implements OnInit {
   search_products!:ProductsSales[];
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
   filter_products: string = 'nombre'
-  filter_sale: string = 'fecha'
+  filter_sale: string = 'all'
   show_sales = false
   search_customers:CustomerSales[] = []
   search_customer:string = ''
@@ -84,8 +84,12 @@ export class SalesComponent implements OnInit {
 
   cambioPagina(event:any){
     this.paginaActual = event
-    let from = (this.paginaActual - 1) * itemsPerPage
+    let from = (this.paginaActual - 1) * this.itemsPerPage
     this.getVentas(from)
+  }
+
+  searchVenta(){
+    this.getVentas(0,this.searchText,this.filter_sale)
   }
 
   searchProduct(){
@@ -183,15 +187,15 @@ export class SalesComponent implements OnInit {
     this.selected_customer = {}
   }
 
-  getVentas(from:number){
-    let limite = this.limite
-    this.salesService.getSales(limite,from).subscribe(resp => {
+  getVentas(from:number,search:string='', searchField:string=''){
+    let limite = this.limit
+    this.salesService.getSales(limite,from, search, searchField).subscribe(resp => {
       if (resp.ok === true){
         console.log(`getVentas - Response: ${resp}`);
         this.sales = resp.ventas
-        this.total_pages = resp.total
+        this.total_items = resp.total
         console.log('ventas:', this.sales);
-        console.log('total:', this.total_pages);
+        console.log('total:', this.total_items);
       }else{
       console.log('error', resp)
       Swal.fire('Error', resp, 'error')

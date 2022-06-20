@@ -45,7 +45,7 @@
       nbInput
       type="text" fullWidth fieldSize="medium"
       [(ngModel)]="searchText"
-      (input)="page = 1"
+      (input)="paginaActual = 1"
       placeholder="Buscar una compra ..." class="search"/>
     </nb-form-field>
   </div>
@@ -105,12 +105,12 @@
 <!-- ? Show Purchases -->
 <nb-card [size]="'medium'" *ngIf="show_purchases" class="animate__animated animate__fadeIn animate_faster">
   <nb-card-header style="display: flex; justify-content: space-between; align-items: center;">
-    <span style="font-weight: bold; margin: 0; padding: 0;">Compras</span>
-    <span style="margin: 0; padding: 0;" class="status-fullstock">Se muestran {{purchases.length < total_pages ? purchases.length : total_pages}} de {{purchases.length}}</span>
+    <span style="font-weight: bold; margin: 0; padding: 0;">Purchases</span>
+    <span style="margin: 0; padding: 0.3125rem;" class="status-fullstock">Se muestran {{purchases.length}} de {{total_items}}</span>
   </nb-card-header>
   <nb-card-body style="padding: 0 0.9375rem;">
     <nb-list>
-      <nb-list-item *ngFor="let purchase of purchases|filter:searchText | paginate: { itemsPerPage: 7, currentPage: page}" class="sale-item" (click)="viewPurchase(InfoPurchase, purchase)"  style="padding: 0.625rem;">
+      <nb-list-item *ngFor="let purchase of purchases|filter:searchText | paginate: { itemsPerPage: itemsPerPage, currentPage: paginaActual, totalItems: total_items}" class="sale-item" (click)="viewPurchase(InfoPurchase, purchase)"  style="padding: 0.625rem;">
         <div style="min-width: 80px; max-width: 80px;">
           <p style="margin: 0;"> {{purchase.proveedor?.nombre_contacto}}</p>
           <p style="margin: 0; font-weight: bold;"> {{purchase.proveedor?.nombre_empresa}}</p>
@@ -126,9 +126,7 @@
     </nb-list>
   </nb-card-body>
   <nb-card-footer style="padding: 0.3125rem; align-items: center;">
-    <div [hidden]="purchases.length <= 7" style="display: flex; justify-content: flex-end;">
-      <pagination-controls (pageChange)="page = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
-    </div>
+    <pagination-controls [responsive]="true" [autoHide]="true" (pageChange)="cambioPagina($event)" previousLabel="Anterior" nextLabel="Siguiente" ></pagination-controls>
   </nb-card-footer>
 </nb-card>
 <!-- ? End Show Purchases -->

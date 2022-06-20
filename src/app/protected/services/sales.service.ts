@@ -17,9 +17,14 @@ export class SalesService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getSales(limit:number,from:number){
+  getSales(limit:number,from:number, search:string, search_field:string){
     const headers = this.getToken()
-    return this.http.get<SalesData>(`${this.baseUrl}/sales?limite=${limit}&desde=${from}`, {headers})
+    let url = `${this.baseUrl}/sales?limite=${limit}&desde=${from}`
+    if(search)
+      url += `&search=${search}`
+    if(search_field)
+      url += `&search_fields=${JSON.stringify([search_field])}`
+    return this.http.get<SalesData>(url, {headers})
       .pipe(
         map( resp => {
             return resp

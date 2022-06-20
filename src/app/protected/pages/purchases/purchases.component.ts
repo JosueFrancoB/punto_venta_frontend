@@ -18,8 +18,10 @@ import { UsersService } from '../../services/users.service';
 export class PurchasesComponent implements OnInit {
 
   date: any
-  page!:number;
-  total_pages:number = 7;
+  limit:number= 5;
+  itemsPerPage: number = 5;
+  paginaActual!:number;
+  total_items:number = 0;
   search_product: string = ''
   total_taxes:number = 0
   total_discount:number = 0
@@ -69,11 +71,17 @@ export class PurchasesComponent implements OnInit {
   toggleShow(){
     this.show_purchases = !this.show_purchases
     if(this.show_purchases)
-      this.getCompras()
+      this.getCompras(0)
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
     this.dialogService.open(dialog, { closeOnBackdropClick });
+  }
+
+  cambioPagina(event:any){
+    this.paginaActual = event
+    let from = (this.paginaActual - 1) * this.itemsPerPage
+    this.getCompras(from)
   }
 
   searchProduct(){
@@ -114,8 +122,6 @@ export class PurchasesComponent implements OnInit {
   addProvider(){
     this.new_purchase.proveedor = this.selected_provider
   }
-
-
 
   changeDate($event:any){
     this.date = $event
@@ -168,11 +174,13 @@ export class PurchasesComponent implements OnInit {
     this.selected_provider = {}
   }
 
-  getCompras(){
-    this.purchaseService.getPurchases().subscribe(resp => {
+  getCompras(from:number){
+    let limite = this.limit
+    this.purchaseService.getPurchases(limite,from).subscribe(resp => {
       if (resp.ok === true){
         console.log(`getCompras - Response: ${resp}`);
         this.purchases = resp.compras
+        this.total_items = resp.total
       }else{
       console.log('error', resp)
       Swal.fire('Error', resp, 'error')
@@ -252,7 +260,7 @@ export class PurchasesComponent implements OnInit {
           this.toastMixin.fire({
             title: 'Compra eliminada'
           });
-          this.getCompras()
+          this.getCompras(0)
         }else{
           Swal.fire('Error', resp, 'error')
         }
