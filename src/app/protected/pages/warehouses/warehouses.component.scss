@@ -161,3 +161,7 @@
     -ms-border-radius: .25rem;
     -o-border-radius: .25rem;
   }
+
+  :host ::ng-deep a{
+    text-decoration: none;
+  }

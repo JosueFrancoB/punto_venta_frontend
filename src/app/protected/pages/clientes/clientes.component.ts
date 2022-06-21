@@ -33,6 +33,8 @@ export class ClientesComponent implements OnInit {
   active_cliente:ClientesBody = {}
   changesEdit = true
 
+  itemsPerPage:number = 10
+  paginaActual!:number;
   correos:Array<string> = []
   telefonos:Array<string> = []
   direcciones:Array<string> = []
@@ -97,7 +99,8 @@ export class ClientesComponent implements OnInit {
           title: 'Cliente agregado'
         });
       }else{
-        Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -136,7 +139,8 @@ export class ClientesComponent implements OnInit {
           title: 'Cliente actualizado'
         });
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -150,8 +154,8 @@ export class ClientesComponent implements OnInit {
         // this.providerID = resp.proveedor._id
         this.clientSrc = this.uploadsUrl + '/' + resp.cliente._id
       }else{
-      console.log('error', resp)
-      Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -175,7 +179,8 @@ export class ClientesComponent implements OnInit {
             title: 'Cliente eliminado'
           });
         }else{
-          Swal.fire('Error', resp, 'error')
+          let msg = resp.msg || resp
+          Swal.fire('Error', msg, 'error')
         }
       })
     }

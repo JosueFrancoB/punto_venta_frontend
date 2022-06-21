@@ -61,6 +61,8 @@ export class ProveedoresComponent implements OnInit {
   active_proveedor:ProveedoresBody = {}
   changesEdit = true
 
+  itemsPerPage:number = 10
+  paginaActual!:number;
   correos:Array<string> = []
   telefonos:Array<string> = []
   direcciones:Array<string> = []
@@ -140,7 +142,8 @@ export class ProveedoresComponent implements OnInit {
           title: 'Proveedor agregado'
         });
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -166,7 +169,8 @@ export class ProveedoresComponent implements OnInit {
           title: 'Proveedor actualizado'
         });
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -180,8 +184,8 @@ export class ProveedoresComponent implements OnInit {
         // this.providerID = resp.proveedor._id
         this.providerSrc = this.uploadsUrl + '/' + resp.proveedor._id
       }else{
-      console.log('error', resp)
-      Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -205,7 +209,8 @@ export class ProveedoresComponent implements OnInit {
             title: 'Proveedor eliminado'
           });
         }else{
-          Swal.fire('Error', resp.msg, 'error')
+          let msg = resp.msg || resp
+          Swal.fire('Error', msg, 'error')
         }
       })
     }
@@ -404,3 +409,4 @@ export class ProveedoresComponent implements OnInit {
     }
 
 }
+

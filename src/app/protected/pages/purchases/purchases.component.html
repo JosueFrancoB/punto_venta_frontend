@@ -39,15 +39,18 @@
       <nb-action icon="funnel" nbTooltip="Filtrar" [nbPopover]="FilterPurchase" nbPopoverTrigger="click" nbPopoverPlacement="bottom"></nb-action>
       <select name="" id=""></select>
     </nb-actions>
-    <nb-form-field style="width: 50%;">
-      <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
-      <input #autoInput
-      nbInput
-      type="text" fullWidth fieldSize="medium"
-      [(ngModel)]="searchText"
-      (input)="paginaActual = 1"
-      placeholder="Buscar una compra ..." class="search"/>
-    </nb-form-field>
+    <div style="display: flex; flex-direction:row; width: 50%;">
+      <button nbButton size="small" nbTooltip="Recargar" (click)="getCompras((this.paginaActual - 1) * this.itemsPerPage);" status="info"><nb-icon icon="refresh" style="font-size: 1.5rem;"></nb-icon></button>
+      <nb-form-field style="width: 100%;">
+        <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+        <input #autoInput
+        nbInput
+        type="text" fullWidth fieldSize="medium"
+        [(ngModel)]="searchText"
+        (input)="paginaActual = 1; searchCompra();"
+        placeholder="Buscar una compra ..." class="search"/>
+      </nb-form-field>
+    </div>
   </div>
   <div>
     <button nbButton status="success" size="small" (click)="toggleShow()">Nueva Compra +</button>
@@ -105,7 +108,7 @@
 <!-- ? Show Purchases -->
 <nb-card [size]="'medium'" *ngIf="show_purchases" class="animate__animated animate__fadeIn animate_faster">
   <nb-card-header style="display: flex; justify-content: space-between; align-items: center;">
-    <span style="font-weight: bold; margin: 0; padding: 0;">Purchases</span>
+    <span style="font-weight: bold; margin: 0; padding: 0;">Compras</span>
     <span style="margin: 0; padding: 0.3125rem;" class="status-fullstock">Se muestran {{purchases.length}} de {{total_items}}</span>
   </nb-card-header>
   <nb-card-body style="padding: 0 0.9375rem;">
@@ -151,8 +154,9 @@
   <nb-card style="margin: 0; padding: 0;">
     <nb-card-body style="margin: 0; padding: 0;">
       <nb-select  [(selected)]="filter_purchase">
-        <nb-option value="fecha">Fecha</nb-option>
-        <nb-option value="usuario" >Usuario</nb-option>
+        <nb-option value="all">Todos</nb-option>
+        <nb-option value="usuario_compra.nombre">Usuario</nb-option>
+        <nb-option value="proveedor">Proveedor</nb-option>
       </nb-select>
     </nb-card-body>
   </nb-card>

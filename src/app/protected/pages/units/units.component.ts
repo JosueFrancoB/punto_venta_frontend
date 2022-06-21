@@ -26,6 +26,8 @@ export class UnitsComponent implements OnInit {
   searchText = ''
   new_unit:UnitsBody = {}
   changesEdit = true
+  itemsPerPage:number = 10
+  paginaActual!:number;
 
   viewLoading = false
   modalLoading = false;
@@ -86,7 +88,8 @@ export class UnitsComponent implements OnInit {
         });
         this.resetUnit()
       }else{
-        Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -114,7 +117,8 @@ export class UnitsComponent implements OnInit {
         });
         this.resetUnit()
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }

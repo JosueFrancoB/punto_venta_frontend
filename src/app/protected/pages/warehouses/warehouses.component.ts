@@ -25,6 +25,8 @@ export class WarehousesComponent implements OnInit {
   searchText = ''
   new_warehouse:WarehouseBody = {}
   changesEdit = true
+  itemsPerPage:number = 10
+  paginaActual!:number;
 
   viewLoading = false
   modalLoading = false;
@@ -85,7 +87,8 @@ export class WarehousesComponent implements OnInit {
         });
         this.resetWarehouse()
       }else{
-        Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -113,7 +116,8 @@ export class WarehousesComponent implements OnInit {
         });
         this.resetWarehouse()
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -124,8 +128,8 @@ export class WarehousesComponent implements OnInit {
       if (resp.ok === true){
         this.new_warehouse = resp.almacen
       }else{
-      console.log('error', resp)
-      Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -149,7 +153,8 @@ export class WarehousesComponent implements OnInit {
             title: 'Almacen eliminado'
           });
         }else{
-          Swal.fire('Error', resp, 'error')
+          let msg = resp.msg || resp
+          Swal.fire('Error', msg, 'error')
         }
       })
     }

@@ -76,7 +76,7 @@ export class SalesComponent implements OnInit {
   toggleShow(){
     this.show_sales = !this.show_sales
     if(this.show_sales)
-      this.getVentas(0)
+      this.getVentas()
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
@@ -131,7 +131,6 @@ export class SalesComponent implements OnInit {
   addCustomer(){
     if (Object.keys(this.selected_customer).length === 0) return
     this.new_sale.cliente = this.selected_customer
-    console.log('cliete',this.new_sale.cliente);
   }
 
 
@@ -188,7 +187,7 @@ export class SalesComponent implements OnInit {
     this.selected_customer = {}
   }
 
-  getVentas(from:number,search:string='', searchField:string=''){
+  getVentas(from:number=0,search:string='', searchField:string=''){
     let limite = this.limit
     this.viewLoading = true
     this.salesService.getSales(limite,from, search, searchField).subscribe(resp => {
@@ -344,7 +343,7 @@ export class SalesComponent implements OnInit {
           this.toastMixin.fire({
             title: 'Venta eliminada'
           });
-          this.getVentas(0)
+          this.getVentas()
         }else{
           Swal.fire('Error', resp, 'error')
         }

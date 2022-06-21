@@ -17,9 +17,14 @@ export class PurchasesService {
       .set('x-token', localStorage.getItem('x-token') || '')
   }
 
-  getPurchases(limit:number,from:number){
+  getPurchases(limit:number,from:number, search:string, search_field:string){
     const headers = this.getToken()
-    return this.http.get<PurchasesData>(`${this.baseUrl}/purchases?limite=${limit}&desde=${from}`, {headers})
+    let url = `${this.baseUrl}/purchases?limite=${limit}&desde=${from}`
+    if(search)
+      url += `&search=${search}`
+    if(search_field)
+      url += `&search_fields=${JSON.stringify([search_field])}`
+    return this.http.get<PurchasesData>(url, {headers})
       .pipe(
         map( resp => {
             return resp

@@ -1,11 +1,11 @@
 @import url('https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css');
 
-.group-title {
+.group-title{
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
   box-sizing: inherit;
   font-size: 1.625rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   font-weight: 700;
   line-height: 0.2rem;
   flex: 1 1 100%;
@@ -44,133 +44,9 @@
   padding-right: 1rem;
 }
 
-
-//     .component-icon{
-//         text-align: left;
-//         font-style: inherit;
-//         color: #222b45;
-//         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-//         font-size: .9375rem;
-//         font-weight: 400;
-//         line-height: 1.25rem;
-//         vertical-align: middle;
-//         box-sizing: inherit;
-//         border-style: none;
-//         max-width: 100%;
-//         margin-bottom: 1rem;
-//         height: 4rem;
-//         width: 64px;
-//     }
-
-//     .component-name{
-//         -webkit-tap-highlight-color: transparent;
-//         -webkit-text-size-adjust: 100%;
-//         --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-//         --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-//         -webkit-font-smoothing: antialiased;
-//         text-align: left;
-//         font-style: inherit;
-//         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-//         font-size: .9375rem;
-//         line-height: 1.25rem;
-//         display: inline-block;
-//         box-sizing: inherit;
-//         margin-bottom: 0!important;
-//         color: #8994a3;
-//         font-weight: 500;
-//     }
-
-//     .card-body-product{
-//         -webkit-tap-highlight-color: transparent;
-//         -webkit-text-size-adjust: 100%;
-//         text-align: left;
-//         font-style: inherit;
-//         color: #222b45;
-//         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-//         font-size: .9375rem;
-//         font-weight: 400;
-//         line-height: 1.25rem;
-//         box-sizing: inherit;
-//         flex: 1;
-//         overflow: auto;
-//         position: relative;
-//         height: 200px;
-//         padding: 2rem;
-//         display: flex;
-//         flex-direction: column;
-//         align-items: center;
-//         justify-content: center;
-//     }
-
-//     .component-navigate-link{
-//         -webkit-tap-highlight-color: transparent;
-//         -webkit-text-size-adjust: 100%;
-//         --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-//         --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-//         -webkit-font-smoothing: antialiased;
-//         text-align: left;
-//         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-//         box-sizing: inherit;
-//         color: #36f;
-//         font-size: inherit;
-//         font-style: inherit;
-//         font-weight: inherit;
-//         line-height: inherit;
-//         background-color: transparent;
-//         text-decoration: none;
-//     }
-
-//     .card-product:hover{
-//         text-align: left;
-//         font-style: inherit;
-//         box-sizing: inherit;
-//         display: flex;
-//         flex-direction: column;
-//         background-color: #fff;
-//         border: .0625rem solid #e4e9f2;
-//         border-radius: .25rem;
-//         color: #222b45;
-//         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-//         font-size: .9375rem;
-//         font-weight: 400;
-//         line-height: 1.25rem;
-//         margin-bottom: 1.875rem;
-//         transition: transform .25s ease;
-//         box-shadow: 0 15px 37px #dbe2eb;
-//         transform: translateY(-1rem);
-//     }
-
-//     .card-product{
-//         text-align: left;
-//         font-style: inherit;
-//         display: flex;
-//         flex-direction: column;
-//         box-sizing: inherit;
-//         background-color: #fff;
-//         border: .0625rem solid #e4e9f2;
-//         border-radius: .25rem;
-//         color: #222b45;
-//         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-//         font-size: .9375rem;
-//         font-weight: 400;
-//         line-height: 1.25rem;
-//         margin-bottom: 1.875rem;
-//         box-shadow: 0 4px 27px #e6eaf033;
-//         transition: transform .25s ease;
-//         -webkit-border-radius: .25rem;
-//         -moz-border-radius: .25rem;
-//         -ms-border-radius: .25rem;
-//         -o-border-radius: .25rem;
-//     }
-
-//     .upload {
-//         width: 300px;
-//         margin: 30px auto;
-//       }
-//       :host nb-layout-header ::ng-deep nav {
-//         justify-content: space-between;
-//       }
-
+:host ::ng-deep a{
+  text-decoration: none;
+}
 
 #tsum-tabs h1 {
   padding: 50px 0;

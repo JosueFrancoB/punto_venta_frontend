@@ -4,11 +4,14 @@
     <nb-action icon="plus-outline" nbTooltip="Agregar Cliente"
       (click)="openDialog(client, false); modalEdit = false; clientValue = '';"></nb-action>
   </nb-actions>
-  <nb-form-field style="width: 50%;">
-    <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
-    <input #autoInput nbInput type="text" fullWidth fieldSize="medium" [(ngModel)]="searchText" placeholder="Buscar ..."
-      class="search" />
-  </nb-form-field>
+  <div style="display: flex; flex-direction:row; width: 70%;">
+    <button nbButton size="small" nbTooltip="Recargar" (click)="getClients();" status="info"><nb-icon icon="refresh" style="font-size: 1.5rem;"></nb-icon></button>
+    <nb-form-field style="width: 100%;">
+      <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+      <input #autoInput nbInput type="text" fullWidth fieldSize="medium" [(ngModel)]="searchText" placeholder="Buscar ..."
+        class="search" />
+    </nb-form-field>
+  </div>
 </nb-layout-header>
 <hr>
 
@@ -17,7 +20,7 @@
   <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
   <div class="components-list">
     <div class="component-card-wrapper ng-star-inserted"
-      *ngFor="let cliente of clientes |filter:searchText; let i= index">
+      *ngFor="let cliente of clientes | filter:searchText  | paginate: { itemsPerPage: itemsPerPage, currentPage: paginaActual} let i = index">
       <nb-reveal-card [showToggleButton]="false" [ngClass]="isRevealed && i == selectedItem  ? 'revealed' : ''">
         <nb-card-front>
           <nb-card title="{{cliente.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
@@ -102,9 +105,9 @@
       </nb-reveal-card>
     </div>
   </div>
-  <div [hidden]="clientes.length <= 10" style="display: flex; justify-content: flex-end;">
-    <jw-pagination [items]="clientes" (changePage)="onChangePage($event)"></jw-pagination>
-  </div>
+</div>
+<div style="padding: 0.3125rem; display: flex; justify-content: end;">
+  <pagination-controls [responsive]="true" [autoHide]="true" (pageChange)="paginaActual = $event" previousLabel="Anterior" nextLabel="Siguiente" ></pagination-controls>
 </div>
 
 <!--? Modal  -->

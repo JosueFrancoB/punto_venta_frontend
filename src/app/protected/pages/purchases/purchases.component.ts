@@ -37,7 +37,7 @@ export class PurchasesComponent implements OnInit {
   search_products!:ProductsPurchases[];
   uploadsUrl:string = environment.baseUrl + '/uploads/productos'
   filter_products: string = 'nombre'
-  filter_purchase: string = 'fecha'
+  filter_purchase: string = 'all'
   show_purchases = false
   search_providers:ProviderPurchases[] = []
   search_provider:string = ''
@@ -72,7 +72,7 @@ export class PurchasesComponent implements OnInit {
   toggleShow(){
     this.show_purchases = !this.show_purchases
     if(this.show_purchases)
-      this.getCompras(0)
+      this.getCompras()
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
@@ -83,6 +83,10 @@ export class PurchasesComponent implements OnInit {
     this.paginaActual = event
     let from = (this.paginaActual - 1) * this.itemsPerPage
     this.getCompras(from)
+  }
+
+  searchCompra(){
+    this.getCompras(0,this.searchText,this.filter_purchase)
   }
 
   searchProduct(){
@@ -121,6 +125,7 @@ export class PurchasesComponent implements OnInit {
     }
 
   addProvider(){
+    if (Object.keys(this.selected_provider).length === 0) return
     this.new_purchase.proveedor = this.selected_provider
   }
 
@@ -175,10 +180,10 @@ export class PurchasesComponent implements OnInit {
     this.selected_provider = {}
   }
 
-  getCompras(from:number){
+  getCompras(from:number=0,search:string='', searchField:string=''){
     this.viewLoading = true
     let limite = this.limit
-    this.purchaseService.getPurchases(limite,from).subscribe(resp => {
+    this.purchaseService.getPurchases(limite, from, search, searchField).subscribe(resp => {
       if (resp.ok === true){
         console.log(`getCompras - Response: ${resp}`);
         this.purchases = resp.compras
@@ -263,7 +268,7 @@ export class PurchasesComponent implements OnInit {
           this.toastMixin.fire({
             title: 'Compra eliminada'
           });
-          this.getCompras(0)
+          this.getCompras()
         }else{
           Swal.fire('Error', resp, 'error')
         }

@@ -363,3 +363,7 @@
 ::ng-deep .swiper-button-lock {
   display: none;
 }
+
+:host ::ng-deep a{
+  text-decoration: none;
+}

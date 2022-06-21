@@ -40,15 +40,18 @@
       <nb-action icon="funnel" nbTooltip="Filtrar" [nbPopover]="FilterVenta" nbPopoverTrigger="click" nbPopoverPlacement="bottom"></nb-action>
       <select name="" id=""></select>
     </nb-actions>
-    <nb-form-field style="width: 50%;">
-      <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
-      <input #autoInput
-      nbInput
-      type="text" fullWidth fieldSize="medium"
-      [(ngModel)]="searchText"
-      (input)="paginaActual = 1; searchVenta();"
-      placeholder="Buscar una venta ..." class="search"/>
-    </nb-form-field>
+    <div style="display: flex; flex-direction:row; width: 50%;">
+      <button nbButton size="small" nbTooltip="Recargar" (click)="getVentas((this.paginaActual - 1) * this.itemsPerPage);" status="info"><nb-icon icon="refresh" style="font-size: 1.5rem;"></nb-icon></button>
+      <nb-form-field style="width: 100%;">
+        <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+        <input #autoInput
+        nbInput
+        type="text" fullWidth fieldSize="medium"
+        [(ngModel)]="searchText"
+        (input)="paginaActual = 1; searchVenta();"
+        placeholder="Buscar una venta ..." class="search"/>
+      </nb-form-field>
+    </div>
   </div>
   <div>
     <button nbButton status="success" size="small" (click)="toggleShow()">Nueva venta +</button>
