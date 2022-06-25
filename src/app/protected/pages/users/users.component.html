@@ -15,7 +15,7 @@
                     <div class="row" style="display: flex; justify-content: center;">
                         <div class="col-lg-10">
                             <div class="form-control-group" fullWidth size="medium">
-                                <label class="label" for="input-username">Nombre de usuario:</label>
+                                <label class="label" for="input-username">Nombre de usuario <em class="required-file">*</em></label>
                                 <input nbInput fullWidth formControlName="nombre"  name="username" id="input-username" [ngClass]="addUserFormControls.nombre.invalid ? 'status-danger' : 'status-success'" placeholder="Ingrese su nombre" [(ngModel)]="user.nombre" (input)="nameChange($event)">
                                 <ng-container *ngIf="addUserForm.controls['nombre'].invalid">
                                 <p class="caption status-danger" *ngIf="campoNoValido('nombre')">
@@ -30,7 +30,7 @@
                     <div class="row" style="display: flex; justify-content: center;">
                         <div class="col-lg-10">
                             <div class="form-control-group" size="medium">
-                                <label class="label" for="input-email">Correo:</label>
+                                <label class="label" for="input-email">Correo <em class="required-file">*</em></label>
                                 <input nbInput fullWidth [ngClass]="addUserFormControls.correo.invalid ? 'status-danger' : 'status-success'" formControlName="correo" (input)="emailChange($event)"  name="email" id="input-email" placeholder="Ingrese su correo" [(ngModel)]="user.correo">
                                 <ng-container *ngIf="addUserForm.controls['correo'].invalid">
                                 <p class="caption status-danger" *ngIf="campoNoValido('correo')">
@@ -44,7 +44,7 @@
                     <div class="row" style="display: flex; justify-content: center;" *ngIf="!modalEdit">
                         <div class="col-lg-10">
                             <div class="form-control-group" size="medium">
-                                <label class="label" for="input-password">Contraseña:</label>
+                                <label class="label" for="input-password">Contraseña <em class="required-file">*</em></label>
                                 <input nbInput fullWidth formControlName="password"  name="password" type="password" [ngClass]="addUserFormControls.password.invalid ? 'status-danger' : 'status-success'" id="input-password" placeholder="Ingrese su contraseña" [(ngModel)]="user.password">
                                 <ng-container *ngIf="addUserForm.controls['password'].invalid">
                                 <p class="caption status-danger" *ngIf="campoNoValido('password')">

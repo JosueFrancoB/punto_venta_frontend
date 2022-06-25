@@ -101,34 +101,34 @@
       <div>
       <div class="row">
         <div class="col-sm-6" style="margin-top: 5px">
-                <span style="font-size:14px;">Nombre de Contacto</span>
+                <span class="label-input">Nombre de Contacto <em class="required-file">*</em></span>
                 <input placeholder="Contacto" type="text" id="input-contacto" class="form-control input-sm" style="background: #fff;" name="contacto" [(ngModel)]="new_proveedor.nombre_contacto">
         </div>
         <div class="col-sm-6" style="margin-top: 5px">
-          <span style="font-size:14px;">Nombre de Empresa:</span>
+          <span class="label-input">Nombre de Empresa <em class="required-file">*</em></span>
                 <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm" style="background: #fff;" name="empresa" [(ngModel)]="new_proveedor.nombre_empresa">
         </div>
       </div>
       
       <div class="row">
         <div class="col-sm-6" style="margin-top: 5px;">
-            <span class="input-group-addon" style="font-size:14px;">Correo:</span>
+            <span class="input-group-addon label-input">Correo</span>
             <input placeholder="Correo" type="text" id="input-correo" class="form-control input-sm" name="correo" ngDefaultControl [(ngModel)]="new_proveedor.correo" style="background: #fff;">
         </div>
         <div class="col-sm-6" style="margin-top: 5px">
-            <span class="input-group-addon" style="font-size:14px;">Dirección:</span>
+            <span class="input-group-addon label-input">Dirección</span>
             <input type="text" id="input-direccion" placeholder="Dirección" class="form-control input-sm" name="direccion" ngDefaultControl [(ngModel)]="new_proveedor.direccion" style="background: #fff;">
         </div>
       </div>
   
       <div class="row">
         <div class="col-sm-6" style="margin-top: 5px;">
-            <span class="input-group-addon" style="font-size:14px;">Número de Teléfono:</span>
-            <input placeholder="Teléfono" type="text" id="input-telefono" class="form-control input-sm" name="telefono" ngDefaultControl [(ngModel)]="new_proveedor.telefono" style="background: #fff;">
+            <span class="input-group-addon label-input">Número de Teléfono</span>
+            <input placeholder="Teléfono" type="text" id="input-telefono" class="form-control input-sm" name="telefono" ngDefaultControl [(ngModel)]="new_proveedor.telefono" style="background: #fff;" (keypress)="numberOnly($event)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="12">
         </div>
         <div class="col-sm-6" style="margin-top: 5px">
-            <span class="input-group-addon" style="font-size:14px;">RFC:</span>
-            <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="new_proveedor.rfc" style="background: #fff;">
+            <span class="input-group-addon label-input">RFC  <small class="muted">13 dígitos</small></span>
+            <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="new_proveedor.rfc" style="background: #fff;" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="13">
         </div>
       </div>
       </div>
@@ -154,17 +154,17 @@
           <section id="content1">
             <div class="row">
               <div class="col-sm-6" style="margin-top: 5px">
-                      <span style="font-size:14px;">Nombre de Contacto</span>
+                      <span class="label-input">Nombre de Contacto <em class="required-file">*</em></span>
                       <input placeholder="Contacto" type="text" id="input-contacto" class="form-control input-sm" style="background: #fff;" name="contacto" [(ngModel)]="active_proveedor.nombre_contacto">
               </div>
               <div class="col-sm-6" style="margin-top: 5px">
-                <span style="font-size:14px;">Nombre de Empresa:</span>
+                <span class="label-input">Nombre de Empresa <em class="required-file">*</em></span>
                       <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm" style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="active_proveedor.nombre_empresa">
               </div>
             </div>
             <div class="row">
               <div class="col-sm-6" style="margin-top: 5px">
-                <span class="input-group-addon" style="font-size:14px;">RFC:</span>
+                <span class="input-group-addon label-input">RFC</span>
                 <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="active_proveedor.rfc" style="background: #fff;">
               </div>
             </div>

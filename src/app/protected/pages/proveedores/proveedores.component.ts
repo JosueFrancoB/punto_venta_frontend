@@ -131,7 +131,6 @@ export class ProveedoresComponent implements OnInit {
 
   addProvider(ref: any){
     console.log(this.new_proveedor);
-    this.new_proveedor
     this.proveedoresService.addProveedor(this.new_proveedor)
     .subscribe(resp =>{
       if(resp.ok === true){
@@ -406,6 +405,16 @@ export class ProveedoresComponent implements OnInit {
       }else{
           return true
       }
+    }
+
+    numberOnly(event:any) {
+      const pattern = /[0-9\+\-\ ]/;
+  
+      let inputChar = String.fromCharCode(event.charCode);
+      if (event.keyCode != 8 && !pattern.test(inputChar)) {
+        event.preventDefault();
+      }
+  
     }
 
 }

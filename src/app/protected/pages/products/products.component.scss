@@ -412,3 +412,11 @@ h1.tag {
     grid-template-columns: repeat(1,minmax(0,2fr));
   }
 }
+
+.required-file{
+  color: red; font-size: 1.7em; font-weight: bold; position: absolute;
+}
+
+.label-input{
+  font-size:14px; font-weight: 550;
+}
