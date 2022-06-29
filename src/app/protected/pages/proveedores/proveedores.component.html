@@ -124,10 +124,10 @@
       <div class="row">
         <div class="col-sm-6" style="margin-top: 5px;">
             <span class="input-group-addon label-input">Número de Teléfono</span>
-            <input placeholder="Teléfono" type="text" id="input-telefono" class="form-control input-sm" name="telefono" ngDefaultControl [(ngModel)]="new_proveedor.telefono" style="background: #fff;" (keypress)="numberOnly($event)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="12">
+            <input placeholder="Teléfono" type="text" id="input-telefono" class="form-control input-sm" name="telefono" ngDefaultControl [(ngModel)]="new_proveedor.telefono" style="background: #fff;" (keypress)="numberOnly($event)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="13">
         </div>
         <div class="col-sm-6" style="margin-top: 5px">
-            <span class="input-group-addon label-input">RFC  <small class="muted">13 dígitos</small></span>
+            <span class="input-group-addon label-input">RFC  <small class="muted">13 caracteres</small></span>
             <input type="text" id="input-rfc" class="form-control input-sm" name="rfc" ngDefaultControl [(ngModel)]="new_proveedor.rfc" style="background: #fff;" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="13">
         </div>
       </div>
