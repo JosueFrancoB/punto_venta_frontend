@@ -205,7 +205,7 @@ export class SalesComponent implements OnInit {
 
   NoProdConflicts(){
     return new Promise<boolean>((resolve, reject) => {
-      let prod_conflicts = this.new_sale.productos?.filter(prod => prod.existencias! <= 0 || (prod.cantidad! > prod.existencias!))
+      let prod_conflicts = this.new_sale.productos?.filter(prod =>  prod.existencias! <= 0 || (prod.cantidad! > prod.existencias!)).map(prod=>prod.nombre)
       if(prod_conflicts![0] !== undefined){
         Swal.fire({
           title: `No hay suficientes existencias de los productos ${JSON.stringify(prod_conflicts).replace('[', '').replace(']','').replace('null','')}, el inventario no se verá afectado en esos productos, ¿Desea continuar con la venta?`,
