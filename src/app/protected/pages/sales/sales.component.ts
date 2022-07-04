@@ -154,7 +154,7 @@ export class SalesComponent implements OnInit {
   async addProductToSale(req_product:ProductosBody){
     if (!req_product) return
     let new_product:ProductsSales = {}
-    const {precio_compra: precio, inventario_max, inventario_min, ...product} = req_product
+    const {precio_venta: precio, inventario_max, inventario_min, ...product} = req_product
     new_product = product
     new_product.precio = precio
     // Para que no se guarden repetidos
