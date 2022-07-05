@@ -402,7 +402,7 @@ export class SalesComponent implements OnInit {
     }
     this.openDialog(this.Venta, true);
   }
- 
+
 
   resetDiscount(){
     this.sale_discount = 0

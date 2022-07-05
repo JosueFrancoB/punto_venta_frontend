@@ -1,1 +1,49 @@
-<h3 class="group-title h4 ng-star-inserted">Inicio<h3>
+<h3 class="group-title h4 ng-star-inserted">Estadísticas</h3>
+<div class="statistics" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+    <nb-card class="card-statistic">
+        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': 'space-between'}">
+            <h4>Productos más vendidos</h4>
+            <nb-icon icon="gift"
+            style="cursor: pointer; font-size: 5rem;" status="warning"></nb-icon>
+        </nb-card-header>
+        <nb-card-body class="card-body">
+            <nb-list>
+                <nb-list-item class="list-statistic" *ngFor="let product of most_selled_products; let i = index">
+                    {{product.nombre}}
+                    <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-trophy.png" alt="gold-trophy">
+                    <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-trophy.png" alt="silver-trophy">
+                    <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-trophy.png" alt="bronze-trophy">
+                </nb-list-item>
+            </nb-list>
+        </nb-card-body>
+    </nb-card>
+    <nb-card class="card-statistic">
+        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': 'space-between'}">
+            <h4>Clientes más frecuentes</h4>
+            <nb-icon icon="people"
+            style="cursor: pointer; font-size: 5rem;" status="warning"></nb-icon>
+        </nb-card-header>
+        <nb-card-body class="card-body">
+            <nb-list>
+                <nb-list-item class="list-statistic" *ngFor="let client of frecuency_clients">
+                    {{client.nombre}}
+                </nb-list-item>
+            </nb-list>
+        </nb-card-body>
+    </nb-card>
+    <nb-card class="card-statistic">
+        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': 'space-between'}">
+            <h4>Empleado con más ventas</h4>
+            <nb-icon icon=""
+            style="cursor: pointer; font-size: 2rem;" status="warning"></nb-icon>
+        </nb-card-header>
+        <nb-card-body class="card-body">
+            <nb-list>
+                <nb-list-item class="list-statistic" *ngFor="let employ of seller_employees">
+                    <span>{{employ.nombre}}</span>
+                    <span style="font-weight: bold; font-size: 1.3em; color: #38A">{{employ.num_ventas}}</span>
+                </nb-list-item>
+            </nb-list>
+        </nb-card-body>
+    </nb-card>
+</div>

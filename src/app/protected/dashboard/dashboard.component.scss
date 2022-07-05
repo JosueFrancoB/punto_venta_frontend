@@ -11,3 +11,100 @@
     margin: 0.5rem 0 2rem;
     text-align: center;
 }
+
+.list-statistic{
+    outline: none;
+    text-size-adjust: none;
+    -webkit-font-smoothing: antialiased;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    height: 3.875rem;
+    min-height: 3.875rem;
+    margin: 0.3125rem 0.625rem;
+    display: flex;
+    flex-direction: row;
+    -webkit-box-align: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 0.1875rem 0.4375rem 0px;
+    border-radius: 6.25rem 1.5625rem 1.5625rem 6.25rem;
+    align-self: stretch;
+    transition: all 0.3s linear 0.3s;
+    margin-top: 0.625rem;
+    -webkit-transition: all 0.3s linear 0.3s;
+    -moz-transition: all 0.3s linear 0.3s;
+    -ms-transition: all 0.3s linear 0.3s;
+    -o-transition: all 0.3s linear 0.3s;
+    -webkit-border-radius: 100px 1.5625rem 1.5625rem 6.25rem;
+    -moz-border-radius: 100px 1.5625rem 1.5625rem 6.25rem;
+    -ms-border-radius: 100px 1.5625rem 1.5625rem 6.25rem;
+    -o-border-radius: 100px 1.5625rem 1.5625rem 6.25rem;
+}
+
+
+.card-statistic{
+    padding: 0.625rem;
+    width: 20.25rem;
+    // margin: 0.625rem;
+    border-radius: 0.3em;
+    -webkit-border-radius: 0.3em;
+    -moz-border-radius: 0.3em;
+    -ms-border-radius: 0.3em;
+    -o-border-radius: 0.3em;
+}
+
+.card-body{
+    padding: 0.625rem;
+}
+
+@media screen and (max-width:1620px) {
+    body {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width:1420px) {
+    body {
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width:1190px) {
+    body {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width:1000px) {
+    body {
+        font-size: 12px;
+    }
+}
+
+
+@media screen and (max-width: 880px) {
+    body {
+        font-size: 12px;
+    }
+    .statistics{
+        flex-wrap: wrap;
+    }
+}
+
+@media screen and (max-width:730px) {
+    body {
+        font-size: 10px;
+    }
+}
+
+@media screen and (max-width:600px) {
+    body {
+        font-size: 10px;
+    }
+}
