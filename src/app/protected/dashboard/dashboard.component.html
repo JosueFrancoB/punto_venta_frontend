@@ -1,47 +1,90 @@
 <h3 class="group-title h4 ng-star-inserted">Estadísticas</h3>
+<h4 class="group-title h4 ng-star-inserted" style="margin-bottom: 0.3125rems;">
+        {{date_key == 'day' ? 'De hoy' : ''}}
+        {{date_key == 'week' ? 'De la semana' : ''}}
+        {{date_key == 'month' ? 'Del mes' : ''}}
+        {{date_key == 'year' ? 'Del año' : ''}}
+    <button nbButton size="small" nbTooltip="Cambiar Fecha" (click)="changeDate('all')" status="info"><nb-icon icon="flip-2" style="font-size: 1.5rem;"></nb-icon></button>
+</h4>
+
 <div class="statistics" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
     <nb-card class="card-statistic">
-        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': 'space-between'}">
-            <h4>Productos más vendidos</h4>
-            <nb-icon icon="gift"
-            style="cursor: pointer; font-size: 5rem;" status="warning"></nb-icon>
+        <nb-card-header style="display:flex; padding: 10px; justify-content: center; flex-direction: column;">
+            <div style="display:flex; flex-direction: row; margin: 0.3125rem;">
+                <h4>Productos más vendidos</h4>
+                <nb-icon icon="gift"
+                style="cursor: pointer; font-size: 3rem;" status="warning"></nb-icon>
+            </div>
         </nb-card-header>
         <nb-card-body class="card-body">
             <nb-list>
                 <nb-list-item class="list-statistic" *ngFor="let product of most_selled_products; let i = index">
-                    {{product.nombre}}
-                    <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-trophy.png" alt="gold-trophy">
-                    <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-trophy.png" alt="silver-trophy">
-                    <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-trophy.png" alt="bronze-trophy">
+                    <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-star.png" alt="gold-star" width="40" height="40">
+                    <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-star.png" alt="silver-star" width="40" height="40">
+                    <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-star.png" alt="bronze-star" width="40" height="40">
+                    <span class="text-list"><p>{{product.nombre}}</p></span>
+                    <span class="img_avatar">{{product.cantidad}}</span>
                 </nb-list-item>
             </nb-list>
         </nb-card-body>
     </nb-card>
     <nb-card class="card-statistic">
-        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': 'space-between'}">
-            <h4>Clientes más frecuentes</h4>
-            <nb-icon icon="people"
-            style="cursor: pointer; font-size: 5rem;" status="warning"></nb-icon>
+        <nb-card-header style="display:flex; padding: 10px; justify-content: center; flex-direction: column;">
+            <div style="display:flex; flex-direction: row; margin: 0.3125rem;">
+                <h4 *ngIf="case_client==1">Clientes más frecuentes</h4>
+                <h4 *ngIf="case_client==2">Clientes con más dinero en compras</h4>
+                <nb-icon icon="people"
+                style="cursor: pointer; font-size: 3rem;" nbTooltip="Ver más" status="warning" (click)="toggleClient()"></nb-icon>
+            </div>
         </nb-card-header>
         <nb-card-body class="card-body">
-            <nb-list>
-                <nb-list-item class="list-statistic" *ngFor="let client of frecuency_clients">
-                    {{client.nombre}}
+            <nb-list *ngIf="case_client==1">
+                <nb-list-item class="list-statistic" *ngFor="let client of frecuency_clients; let i = index">
+                    <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-crown.png" alt="gold-crown" width="40" height="40">
+                    <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-crown.png" alt="silver-crown" width="40" height="40">
+                    <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-crown.png" alt="bronze-crown" width="40" height="40">
+                    <span class="text-list"><p>{{client.nombre}}</p></span>
+                    <span class="img_avatar">{{client.num_compras}}</span>
+                </nb-list-item>
+            </nb-list>
+            <nb-list *ngIf="case_client==2">
+                <nb-list-item class="list-statistic" *ngFor="let client of frecuency_clients; let i = index">
+                    <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-crown.png" alt="gold-crown" width="40" height="40">
+                    <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-crown.png" alt="silver-crown" width="40" height="40">
+                    <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-crown.png" alt="bronze-crown" width="40" height="40">
+                    <span class="text-list"><p>{{client.nombre}}</p></span>
+                    <span class="text-list"><p>{{client.nombre_empresa}}</p></span>
+                    <span class="img_avatar">{{client.dinero_compras|currency}}</span>
                 </nb-list-item>
             </nb-list>
         </nb-card-body>
     </nb-card>
     <nb-card class="card-statistic">
-        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': 'space-between'}">
-            <h4>Empleado con más ventas</h4>
-            <nb-icon icon=""
-            style="cursor: pointer; font-size: 2rem;" status="warning"></nb-icon>
+        <nb-card-header style="display:flex; padding: 10px; justify-content: center; flex-direction: column;">
+            <div style="display:flex; flex-direction: row; margin: 0.3125rem;">
+                <h4 *ngIf="case_employee==1">Empleado con más ventas</h4>
+                <h4 *ngIf="case_employee==2">Empleado con más dinero vendido</h4>
+                <nb-icon icon="award"
+                style="cursor: pointer; font-size: 3rem;" nbTooltip="Ver más" status="warning" (click)="toggleEmployee()"></nb-icon>
+            </div>
         </nb-card-header>
         <nb-card-body class="card-body">
-            <nb-list>
-                <nb-list-item class="list-statistic" *ngFor="let employ of seller_employees">
-                    <span>{{employ.nombre}}</span>
-                    <span style="font-weight: bold; font-size: 1.3em; color: #38A">{{employ.num_ventas}}</span>
+            <nb-list *ngIf="case_employee==1">
+                <nb-list-item class="list-statistic" *ngFor="let employ of seller_employees; let i = index">
+                    <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-trophy.png" alt="gold-trophy" width="40" height="40">
+                    <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-trophy.png" alt="silver-trophy" width="40" height="40">
+                    <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-trophy.png" alt="bronze-trophy" width="40" height="40">
+                    <span class="text-list"><p>{{employ.nombre}}</p></span>
+                    <span class="img_avatar">{{employ.num_ventas}}</span>
+                </nb-list-item>
+            </nb-list>
+            <nb-list *ngIf="case_employee==2">
+                <nb-list-item class="list-statistic" *ngFor="let employ of seller_employees; let i = index">
+                    <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-trophy.png" alt="gold-trophy" width="40" height="40">
+                    <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-trophy.png" alt="silver-trophy" width="40" height="40">
+                    <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-trophy.png" alt="bronze-trophy" width="40" height="40">
+                    <span class="text-list"><p>{{employ.nombre}}</p></span>
+                    <span class="img_avatar">{{employ.dinero_ventas|currency}}</span>
                 </nb-list-item>
             </nb-list>
         </nb-card-body>
