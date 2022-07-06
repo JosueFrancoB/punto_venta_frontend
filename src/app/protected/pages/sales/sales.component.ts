@@ -247,7 +247,7 @@ export class SalesComponent implements OnInit {
           if(result.isConfirmed){
             // Continue? Yes
             this.total_amount -= (this.discount * this.total_amount) / 100
-            this.total_amount = this.total_amount.toFixed(2)
+            this.total_amount = +this.total_amount.toFixed(2)
             resolve(true)
           }else{
             // Continue? No
