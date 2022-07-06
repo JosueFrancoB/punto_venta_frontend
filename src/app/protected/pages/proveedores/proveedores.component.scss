@@ -363,3 +363,19 @@
 ::ng-deep .swiper-button-lock {
   display: none;
 }
+
+:host ::ng-deep a{
+  text-decoration: none;
+}
+
+.required-file{
+  color: red; font-size: 1.7em; font-weight: bold; position: absolute;
+}
+
+.label-input{
+  font-size:14px; font-weight: 550;
+}
+
+.muted{
+  font-weight: bold; color: #bcc
+}

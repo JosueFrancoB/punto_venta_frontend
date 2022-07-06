@@ -3,6 +3,7 @@
 <div style="display: flex; flex-direction: row;">
   <nb-card *ngIf="!product_selected" style="width: 100%;">
       <nb-card-header style="display: flex; align-items: center; align-content: center; justify-content: space-around;">
+          <button nbButton size="medium" nbTooltip="Recargar" (click)="getProducts();" status="info"><nb-icon icon="refresh" style="font-size: 1.5rem;"></nb-icon></button>
           <nb-form-field>
               <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
               <input nbInput #search class="search" name="search-user" type="text" placeholder="Buscar..." (input)="onSearch(search.value)"> 
@@ -11,7 +12,7 @@
       </nb-card-header>
   
       <nb-card-body>        
-          <ng2-smart-table [nbSpinner]="viewLoading" nbSpinnerStatus="danger"   [settings]="settings" [source]="source" (userRowSelect)="onProductRowSelect($event);" style="cursor: pointer;">
+          <ng2-smart-table [nbSpinner]="viewLoading" nbSpinnerStatus="danger" [settings]="settings" [source]="source" (userRowSelect)="onProductRowSelect($event);" style="cursor: pointer;">
           </ng2-smart-table>
       </nb-card-body>
   </nb-card>
@@ -228,29 +229,30 @@
     <div *ngIf="section_general">
     <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Clave:</span>
+              <span class="label-input">Clave </span>
               <input placeholder="Clave principal" type="text" id="input-clave" class="form-control input-sm" style="background: #fff;" name="clave" ngDefaultControl [(ngModel)]="new_producto.clave" [maxlength]="20">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
-        <span style="font-size:14px;">Clave Alterna:</span>
+        <span class="label-input">Clave Alterna </span>
               <input placeholder="Clave Alterna" type="text" id="input-clave-alt" class="form-control input-sm" style="background: #fff;" name="clave_alterna" ngDefaultControl [(ngModel)]="new_producto.clave_alterna" [maxlength]="20">
       </div>
     </div>
     <hr>
     <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-6" style="margin-top: 5px;">
-          <span class="input-group-addon" style="font-size:14px;">Nombre del Producto:</span>
+          <span class="input-group-addon label-input">Nombre del Producto <em class="required-file">*</em></span>
           <input placeholder="Nombre" type="text" id="input-nom" class="form-control input-sm" name="nombre" ngDefaultControl [(ngModel)]="new_producto.nombre" style="background: #fff;" [maxlength]="20">
       </div>
       <div class="col-sm-6" style="margin-top: 5px">
-          <span class="input-group-addon" style="font-size:14px;">Categoría:</span>
+          <span class="input-group-addon label-input">Categoría </span>
           <input type="text" id="input-cat" class="form-control input-sm" name="categoria" ngDefaultControl placeholder="{{current_category}}" readonly style="background: #fff;">
       </div>
     </div>
     <hr>
     <div class="row" style="justify-content: center; max-width:36.25rem;">
       <div class="col-sm-5" style="margin-top: 5px">
-            <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span>
+            <!-- <span class="input-group-addon" style="font-size:14px;">Unidad de Compra:</span> -->
+            <span class="input-group-addon label-input">Unidad de Compra <em class="required-file">*</em></span>
             <div class="input-group">
               <input class="form-control input-sm" #unitCompraInput
                 type="text"
@@ -272,7 +274,7 @@
             </div>
       </div>
       <div class="col-sm-5" style="margin-top: 5px;">
-          <span class="input-group-addon" style="font-size:14px;">Unidad de Venta:</span>
+          <span class="input-group-addon label-input">Unidad de Venta <em class="required-file">*</em></span>
           <div class="input-group">
             <input class="form-control input-sm" #unitVentaInput
               type="text"
@@ -294,7 +296,7 @@
           </div>
       </div>
       <div class="col-sm-2" style="margin-top: 5px;">
-          <span class="input-group-addon" style="font-size:14px;">Factor:</span>
+          <span class="input-group-addon label-input">Factor</span>
           <nb-badge text="?" status="info" style="cursor: pointer;" (click)="openDialogInfo(InfoFactor, false)"></nb-badge>
           <input placeholder="1" [(ngModel)]="new_producto.factor" type="number" min="1" id="input-desc" class="form-control input-sm" style="background: #fff;">
       </div>
@@ -302,16 +304,16 @@
     <hr>
     <div class="row" style="justify-content: center; max-width:34.375rem;">
       <div class="col-sm-4" style="margin-top: 0.3125rem;">
-          <span class="input-group-addon" style="font-size:14px;">Precio de Compra</span>
+          <span class="input-group-addon label-input">Precio de Compra <em class="required-file">*</em></span>
           <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
-            <input type="number" class="form-control input-sm" style="background: #fff;" [placeholder]="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_compra">
+            <input type="number" class="form-control input-sm" style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_compra">
             <div class="input-group-btn">
               <button class="btn btn-secondary btn-sm" disabled>x {{unit_value.compra_abv|uppercase}}</button>
             </div>
           </div>
       </div>
       <div class="col-sm-4" style="margin-top: 0.3125rem;">
-          <span class="input-group-addon" style="font-size:14px;">Precio de Venta</span>
+          <span class="input-group-addon label-input">Precio de Venta <em class="required-file">*</em></span>
           <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
             <input type="number" class="form-control input-sm " style="background: #fff;" placeholder="0.00" min="0" name="fieldName" ngDefaultControl [(ngModel)]="new_producto.precio_venta">
             <div class="input-group-btn">
@@ -320,7 +322,7 @@
           </div>
       </div>
       <div class="col-sm-4" style="margin-top: 0.3125rem;">
-        <span class="input-group-addon" style="font-size:14px;">Cantidad Actual</span>
+        <span class="input-group-addon label-input">Cantidad Actual</span>
         <div class="input-group" style="align-items: center; display:flex; flex-direction: row;">
         <input style="background: #fff;" id="in-cant-actual" class="form-control input-sm" type="number" min="0" [disabled]="modalEdit && user_rol != 'Administrador'" placeholder="0" ngDefaultControl [(ngModel)]="current_existencias">
         <div class="input-group-btn">

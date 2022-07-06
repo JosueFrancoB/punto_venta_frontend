@@ -63,6 +63,7 @@ export class ProductsComponent implements OnInit{
   current_unit_gen:string = this.unit_value.venta_abv
   current_unit_inv:string = this.unit_value.venta_abv
   utility:number|undefined = undefined
+  category_id: string = ''
 
   current_inv = {min:0,max:0}
   current_existencias:number = 0
@@ -117,18 +118,19 @@ export class ProductsComponent implements OnInit{
   ngOnInit() {
     this.params = this.activatedRoute.snapshot.params;
     if(this.params.id){
-      this.getProducts(this.params.id)
-      this.getCategory(this.params.id)
+      this.category_id = this.params.id
+      this.getProducts()
+      this.getCategory()
     }
     this.settings.pager.display = true;
-    this.settings.pager.perPage = 15;
+    this.settings.pager.perPage = 10;
     
   }
 
-  getProducts(id: string){
-    this.categoria = id
+  getProducts(){
+    this.categoria = this.category_id
     this.viewLoading = true
-    this.productsService.getProductsByCategoria(id).subscribe(res =>{
+    this.productsService.getProductsByCategoria(this.category_id).subscribe(res =>{
       const {productos} = res
       this.productos = productos
       this.source.load(productos)
@@ -169,7 +171,7 @@ export class ProductsComponent implements OnInit{
       this.productsService.addProduct(this.new_producto, this.categoria)
         .subscribe(resp =>{
           if (resp.ok === true){
-            this.getProducts(this.categoria)
+            this.getProducts()
             ref.close()
             this.cargarProductImg(resp.producto._id)
             this.toastMixin.fire({
@@ -177,7 +179,8 @@ export class ProductsComponent implements OnInit{
             });
             this.resetProduct()
           }else{
-            Swal.fire('Error', resp, 'error')
+            let msg = resp.msg || resp
+            Swal.fire('Error', msg, 'error')
           }
           this.addLoading = false
         })
@@ -192,18 +195,22 @@ export class ProductsComponent implements OnInit{
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
         if(resp.ok === true){
+          //? INFO Fix cache in get image from server adding query date like server/img/my_id?12/23/32
+          this.productSrc = this.uploadsUrl + '/' + resp.producto._id + '?' + new Date().getTime()
           if (this.changeImg === true){
             this.cargarProductImg(id)
           }
+          console.log('la respon', resp);
           this.toastMixin.fire({
             title: 'Producto actualizado'
           });
           this.utility = this.getUtility(this.product)
-          this.getProducts(this.categoria)
+          this.getProducts()
           ref.close()
           this.resetProduct()
         }else{
-          Swal.fire('Error', resp, 'error')
+          let msg = resp.msg || resp
+          Swal.fire('Error', msg, 'error')
         }
         this.updLoading = false
       })
@@ -225,15 +232,15 @@ export class ProductsComponent implements OnInit{
         if (id !== undefined)
           this.productsService.deleteProduct(id).subscribe(resp => {
               if (resp.ok === true){
-                this.getProducts(this.categoria)
+                this.getProducts()
                 this.addUnit=false
                 this.toastMixin.fire({
                   title: 'Producto eliminado'
                 });
                 this.product_selected = false
               }else{
-                Swal.fire('Error', resp, 'error')
-                console.log(resp)
+                let msg = resp.msg || resp
+                Swal.fire('Error', msg, 'error')
               }
               this.delLoading = false
             })
@@ -245,7 +252,8 @@ export class ProductsComponent implements OnInit{
     
   }
 
-  getCategory(id: string){
+  getCategory(){
+    let id = this.category_id
     this.categoriasService.getCategory(id).subscribe(resp =>{
       if(resp.ok === true){
         this.title = resp.categoria.nombre
@@ -269,9 +277,7 @@ export class ProductsComponent implements OnInit{
   onProductRowSelect(event:any): void {
     this.product_selected = true
     this.product = event.data
-    if(this.product.img){
-      this.productSrc = this.uploadsUrl + '/' + this.product._id
-    }
+    this.productSrc = this.uploadsUrl + '/' + this.product._id
     this.getProdByUnitId()
     this.getProviderById()
     this.getWarehouseById()
@@ -422,7 +428,7 @@ export class ProductsComponent implements OnInit{
     },
     pager: {
       display: true,
-      perPage: 15,
+      perPage: 10,
     }
   };
 

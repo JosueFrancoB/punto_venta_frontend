@@ -61,6 +61,8 @@ export class ProveedoresComponent implements OnInit {
   active_proveedor:ProveedoresBody = {}
   changesEdit = true
 
+  itemsPerPage:number = 10
+  paginaActual!:number;
   correos:Array<string> = []
   telefonos:Array<string> = []
   direcciones:Array<string> = []
@@ -71,7 +73,7 @@ export class ProveedoresComponent implements OnInit {
   modalLoading = false;
   addLoading = false;
   updLoading = false;
-  tele = false;
+  error_new_provider:boolean = false
 
   uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
   pageOfItems!: Array<any>;
@@ -124,23 +126,62 @@ export class ProveedoresComponent implements OnInit {
       this.viewLoading = false
     })
     }
+
+    validateEmail(){
+      if(this.new_proveedor.correo && this.new_proveedor.correo?.trim() !== ''){
+        let regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
+        let valid = this.validaCampos(regex, this.new_proveedor.correo)
+        if (valid){
+          this.new_proveedor.correos = [this.new_proveedor.correo]
+          this.error_new_provider =  false
+        }
+        else{
+          this.error_new_provider =  true 
+          Swal.fire('Error', 'Correo no válido', 'error')
+        }
+      }
+    }
+    validateTelefono(){
+      if(this.new_proveedor.telefono && this.new_proveedor.telefono?.trim() !== ''){
+        let regex = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
+        let valid = this.validaCampos(regex, this.new_proveedor.telefono)
+        if (valid){
+          this.new_proveedor.telefonos = [this.new_proveedor.telefono]
+          this.error_new_provider =  false 
+        }
+        else{
+          this.error_new_provider =  true 
+          Swal.fire('Error', 'Teléfono no válido', 'error')
+        }
+      }
+    }
+    pushDireccion(){
+      if(this.new_proveedor.direccion && this.new_proveedor.direccion?.trim() !== ''){
+        this.new_proveedor.direcciones = [this.new_proveedor.direccion]
+      }
+    }
   
 
 
   addProvider(ref: any){
+    this.validateEmail()
+    this.validateTelefono()
+    this.pushDireccion()
+    if(this.error_new_provider) return
     console.log(this.new_proveedor);
-    this.new_proveedor
     this.proveedoresService.addProveedor(this.new_proveedor)
     .subscribe(resp =>{
       if(resp.ok === true){
         console.log(resp)
         this.getProviders()
         ref.close()
+        this.resetProvider()
         this.toastMixin.fire({
           title: 'Proveedor agregado'
         });
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -166,7 +207,8 @@ export class ProveedoresComponent implements OnInit {
           title: 'Proveedor actualizado'
         });
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -180,8 +222,8 @@ export class ProveedoresComponent implements OnInit {
         // this.providerID = resp.proveedor._id
         this.providerSrc = this.uploadsUrl + '/' + resp.proveedor._id
       }else{
-      console.log('error', resp)
-      Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -205,7 +247,8 @@ export class ProveedoresComponent implements OnInit {
             title: 'Proveedor eliminado'
           });
         }else{
-          Swal.fire('Error', resp.msg, 'error')
+          let msg = resp.msg || resp
+          Swal.fire('Error', msg, 'error')
         }
       })
     }
@@ -403,4 +446,15 @@ export class ProveedoresComponent implements OnInit {
       }
     }
 
+    numberOnly(event:any) {
+      const pattern = /[0-9\+\-\ ]/;
+  
+      let inputChar = String.fromCharCode(event.charCode);
+      if (event.keyCode != 8 && !pattern.test(inputChar)) {
+        event.preventDefault();
+      }
+  
+    }
+
 }
+

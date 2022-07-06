@@ -26,9 +26,11 @@ export class ClientesService {
             return resp
         }),
         catchError(err => {
-          console.log(`${err.error.msg}`)
-          // of(err.error.msg)
-          return of()
+          if(err.error.errors){
+            return of(err.error.errors[0].msg)
+          }else{
+            return of(err.error.msg)
+          }
         })
       )
   }
@@ -39,10 +41,11 @@ export class ClientesService {
         return resp
     }),
     catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
+      if(err.error.errors){
+        return of(err.error.errors[0].msg)
+      }else{
+        return of(err.error.msg)
+      }
     })
     )
   }
@@ -74,10 +77,10 @@ export class ClientesService {
         return resp
     }),
     catchError(err => {
-      if (err.error.errors){
-        return of(err.error.errors[0])
+      if(err.error.errors){
+        return of(err.error.errors[0].msg)
       }else{
-        return of(err.error)
+        return of(err.error.msg)
       }
     })
     )
@@ -91,10 +94,10 @@ export class ClientesService {
         return resp
     }),
     catchError(err => {
-      if (err.error.errors){
-        return of(err.error.errors[0])
+      if(err.error.errors){
+        return of(err.error.errors[0].msg)
       }else{
-        return of(err.error)
+        return of(err.error.msg)
       }
     })
     )
@@ -107,8 +110,11 @@ export class ClientesService {
         return resp
     }),
     catchError(err => {
-      console.log(err);
-      return of(err.error.msg)
+      if(err.error.errors){
+        return of(err.error.errors[0].msg)
+      }else{
+        return of(err.error.msg)
+      }
     })
     )
   }

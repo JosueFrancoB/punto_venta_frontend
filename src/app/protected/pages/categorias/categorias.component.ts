@@ -27,6 +27,8 @@ export class CategoriasComponent implements OnInit {
   changeImg = true
   searchText = ''
 
+  itemsPerPage:number = 10
+  paginaActual!:number;
   viewLoading = false
   modalLoading = false;
   addLoading = false;

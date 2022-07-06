@@ -4,24 +4,27 @@
     <nb-action icon="plus-outline" nbTooltip="Agregar Cliente"
       (click)="openDialog(client, false); modalEdit = false; clientValue = '';"></nb-action>
   </nb-actions>
-  <nb-form-field style="width: 50%;">
-    <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
-    <input #autoInput nbInput type="text" fullWidth fieldSize="medium" [(ngModel)]="searchText" placeholder="Buscar ..."
-      class="search" />
-  </nb-form-field>
+  <div style="display: flex; flex-direction:row; width: 70%;">
+    <button nbButton size="small" nbTooltip="Recargar" (click)="getClients();" status="info"><nb-icon icon="refresh" style="font-size: 1.5rem;"></nb-icon></button>
+    <nb-form-field style="width: 100%;">
+      <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+      <input #autoInput nbInput type="text" fullWidth fieldSize="medium" [(ngModel)]="searchText" placeholder="Buscar ..."
+        class="search" />
+    </nb-form-field>
+  </div>
 </nb-layout-header>
 <hr>
 
-
-<div style="display: flex; flex-direction: column; position: relative; min-width: 100px; min-height: 100px;">
+<!-- Card -->
+<div style="display: flex; flex-direction: column; position: relative; min-width: 6.25rem; min-height: 6.25rem;">
   <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
   <div class="components-list">
     <div class="component-card-wrapper ng-star-inserted"
-      *ngFor="let cliente of clientes |filter:searchText; let i= index">
+      *ngFor="let cliente of clientes | filter:searchText  | paginate: { itemsPerPage: itemsPerPage, currentPage: paginaActual} let i = index" style="max-width: 31.25rem;">
       <nb-reveal-card [showToggleButton]="false" [ngClass]="isRevealed && i == selectedItem  ? 'revealed' : ''">
         <nb-card-front>
-          <nb-card title="{{cliente.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
-            <div style="position: absolute; right: 0; bottom: 0;" *ngIf="isDisplay(cliente.nombre_empresa)">
+          <nb-card title="{{cliente.nombre}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
+            <div style="position: absolute; right: 0; bottom: 0;" *ngIf="isDisplay(cliente.nombre)">
               <button nbbutton="" appearance="outline"
                 class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition"
                 aria-disabled="false" nbTooltip="Editar">
@@ -38,7 +41,7 @@
             <nb-card-body class="card-body-product">
               <div class="top-card" style="display: flex; justify-content: space-between; align-items: center;">
                 <div class="img-txt">
-                  <img class="component-icon" src="assets/images/components/layout.svg" alt="{{cliente.nombre_empresa}}">
+                  <img class="component-icon" src="assets/images/components/layout.svg" alt="{{cliente.nombre}}">
                   <span class="component-name">{{cliente.nombre}}</span>
                 </div>
                 <nb-actions
@@ -57,8 +60,8 @@
           </nb-card>
         </nb-card-front>
         <nb-card-back style="min-height: 9.75rem;">
-          <nb-card title="{{cliente.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
-            <div style="position: absolute; right: 0; bottom: 0;" *ngIf="isDisplay(cliente.nombre_empresa)">
+          <nb-card title="{{cliente.nombre}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
+            <div style="position: absolute; right: 0; bottom: 0;" *ngIf="isDisplay(cliente.nombre)">
               <button nbbutton="" appearance="outline"
                 class="toggle-settings appearance-outline size-small shape-rectangle icon-start icon-end status-info nb-transition"
                 aria-disabled="false" nbTooltip="Editar">
@@ -102,9 +105,9 @@
       </nb-reveal-card>
     </div>
   </div>
-  <div [hidden]="clientes.length <= 10" style="display: flex; justify-content: flex-end;">
-    <jw-pagination [items]="clientes" (changePage)="onChangePage($event)"></jw-pagination>
-  </div>
+</div>
+<div style="padding: 0.3125rem; display: flex; justify-content: end;">
+  <pagination-controls [responsive]="true" [autoHide]="true" (pageChange)="paginaActual = $event" previousLabel="Anterior" nextLabel="Siguiente" ></pagination-controls>
 </div>
 
 <!--? Modal  -->
@@ -121,12 +124,12 @@
         <div>
           <div class="row">
             <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Nombre del Cliente</span>
+              <span class="label-input">Nombre del Cliente <em class="required-file">*</em></span>
               <input placeholder="Contacto" type="text" id="input-contacto" class="form-control input-sm"
                 style="background: #fff;" name="contacto" [(ngModel)]="new_cliente.nombre">
             </div>
             <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Nombre de Empresa:</span>
+              <span class="label-input">Nombre de Empresa </span>
               <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm"
                 style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="new_cliente.nombre_empresa">
             </div>
@@ -134,12 +137,12 @@
 
           <div class="row">
             <div class="col-sm-6" style="margin-top: 5px;">
-              <span class="input-group-addon" style="font-size:14px;">Correo:</span>
+              <span class="input-group-addon label-input">Correo </span> <small class="text-hint">ejemplo@correo.com</small>
               <input placeholder="Correo" type="text" id="input-correo" class="form-control input-sm" name="correo"
                 ngDefaultControl [(ngModel)]="new_cliente.correo" style="background: #fff;">
             </div>
             <div class="col-sm-6" style="margin-top: 5px">
-              <span class="input-group-addon" style="font-size:14px;">Dirección:</span>
+              <span class="input-group-addon label-input">Dirección</span>
               <input type="text" id="input-direccion" placeholder="Dirección" class="form-control input-sm"
                 name="direccion" ngDefaultControl [(ngModel)]="new_cliente.direccion" style="background: #fff;">
             </div>
@@ -147,9 +150,10 @@
 
           <div class="row">
             <div class="col-sm-6" style="margin-top: 5px;">
-              <span class="input-group-addon" style="font-size:14px;">Número de Teléfono:</span>
+              <span class="input-group-addon label-input">Número de Teléfono </span>
+              <small class="text-hint">10 a 12 dígitos</small>
               <input placeholder="Teléfono" type="text" id="input-telefono" class="form-control input-sm"
-                name="telefono" ngDefaultControl [(ngModel)]="new_cliente.telefono" style="background: #fff;">
+                name="telefono" ngDefaultControl [(ngModel)]="new_cliente.telefono" style="background: #fff;" (keypress)="numberOnly($event)" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="12">
             </div>
           </div>
 
@@ -178,12 +182,12 @@
         <section id="content1">
           <div class="row">
             <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Nombre</span>
+              <span class="label-input">Nombre <em class="required-file">*</em></span>
               <input placeholder="Nombre" type="text" id="input-nombre" class="form-control input-sm"
                 style="background: #fff;" name="nombre" [(ngModel)]="active_cliente.nombre">
             </div>
             <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Nombre de Empresa:</span>
+              <span class="label-input">Nombre de Empresa </span>
               <input placeholder="Empresa" type="text" id="input-empresa" class="form-control input-sm"
                 style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="active_cliente.nombre_empresa">
             </div>
@@ -326,7 +330,7 @@
     <nb-card-footer style="display: flex; justify-content: space-between;">
       <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline">Cancelar</button>
       <button [nbSpinner]="addLoading" nbSpinnerStatus="success"
-        *ngIf="new_cliente.nombre != '' && new_cliente.nombre_empresa != '' && !modalEdit" nbButton size="small"
+        *ngIf="new_cliente.nombre != '' && !modalEdit" nbButton size="small"
         appearance="outline" status="success" (click)="addClient(ref);">
         Agregar Cliente
       </button>

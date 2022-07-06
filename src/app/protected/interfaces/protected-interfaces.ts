@@ -6,6 +6,7 @@ export interface UserBody{
     estado?: boolean;
     rol?: string;
     img?: string;
+    uid?: string;
 }
 
 export interface UserData{
@@ -71,6 +72,9 @@ export interface NewClientesBody{
     nombre_empresa?: string;
     telefono?: string;
     correo?: string;
+    telefonos?: Array<string|undefined>;
+    correos?: Array<string|undefined>;
+    direcciones?: Array<string|undefined>;
     rfc?: string;
     img?: string;
     direccion?: string;
@@ -95,10 +99,13 @@ export interface NewProveedoresBody{
     _id?: string;
     nombre_contacto?: string;
     nombre_empresa?: string;
+    telefonos?: Array<string|undefined>;
+    correos?: Array<string|undefined>;
     telefono?: string;
     correo?: string;
     rfc?: string;
     img?: string;
+    direcciones?: Array<string|undefined>;
     direccion?: string;
 }
 

@@ -26,9 +26,11 @@ export class ProveedoresService {
             return resp
         }),
         catchError(err => {
-          console.log(`${err.error.msg}`)
-          // of(err.error.msg)
-          return of()
+          if (err.error.errors){
+            return of(err.error.errors[0].msg)
+          }else{
+            return of(err.error.msg)
+          }
         })
       )
   }
@@ -39,20 +41,16 @@ export class ProveedoresService {
         return resp
     }),
     catchError(err => {
-      console.log(err);
-      console.log(err.error);
-      console.log(err.error.errors[0].msg);
-      return of(err.error.errors[0].msg)
+      if (err.error.errors){
+        return of(err.error.errors[0].msg)
+      }else{
+        return of(err.error.msg)
+      }
     })
     )
   }
   addProveedor(provedor_data: any){
     const headers = this.getToken()
-    console.log(provedor_data);
-    provedor_data.correos = [provedor_data.correo]
-    provedor_data.telefonos = [provedor_data.telefono]
-    provedor_data.direcciones = [provedor_data.direccion]
-    provedor_data.correos = provedor_data.correo
     let body = provedor_data
     return this.http.post(`${this.baseUrl}/providers`, body, {headers}).pipe(
       map( resp => {
@@ -61,9 +59,9 @@ export class ProveedoresService {
     }),
     catchError(err => {
       if (err.error.errors){
-        return of(err.error.errors[0])
+        return of(err.error.errors[0].msg)
       }else{
-        return of(err.error)
+        return of(err.error.msg)
       }
     })
     )
@@ -78,9 +76,9 @@ export class ProveedoresService {
     }),
     catchError(err => {
       if (err.error.errors){
-        return of(err.error.errors[0])
+        return of(err.error.errors[0].msg)
       }else{
-        return of(err.error)
+        return of(err.error.msg)
       }
     })
     )
@@ -94,9 +92,9 @@ export class ProveedoresService {
     }),
     catchError(err => {
       if (err.error.errors){
-        return of(err.error.errors[0])
+        return of(err.error.errors[0].msg)
       }else{
-        return of(err.error)
+        return of(err.error.msg)
       }
     })
     )

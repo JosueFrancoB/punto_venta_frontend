@@ -33,6 +33,8 @@ export class ClientesComponent implements OnInit {
   active_cliente:ClientesBody = {}
   changesEdit = true
 
+  itemsPerPage:number = 10
+  paginaActual!:number;
   correos:Array<string> = []
   telefonos:Array<string> = []
   direcciones:Array<string> = []
@@ -48,6 +50,7 @@ export class ClientesComponent implements OnInit {
 
   items:Array<ClientesBody> = [];
   pageOfItems!: Array<any>;
+  error_new_client:boolean = true
 
   constructor(private clientesService: ClientesService,
               private uploadsService: UploadsService,
@@ -77,15 +80,52 @@ export class ClientesComponent implements OnInit {
   getClients(){
     this.viewLoading = true
     this.clientesService.getClientes().subscribe(res =>{
-      console.log(res);
       const {clientes} = res
       this.clientes = clientes
       this.viewLoading = false
     })
     }
 
+  validateEmail(){
+    if(this.new_cliente.correo && this.new_cliente.correo?.trim() !== ''){
+      let regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
+      let valid = this.validaCampos(regex, this.new_cliente.correo)
+      if (valid){
+        this.new_cliente.correos = [this.new_cliente.correo]
+        this.error_new_client =  false
+      }
+      else{
+        this.error_new_client =  true 
+        Swal.fire('Error', 'Correo no válido', 'error')
+      }
+    }
+  }
+  validateTelefono(){
+    if(this.new_cliente.telefono && this.new_cliente.telefono?.trim() !== ''){
+      let regex = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
+      let valid = this.validaCampos(regex, this.new_cliente.telefono)
+      if (valid){
+        this.new_cliente.telefonos = [this.new_cliente.telefono]
+        this.error_new_client =  false 
+      }
+      else{
+        this.error_new_client =  true 
+        Swal.fire('Error', 'Teléfono no válido', 'error')
+      }
+    }
+  }
+  pushDireccion(){
+    if(this.new_cliente.direccion && this.new_cliente.direccion?.trim() !== ''){
+      this.new_cliente.direcciones = [this.new_cliente.direccion]
+    }
+  }
+
   addClient(ref: any){
-    console.log(this.new_cliente);
+    this.validateEmail()
+    this.validateTelefono()
+    this.pushDireccion()
+    console.log('el new', this.new_cliente);
+    if (this.error_new_client) return
     this.clientesService.addCliente(this.new_cliente)
     .subscribe(resp =>{
       if(resp.ok === true){
@@ -93,11 +133,13 @@ export class ClientesComponent implements OnInit {
         this.cargarClientImg(resp.cliente._id)
         this.getClients()
         ref.close()
+        this.new_cliente = {}
         this.toastMixin.fire({
           title: 'Cliente agregado'
         });
       }else{
-        Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -136,7 +178,8 @@ export class ClientesComponent implements OnInit {
           title: 'Cliente actualizado'
         });
       }else{
-        Swal.fire('Error', resp.msg, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -150,8 +193,8 @@ export class ClientesComponent implements OnInit {
         // this.providerID = resp.proveedor._id
         this.clientSrc = this.uploadsUrl + '/' + resp.cliente._id
       }else{
-      console.log('error', resp)
-      Swal.fire('Error', resp, 'error')
+        let msg = resp.msg || resp
+        Swal.fire('Error', msg, 'error')
       }
     })
   }
@@ -175,7 +218,8 @@ export class ClientesComponent implements OnInit {
             title: 'Cliente eliminado'
           });
         }else{
-          Swal.fire('Error', resp, 'error')
+          let msg = resp.msg || resp
+          Swal.fire('Error', msg, 'error')
         }
       })
     }
@@ -237,7 +281,6 @@ export class ClientesComponent implements OnInit {
 
   content_back_card(elementSelected: string){
     this.info_selected = elementSelected
-    console.log(this.info_selected);
   }
 
 
@@ -330,7 +373,6 @@ export class ClientesComponent implements OnInit {
       case 'correo':
         this.new_cliente.correo = ''
         this.active_cliente.correos?.splice(idx_value,1)
-        console.log(this.active_cliente.correos);
         break;
       case 'direccion':
         this.new_cliente.direccion = ''
@@ -348,6 +390,16 @@ export class ClientesComponent implements OnInit {
     }else{
         return true
     }
+  }
+
+  numberOnly(event:any) {
+    const pattern = /[0-9\+\-\ ]/;
+
+    let inputChar = String.fromCharCode(event.charCode);
+    if (event.keyCode != 8 && !pattern.test(inputChar)) {
+      event.preventDefault();
+    }
+
   }
 
 }

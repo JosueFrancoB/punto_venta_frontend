@@ -5,11 +5,17 @@
     <nb-action icon="plus-outline" nbTooltip="Agregar Unidad"
       (click)="openDialog(unit, false); modalEdit = false; unitValue = '';"></nb-action>
   </nb-actions>
-  <nb-form-field style="width: 50%;">
-    <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
-    <input #autoInput nbInput type="text" fullWidth fieldSize="medium" [(ngModel)]="searchText" placeholder="Buscar ..."
-      class="search" />
-  </nb-form-field>
+  <div style="display: flex; flex-direction:row; width: 70%;">
+    <button nbButton size="small" nbTooltip="Recargar" (click)="getUnits();" status="info"><nb-icon icon="refresh" style="font-size: 1.5rem;"></nb-icon></button>
+    <nb-form-field style="width: 100%;">
+      <nb-icon nbPrefix icon="search-outline"  pack="eva"></nb-icon>
+      <input #autoInput
+      nbInput
+      type="text" fullWidth fieldSize="medium"
+      [(ngModel)]="searchText"
+      placeholder="Buscar ..." class="search"/>
+    </nb-form-field>
+  </div>
 </nb-layout-header>
 <hr>
 <!--+ End Search bar -->
@@ -26,7 +32,7 @@
 <div style="display: flex; flex-direction: column; position: relative; min-width: 100px; min-height: 100px;">
   <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
   <div class="components-list">
-    <div class="component-card-wrapper ng-star-inserted" *ngFor="let unidad of pageOfItems |filter:searchText; let i = index">
+    <div class="component-card-wrapper ng-star-inserted" *ngFor="let unidad of unidades | filter:searchText  | paginate: { itemsPerPage: itemsPerPage, currentPage: paginaActual} let i = index;">
       <nb-card title="{{unidad.nombre}}" class="card-product" (mouseenter)="mouseEnter($event)"
         (mouseleave)="mouseLeave($event)">
         <div style="position: absolute;" *ngIf="isDisplay(unidad.nombre)">
@@ -49,9 +55,9 @@
       </nb-card>
     </div>
   </div>
-  <div [hidden]="unidades.length <= 10" style="display: flex; justify-content: flex-end;">
-    <jw-pagination [items]="unidades" (changePage)="onChangePage($event)"></jw-pagination>
-  </div>
+</div>
+<div style="padding: 0.3125rem; display: flex; justify-content: end;">
+  <pagination-controls [responsive]="true" [autoHide]="true" (pageChange)="paginaActual = $event" previousLabel="Anterior" nextLabel="Siguiente" ></pagination-controls>
 </div>
   
 <!-- ? End Cards -->
@@ -72,12 +78,12 @@
         <div>
           <div class="row">
             <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Unidad de medida</span>
+              <span class="label-input">Unidad de medida <em class="required-file">*</em></span>
               <input placeholder="Unidad de medida" type="text" id="input-contacto" class="form-control input-sm"
                 style="background: #fff;" name="contacto" [(ngModel)]="new_unit.nombre">
             </div>
             <div class="col-sm-6" style="margin-top: 5px">
-              <span style="font-size:14px;">Abreviacion:</span>
+              <span class="label-input">Abreviación</span>
               <input placeholder="Abreviacion" type="text" id="input-empresa" class="form-control input-sm"
                 style="background: #fff;" name="empresa" ngDefaultControl [(ngModel)]="new_unit.abreviacion">
             </div>

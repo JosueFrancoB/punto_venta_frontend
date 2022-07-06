@@ -25,6 +25,7 @@ export class SalesComponent implements OnInit {
   pay:number = 0
   taxes:number = 0
   discount:number = 0
+  viewLoading:boolean = false
   sale_discount:number = 0
   search_product: string = ''
   total_taxes:number = 0
@@ -75,7 +76,7 @@ export class SalesComponent implements OnInit {
   toggleShow(){
     this.show_sales = !this.show_sales
     if(this.show_sales)
-      this.getVentas(0)
+      this.getVentas()
   }
 
   openDialog(dialog: TemplateRef<any>, closeOnBackdropClick: boolean) {
@@ -130,7 +131,6 @@ export class SalesComponent implements OnInit {
   addCustomer(){
     if (Object.keys(this.selected_customer).length === 0) return
     this.new_sale.cliente = this.selected_customer
-    console.log('cliete',this.new_sale.cliente);
   }
 
 
@@ -154,7 +154,7 @@ export class SalesComponent implements OnInit {
   async addProductToSale(req_product:ProductosBody){
     if (!req_product) return
     let new_product:ProductsSales = {}
-    const {precio_compra: precio, inventario_max, inventario_min, ...product} = req_product
+    const {precio_venta: precio, inventario_max, inventario_min, ...product} = req_product
     new_product = product
     new_product.precio = precio
     // Para que no se guarden repetidos
@@ -187,15 +187,15 @@ export class SalesComponent implements OnInit {
     this.selected_customer = {}
   }
 
-  getVentas(from:number,search:string='', searchField:string=''){
+  getVentas(from:number=0,search:string='', searchField:string=''){
     let limite = this.limit
+    this.viewLoading = true
     this.salesService.getSales(limite,from, search, searchField).subscribe(resp => {
       if (resp.ok === true){
         console.log(`getVentas - Response: ${resp}`);
         this.sales = resp.ventas
         this.total_items = resp.total
-        console.log('ventas:', this.sales);
-        console.log('total:', this.total_items);
+        this.viewLoading = false
       }else{
       console.log('error', resp)
       Swal.fire('Error', resp, 'error')
@@ -205,7 +205,7 @@ export class SalesComponent implements OnInit {
 
   NoProdConflicts(){
     return new Promise<boolean>((resolve, reject) => {
-      let prod_conflicts = this.new_sale.productos?.filter(prod => prod.existencias! <= 0 || (prod.cantidad! > prod.existencias!))
+      let prod_conflicts = this.new_sale.productos?.filter(prod =>  prod.existencias! <= 0 || (prod.cantidad! > prod.existencias!)).map(prod=>prod.nombre)
       if(prod_conflicts![0] !== undefined){
         Swal.fire({
           title: `No hay suficientes existencias de los productos ${JSON.stringify(prod_conflicts).replace('[', '').replace(']','').replace('null','')}, el inventario no se verá afectado en esos productos, ¿Desea continuar con la venta?`,
@@ -247,7 +247,7 @@ export class SalesComponent implements OnInit {
           if(result.isConfirmed){
             // Continue? Yes
             this.total_amount -= (this.discount * this.total_amount) / 100
-            this.total_amount = this.total_amount.toFixed(2)
+            this.total_amount = +this.total_amount.toFixed(2)
             resolve(true)
           }else{
             // Continue? No
@@ -343,7 +343,7 @@ export class SalesComponent implements OnInit {
           this.toastMixin.fire({
             title: 'Venta eliminada'
           });
-          this.getVentas(0)
+          this.getVentas()
         }else{
           Swal.fire('Error', resp, 'error')
         }
@@ -402,7 +402,7 @@ export class SalesComponent implements OnInit {
     }
     this.openDialog(this.Venta, true);
   }
- 
+
 
   resetDiscount(){
     this.sale_discount = 0
