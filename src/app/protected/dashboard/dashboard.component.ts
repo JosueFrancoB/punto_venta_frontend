@@ -21,6 +21,7 @@ export class DashboardComponent implements OnInit {
   date_key: string = 'week'
   case_client: number = 1
   case_employee: number = 1
+  viewLoading: boolean = false
 
   ngOnInit() {
     this.current_week = this.ProcessDate(this.getFullDay(), 'week')
@@ -77,9 +78,11 @@ export class DashboardComponent implements OnInit {
   }
 
   getStatistics(statistic:string, date_key:string, date:string){
+    this.viewLoading = true
     this.statisticsService.getStatistics(statistic, date_key, date)
       .subscribe(res =>{
         console.log(res);
+        this.viewLoading = false
         switch (statistic) {
           case 'all':
             this.most_selled_products = res.statistics.most_selled_products
@@ -110,6 +113,7 @@ export class DashboardComponent implements OnInit {
   }
 
   changeDate(statistic:string){
+    this.viewLoading = true
     let date = ''
     switch (this.date_key) {
       case 'week':

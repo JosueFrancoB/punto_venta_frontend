@@ -51,11 +51,6 @@ export class ProveedoresService {
   }
   addProveedor(provedor_data: any){
     const headers = this.getToken()
-    console.log(provedor_data);
-    provedor_data.correos = [provedor_data.correo]
-    provedor_data.telefonos = [provedor_data.telefono]
-    provedor_data.direcciones = [provedor_data.direccion]
-    provedor_data.correos = provedor_data.correo
     let body = provedor_data
     return this.http.post(`${this.baseUrl}/providers`, body, {headers}).pipe(
       map( resp => {

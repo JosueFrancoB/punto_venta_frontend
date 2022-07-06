@@ -8,7 +8,7 @@
 </h4>
 
 <div class="statistics" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-    <nb-card class="card-statistic">
+    <nb-card class="card-statistic animate__animated animate__fadeIn animate_faster">
         <nb-card-header style="display:flex; padding: 10px; justify-content: center; flex-direction: column;">
             <div style="display:flex; flex-direction: row; margin: 0.3125rem;">
                 <h4>Productos más vendidos</h4>
@@ -17,6 +17,7 @@
             </div>
         </nb-card-header>
         <nb-card-body class="card-body">
+            <div *ngIf="viewLoading" style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
             <nb-list>
                 <nb-list-item class="list-statistic" *ngFor="let product of most_selled_products; let i = index">
                     <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-star.png" alt="gold-star" width="40" height="40">
@@ -28,7 +29,7 @@
             </nb-list>
         </nb-card-body>
     </nb-card>
-    <nb-card class="card-statistic">
+    <nb-card class="card-statistic animate__animated animate__fadeIn animate_faster">
         <nb-card-header style="display:flex; padding: 10px; justify-content: center; flex-direction: column;">
             <div style="display:flex; flex-direction: row; margin: 0.3125rem;">
                 <h4 *ngIf="case_client==1">Clientes más frecuentes</h4>
@@ -38,6 +39,7 @@
             </div>
         </nb-card-header>
         <nb-card-body class="card-body">
+            <div *ngIf="viewLoading" style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
             <nb-list *ngIf="case_client==1">
                 <nb-list-item class="list-statistic" *ngFor="let client of frecuency_clients; let i = index">
                     <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-crown.png" alt="gold-crown" width="40" height="40">
@@ -48,7 +50,7 @@
                 </nb-list-item>
             </nb-list>
             <nb-list *ngIf="case_client==2">
-                <nb-list-item class="list-statistic" *ngFor="let client of frecuency_clients; let i = index">
+                <nb-list-item class="list-statistic" *ngFor="let client of rich_clients; let i = index">
                     <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-crown.png" alt="gold-crown" width="40" height="40">
                     <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-crown.png" alt="silver-crown" width="40" height="40">
                     <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-crown.png" alt="bronze-crown" width="40" height="40">
@@ -59,16 +61,17 @@
             </nb-list>
         </nb-card-body>
     </nb-card>
-    <nb-card class="card-statistic">
+    <nb-card class="card-statistic animate__animated animate__fadeIn animate_faster">
         <nb-card-header style="display:flex; padding: 10px; justify-content: center; flex-direction: column;">
             <div style="display:flex; flex-direction: row; margin: 0.3125rem;">
-                <h4 *ngIf="case_employee==1">Empleados con más ventas</h4>
-                <h4 *ngIf="case_employee==2">Empleados con más dinero vendido</h4>
+                <h4 *ngIf="case_employee==1">Ventas Por Empleado</h4>
+                <h4 *ngIf="case_employee==2">Dinero Por Empleado</h4>
                 <nb-icon icon="award"
                 style="cursor: pointer; font-size: 3rem;" nbTooltip="Ver más" status="warning" (click)="toggleEmployee()"></nb-icon>
             </div>
         </nb-card-header>
         <nb-card-body class="card-body">
+            <div *ngIf="viewLoading" style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
             <nb-list *ngIf="case_employee==1">
                 <nb-list-item class="list-statistic" *ngFor="let employ of seller_employees; let i = index">
                     <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-trophy.png" alt="gold-trophy" width="40" height="40">
@@ -79,7 +82,7 @@
                 </nb-list-item>
             </nb-list>
             <nb-list *ngIf="case_employee==2">
-                <nb-list-item class="list-statistic" *ngFor="let employ of seller_employees; let i = index">
+                <nb-list-item class="list-statistic" *ngFor="let employ of money_employees; let i = index">
                     <img *ngIf="i == 0" src="../../../assets/images/statistics/gold-trophy.png" alt="gold-trophy" width="40" height="40">
                     <img *ngIf="i > 0 && i <= 5" src="../../../assets/images/statistics/silver-trophy.png" alt="silver-trophy" width="40" height="40">
                     <img *ngIf="i > 5 && i <= 10" src="../../../assets/images/statistics/bronze-trophy.png" alt="bronze-trophy" width="40" height="40">

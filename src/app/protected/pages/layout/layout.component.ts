@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NbMenuItem, NbMenuService, NbSidebarService } from '@nebular/theme';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { LayoutService } from '../../services/layout.service';
+import { UsersService } from '../../services/users.service';
 
 import { map, filter } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -23,6 +24,7 @@ export class LayoutComponent implements OnInit {
     private layoutService: LayoutService,
     private authService: AuthService,
     private nbMenuService: NbMenuService,
+    private usersService: UsersService,
     private router:Router) { }
   
 
@@ -31,15 +33,16 @@ export class LayoutComponent implements OnInit {
     }
 
     userPictureOnly: boolean = false;
+    user_rol:string = ''
     userMenu = [ 
-    { title: 'Mi Perfil', icon: 'person-outline', link: '/dashboard/perfil' }, 
+    // { title: 'Mi Perfil', icon: 'person-outline', link: '/dashboard/perfil' }, 
     { title: 'Cerrar Sesión', icon: 'log-out-outline' }
     ];
 
 
   items: NbMenuItem[] = [
     {
-      title: 'Inicio',
+      title: 'Estadísticas',
       icon: 'home-outline',
       link: '/dashboard',
       home: true
@@ -87,6 +90,9 @@ export class LayoutComponent implements OnInit {
   ];
 
   ngOnInit(){
+    //TODO: Checar permisos de usuario
+    this.getUserRol()
+    
     this.nbMenuService.onItemClick()
       .pipe(
         filter(({ tag }) => tag === 'user-menu'),
@@ -98,6 +104,21 @@ export class LayoutComponent implements OnInit {
           this.logout()
         }
       });
+  }
+
+  getUserRol(){
+    this.usersService.validateJWT().subscribe(res=>{
+      if(res.ok && res.ok ===true){
+        this.user_rol = res.usuario.rol
+        if(this.user_rol === 'Usuario'){
+          this.restrictMenu()
+        }
+      }
+    })
+  }
+
+  restrictMenu(){
+    this.items = this.items.filter(item => item.title != 'Usuarios' && item.title != 'Estadísticas')
   }
 
   logout(){

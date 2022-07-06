@@ -1,7 +1,7 @@
 <ng-template #Usuario let-data let-ref="dialogRef">
     <nb-card [nbSpinner]="modalLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant">
-        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit ? 'space-between' : 'flex-end' }">
-            <button *ngIf="modalEdit" nbButton size="small" appearance="outline" status="danger" (click)="deleteUser(user_id, ref);" [nbSpinner]="delLoading" nbSpinnerStatus="danger">
+        <nb-card-header style="display:flex;" [ngStyle]="{'justify-content': modalEdit && delete_btn ? 'space-between' : 'flex-end' }">
+            <button *ngIf="modalEdit && delete_btn" nbButton size="small" appearance="outline" status="danger" (click)="deleteUser(user_id, ref);" [nbSpinner]="delLoading" nbSpinnerStatus="danger">
                 Eliminar Usuario
             </button>
             <nb-icon (click)="ref.close(); cancelDialog();" icon="close-square-outline" style="cursor: pointer; font-size: 2rem;" status="danger"></nb-icon>
@@ -96,7 +96,7 @@
     <nb-card-body>
         
         <!-- <h1 *ngIf="usuarios.length == 0">Aun no hay</h1> -->
-        <ng2-smart-table [nbSpinner]="viewLoading" nbSpinnerStatus="danger"   [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event); openDialog(Usuario, false)" style="cursor: pointer;">
+        <ng2-smart-table [nbSpinner]="viewLoading" nbSpinnerStatus="danger" [settings]="settings" [source]="source" (userRowSelect)="onUserRowSelect($event); openDialog(Usuario, false)" style="cursor: pointer;">
         </ng2-smart-table>
     </nb-card-body>
 </nb-card>

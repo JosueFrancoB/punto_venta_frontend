@@ -123,7 +123,7 @@ export class ProductsComponent implements OnInit{
       this.getCategory()
     }
     this.settings.pager.display = true;
-    this.settings.pager.perPage = 15;
+    this.settings.pager.perPage = 10;
     
   }
 
@@ -195,9 +195,12 @@ export class ProductsComponent implements OnInit{
       this.updLoading = true
       this.productsService.updateProduct(id, this.product, this.categoria).subscribe(resp => {
         if(resp.ok === true){
+          //? INFO Fix cache in get image from server adding query date like server/img/my_id?12/23/32
+          this.productSrc = this.uploadsUrl + '/' + resp.producto._id + '?' + new Date().getTime()
           if (this.changeImg === true){
             this.cargarProductImg(id)
           }
+          console.log('la respon', resp);
           this.toastMixin.fire({
             title: 'Producto actualizado'
           });
@@ -425,7 +428,7 @@ export class ProductsComponent implements OnInit{
     },
     pager: {
       display: true,
-      perPage: 15,
+      perPage: 10,
     }
   };
 

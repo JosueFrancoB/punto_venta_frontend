@@ -73,7 +73,7 @@ export class ProveedoresComponent implements OnInit {
   modalLoading = false;
   addLoading = false;
   updLoading = false;
-  tele = false;
+  error_new_provider:boolean = false
 
   uploadsUrl:string = environment.baseUrl + '/uploads/proveedores'
   pageOfItems!: Array<any>;
@@ -126,10 +126,48 @@ export class ProveedoresComponent implements OnInit {
       this.viewLoading = false
     })
     }
+
+    validateEmail(){
+      if(this.new_proveedor.correo && this.new_proveedor.correo?.trim() !== ''){
+        let regex = '[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}'
+        let valid = this.validaCampos(regex, this.new_proveedor.correo)
+        if (valid){
+          this.new_proveedor.correos = [this.new_proveedor.correo]
+          this.error_new_provider =  false
+        }
+        else{
+          this.error_new_provider =  true 
+          Swal.fire('Error', 'Correo no válido', 'error')
+        }
+      }
+    }
+    validateTelefono(){
+      if(this.new_proveedor.telefono && this.new_proveedor.telefono?.trim() !== ''){
+        let regex = '^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
+        let valid = this.validaCampos(regex, this.new_proveedor.telefono)
+        if (valid){
+          this.new_proveedor.telefonos = [this.new_proveedor.telefono]
+          this.error_new_provider =  false 
+        }
+        else{
+          this.error_new_provider =  true 
+          Swal.fire('Error', 'Teléfono no válido', 'error')
+        }
+      }
+    }
+    pushDireccion(){
+      if(this.new_proveedor.direccion && this.new_proveedor.direccion?.trim() !== ''){
+        this.new_proveedor.direcciones = [this.new_proveedor.direccion]
+      }
+    }
   
 
 
   addProvider(ref: any){
+    this.validateEmail()
+    this.validateTelefono()
+    this.pushDireccion()
+    if(this.error_new_provider) return
     console.log(this.new_proveedor);
     this.proveedoresService.addProveedor(this.new_proveedor)
     .subscribe(resp =>{
@@ -137,6 +175,7 @@ export class ProveedoresComponent implements OnInit {
         console.log(resp)
         this.getProviders()
         ref.close()
+        this.resetProvider()
         this.toastMixin.fire({
           title: 'Proveedor agregado'
         });

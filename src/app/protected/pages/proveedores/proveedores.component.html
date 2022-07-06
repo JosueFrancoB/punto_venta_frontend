@@ -19,10 +19,10 @@
 <hr>
 
 <!-- Card -->
-<div style="display: flex; flex-direction: column; position: relative; min-width: 100px; min-height: 100px;">
+<div style="display: flex; flex-direction: column; position: relative; min-width: 6.25rem; min-height: 6.25rem;">
   <div style="position: absolute; width: 100%; height: 100%;" [nbSpinner]="viewLoading" nbSpinnerStatus="danger" nbSpinnerSize="giant"></div>
   <div class="components-list">
-      <div class="component-card-wrapper ng-star-inserted" *ngFor="let proveedor of proveedores | filter:searchText  | paginate: { itemsPerPage: itemsPerPage, currentPage: paginaActual} let i = index">
+      <div class="component-card-wrapper ng-star-inserted" *ngFor="let proveedor of proveedores | filter:searchText  | paginate: { itemsPerPage: itemsPerPage, currentPage: paginaActual} let i = index" style="max-width: 31.25rem;">
         <nb-flip-card [showToggleButton]="false" [ngClass]="isFlipped && i == selectedItem  ? 'flipped' : ''">
           <nb-card-front>
               <nb-card title="{{proveedor.nombre_empresa}}" (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)">
@@ -256,7 +256,7 @@
 
   <nb-card-footer style="display: flex; justify-content: space-between;">
     <button nbButton (click)="cancelDialog(); ref.close(); " size="small" appearance="outline" >Cancelar</button>
-    <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_proveedor.nombre_contacto != '' && new_proveedor.nombre_empresa != '' && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addProvider(ref);">
+    <button [nbSpinner]="addLoading" nbSpinnerStatus="success" *ngIf="new_proveedor.nombre_empresa != '' && !modalEdit" nbButton size="small" appearance="outline" status="success" (click)="addProvider(ref);">
         Agregar Proveedor
     </button>
     <button [nbSpinner]="updLoading" nbSpinnerStatus="info" *ngIf="modalEdit && changesEdit" nbButton size="small" appearance="outline" status="info" (click)="updateProvider(active_proveedor, ref);">

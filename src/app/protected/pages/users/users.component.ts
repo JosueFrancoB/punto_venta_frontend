@@ -14,6 +14,7 @@ import { UserBody } from '../../interfaces/protected-interfaces';
 })
 export class UsersComponent implements OnInit {
   
+  my_user:any
   usuarios: any
   user_id: string = ''
   user_rol: string = 'Usuario'
@@ -39,6 +40,7 @@ export class UsersComponent implements OnInit {
   source: LocalDataSource;
   @ViewChild('Usuario') Usuario!: TemplateRef<any>;
   pageSize:number = 0
+  delete_btn:boolean = true
 
   constructor(private usersService:UsersService,
               private dialogService: NbDialogService,
@@ -66,6 +68,14 @@ export class UsersComponent implements OnInit {
     this.getUsers()
     this.settings.pager.display = true;
     this.settings.pager.perPage = 5;
+  }
+
+  getMyUser(){
+    this.usersService.validateJWT().subscribe(res=>{
+      if(res.ok && res.ok ===true){
+          this.my_user = res.usuario
+        }
+      })
   }
 
   correoPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"
@@ -198,6 +208,7 @@ export class UsersComponent implements OnInit {
   }
 
   onUserRowSelect(event:any): void {
+      this.getMyUser()
       this.modalEdit = true;
       this.changesEdit = false;
       let {rol} = event.data
@@ -209,6 +220,8 @@ export class UsersComponent implements OnInit {
       this.usersService.getUser(this.user_id).subscribe(resp => {
         if (resp.ok === true){
           this.user = resp.usuario
+          this.delete_btn = this.user.uid === this.my_user.uid ? false : true
+          console.log('el btn', this.delete_btn);
           this.checkedEstado = this.user.estado
         }
         this.modalLoading = false
